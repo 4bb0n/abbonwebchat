@@ -1,0 +1,19 @@
+ : log
+ : NOW
+ : this is so slow
+ : hello
+ : hello
+ : LOG
+ : NOW
+ : OR ELSE
+ : hi
+ : HELLO
+ : hello
+ : hello
+ : ur serious?
+ : why
+ : is node so slow?
+ : hello
+ : hi
+ : hi
+Abby : Hi

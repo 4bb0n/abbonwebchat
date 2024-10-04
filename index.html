@@ -1,0 +1,536 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Chat</title>   
+    <style>
+      body{
+        background-color: whitesmoke;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      input {
+        height: 100px;
+        width: 200px;
+        border-radius: 15px;
+        font-size: 20px;
+        border-width: 1px;
+        font-family: monospace;
+        background-color: rgb(0, 8, 33);
+        color:white;
+      }
+
+      #chat-display {
+        height: auto;
+        width: 100%;
+        font-size: 20px;
+        background-color: #F5F5F5;
+        font-family: sans-serif;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-width: 10px;
+        border-color: black;
+      }
+      .myMessage{
+        width: 1000px;
+        position:relative;
+        height:auto;
+        background-color: #DDDCE2;
+        opacity: 5;
+        margin:10px;
+        border-radius: 10px;
+        color: black;
+        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+      .senderMessage{
+        width: 1000px;
+        position:relative;
+        left:31%;
+        height:auto;
+        background-image: linear-gradient(#53BBF0, #258FF4);
+        opacity: 5;
+        margin:10px;
+        border-radius: 10px;
+        color: white;
+        text-align: left;
+        font-family: helvetica;
+        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+       .triangle {
+      width: 0px;
+      height: 0px;
+      border-style: solid;
+      border-width: 0 5px 32px 5px;
+      border-color: transparent transparent #258FF4 transparent;
+       transform: rotate(136deg);
+      }
+      button {
+        height: 80px;
+        width: 160px;
+        background-color: lime;
+        border-radius: 15px;
+        font-size: larger;
+        border-width: 1px;
+        box-shadow: 2px 2px 2px black;
+        cursor: pointer;
+        font-family: Impact, fantasy;
+      }
+      #send {
+        border-radius: 15px;
+        padding: 30px;
+        width: 140px;
+        text-align: center;
+        margin: auto;
+        font-family: Impact, fantasy;
+        font-size: 24px;
+        height: 40px;
+        position: relative;
+        top: 15px;
+      }
+      #send:hover {
+        background-color: rgb(51, 151, 217);
+      }
+      #send:active {
+        background-color: rgb(51, 151, 217);
+      }
+      #chat-input {
+        box-shadow: 3px 3px 2px;
+        border-width: 1px;
+        border-color: #DBDBDB;
+        width: 85%;
+        height: 50px;
+        font-family: helvetica;
+        background-color: white;
+        color: black;
+        border-radius: 30px;
+        padding-left: 20px;
+        box-shadow: 0;
+      }
+      #chat-input:active{
+        border-color: #DBDBDB;
+      }
+      pre {
+        font-size: 24px;
+        font-weight: bold;
+        font-family: monospace;
+      }
+      #loginBtn {
+        background-color: rgb(224, 224, 224);
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        border-radius: 0;
+        width:100px;
+        height:50px;
+        position:relative;
+        bottom:30px;
+        left:70px;
+        top:50px;
+      }
+      #loginBtn:hover{
+        background-color: rgb(240, 240, 240);
+      }
+      #password {
+        height: 40px;
+        position: relative;
+        left: 20px;
+        box-shadow: 2px 2px 2px;
+        text-align: center;
+        font-family: Trebuchet MS, sans-serif;
+        font-weight: bold;
+        top: 55px;
+      }
+      #note{
+        font-size: 10x;
+        position:relative;
+        left:70px;
+        color:red;
+        top:50px;
+      }
+      #file-input {
+        height:50px;
+        border-radius: 0;
+        border: solid 5px black;
+        background-color: white;
+        color:black;
+        padding:10px;
+        padding-top: 0px;
+        text-align: center;
+        top:50px;
+      }
+      @keyframes rainbowText {
+        10% {color: red;}
+        20% {color: orangered;}
+        25% {color: rgb(255, 111, 0);}
+        30% {color: yellow;}
+        35% {color: yellowgreen;}
+        40% {color: lime;}
+        45% {color: green;}
+        50% {color: rgb(0, 255, 251);}
+        55% {color: rgb(0, 123, 255);}
+        60% {color: rgb(21, 0, 255);}
+        70% {color: rgb(123, 0, 255);}
+        80% {color: rgb(242, 0, 255);}
+        90% {color: rgb(255, 0, 123);}
+        100% {color: rgb(255, 0, 0);}
+      }
+      @keyframes rainbowBackground {
+        10% {background-color: red;}
+        20% {background-color: orangered;}
+        25% {background-color: rgb(255, 111, 0);}
+        30% {background-color: yellow;}
+        35% {background-color: yellowgreen;}
+        40% {background-color: lime;}
+        45% {background-color: green;}
+        50% {background-color: rgb(0, 255, 251);}
+        55% {background-color: rgb(0, 123, 255);}
+        60% {background-color: rgb(21, 0, 255);}
+        70% {background-color: rgb(123, 0, 255);}
+        80% {background-color: rgb(242, 0, 255);}
+        90% {background-color: rgb(255, 0, 123);}
+        100% {background-color: rgb(255, 0, 0);}
+      }
+      #username {
+        height: 40px;
+        text-align: center;
+        font-family: Trebuchet MS, sans-serif;
+        font-weight: bold;
+        box-shadow: 2px 2px 2px;
+        position: relative;
+        left: 20px;
+        top: 50px;
+      }
+      #userInfo {
+        position: relative;
+        left: 1059px;
+        bottom: 100px;
+      }
+      #file-send-button {
+        height: 40px;
+        border-radius: 0;
+        background-color: rgb(0, 0, 41);
+        color:white;
+        position:relative;
+        top:5px;
+        left:25px;
+        box-shadow: 2px 2px 2px lime;
+        border-left: solid 10px rgb(0, 179, 255);
+        top:30px;
+      }
+      @keyframes border-left-appear{
+        0% {border-left: solid 10px rgb(0, 179, 255);}
+        100% {border-left: solid 10px red;}
+      }
+      @keyframes border-right-appear{
+        0% {border-right: solid 10px rgb(0, 179, 255);}
+        100% {border-right: solid 10px red;}
+      }
+      #file-send-button:hover {
+        background-color: rgb(0, 0, 70);
+        animation-name: border-left-appear;
+        animation-duration: 0.5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+      h3{
+        color:white;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chat-display" readonly></div>
+    <form id="chat-form">
+      <input id="chat-input" type="text" autocomplete="off" contenteditable="on" placeholder="Type a message...">
+      <button id="send" type="submit">Send</button>
+    </form>
+    <input type="file" id="file-input" />
+    <button id="file-send-button">SEND FILE</button>
+    <div id="userInfo">
+      <input placeholder="username" id="username" autocomplete="off"><br>
+      <input type="text" id="password" placeholder="password*" autocomplete="off"><p id="note">*for admins only!</p><br>
+      <button id="loginBtn">Login</button>
+    </div>
+    <pre id="userOnline"></pre>
+    <input type="text" id="room" placeholder="room">
+    <button>join room</button>
+    <br>
+    <button id="offNot">TOGGLE NOTIFICATIONS</button>
+    <br>
+    <hr>
+    <h2>SETTINGS</h2>
+    <br>
+    <h3>speech box colour</h3>
+    <div id="background-color-mode">
+      <button id="darkMode">Dark Mode</button>
+      <button id="lightMode">Light Mode</button>
+    </div>
+    <hr>
+    <div id="AdminUIContainer">
+      <h3 id="adminUI">Admin UI</h3>
+      <input type="text" placeholder="username to kick" id="targetUser">
+      <button id="kickUserButton">Kick User</button>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="index.cjs"></script>
+    <script>
+  const socket = io();
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('chat-input');
+      const chatDisplay = document.getElementById('chat-display');
+      const fileInput = document.getElementById('file-input');
+      const fileSendButton = document.getElementById('file-send-button');
+      const sendBtn = document.getElementById("send");
+      const submitName = document.getElementById("submitName");
+      const username = document.getElementById("username").value;
+      let soundeffect = new Audio("chatSoundEffect.mp3");
+      const offNot = document.getElementById("offnot");
+      const password = document.getElementById("password");
+      const loginBtn = document.getElementById("loginBtn");
+      const darkMode = document.getElementById("darkMode");
+      const lightMode = document.getElementById("lightMode");
+      Notification.requestPermission();
+
+      form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (input.value){
+      const input = document.getElementById("chat-input");
+      input.value = input.value.replaceAll("skibidi", "_______").replaceAll("rizzler","_______").replaceAll("sigma", "_____").replaceAll("ohio")
+      const username = document.getElementById("username").value;
+      const message = `${username} : ${input.value}`;
+      const senderMessage = `${input.value}`
+      console.log('Sending message:', message);
+      socket.emit('chat message', message);
+      socket.emit('sender message', senderMessage)
+      appendSenderMessage('YOU: '+ ' '+senderMessage)
+      input.value = ""
+      }
+
+  socket.on('user count', numUsers => {
+    const userOnline = document.getElementById("userOnline");
+    userOnline.textContent = 'Users online:' + ' ' + numUsers;
+  })
+
+  socket.on('chat log', log => {
+    chatDisplay.innerHTML = log;
+  })
+
+  });
+  //login
+  loginBtn.onclick = () => {
+    const password = document.getElementById("password").value;
+    switch(password){
+      case "stcxkl@ctdvn":
+      const adminUIContainer = document.getElementById("adminUIContainer")
+      adminUIContainer.style.removeProperty("display")
+      console.log('property removed')
+    }
+  }
+  //force kick packet receiver
+    
+
+      socket.on('chat message', (msg) => {
+    console.log('Received message:', msg);
+    //define the neccessary variables
+    const myMessage = document.createElement("div");
+    const username = document.getElementById("username").value;
+    const br = document.createElement("br")
+    //append the message
+    myMessage.classList.add("myMessage");
+    myMessage.setAttribute("id","myMessage")
+    chatDisplay.appendChild(myMessage)
+      myMessage.textContent = myMessage.textContent + '\n'+ msg;
+      console.log('chatDisplay updated. New value:', myMessage.textContent);
+      chatDisplay.scrollTop = myMessage.scrollHeight;    console.error('chatDisplay element not found');
+      //notification
+      function showNotification() {
+            if (Notification.permission === "granted") {
+                new Notification("Hello");
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification("new message from "+username,
+                        {
+                          body: msg
+                        }
+                          
+                        );
+                    }
+                });
+            }
+        }
+  });
+
+  socket.on('new message notification', (msg) => {
+    if (notificationsEnabled && Notification.permission === "granted") {
+      const username = msg.split('>')[0].substr(1);
+      const message = msg.split('>')[1].trim();
+      new Notification(`New message from ${username}`, {
+        body: message
+      });
+      soundeffect.play();
+    }
+  });
+
+  socket.on('sender message', appendMessage('You Joined'))
+
+  function appendMessage(msg){
+    console.log('received message:',msg)
+    const chatDisplay = document.getElementById('chat-display');
+    const myMessage = document.createElement("div");
+    const username = document.getElementById("username").value;
+    myMessage.classList.add("myMessage");
+    chatDisplay.appendChild(myMessage)
+      myMessage.textContent = myMessage.textContent + '\n'+ msg;
+      console.log('chatDisplay updated. New value:', myMessage.textContent);
+      chatDisplay.scrollTop = myMessage.scrollHeight;    console.error('chatDisplay element not found');
+  }
+  function appendSenderMessage(msg){
+    console.log('received message:',msg)
+    const chatDisplay = document.getElementById('chat-display');
+    const myMessage = document.createElement("div");
+    const whip = document.createElement("div")
+    const username = document.getElementById("username").value;
+    myMessage.classList.add("senderMessage");
+    whip.classList.add("triangle")
+    chatDisplay.appendChild(myMessage)
+    myMessage.appendChild(whip)
+      myMessage.textContent = myMessage.textContent + '\n'+ msg;
+      console.log('chatDisplay updated. New value:', myMessage.textContent);
+      chatDisplay.scrollTop = myMessage.scrollHeight;    console.error('chatDisplay element not found');
+  }
+
+  socket.on('notification', (msg) => {
+    if (notificationsEnabled && Notification.permission === "granted") {
+      const username = msg.split('>')[0].substr(1);
+      const message = msg.split('>')[1].trim();
+      new Notification(`New message from ${username}`, {
+        body: message
+      });
+      soundeffect.play();
+    }
+  });
+
+  const targetUser = document.getElementById("targetUser");
+  const kickUserButton = document.getElementById("kickUserButton");
+  kickUserButton.onclick = () => {
+    const targetUser = document.getElementById("targetUser");
+    const kickUserButton = document.getElementById("kickUserButton");
+    const targetUsername = targetUser.value;console.log(targetUsername)
+    socket.emit('kick-user', targetUsername);
+  };
+  socket.on('close window', () => {
+    window.close();
+  })
+
+  // Get the user's IPv4 address
+const getIPv4Address = () => {
+  fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => socket.emit('ip',data.ip))
+    .catch(error => console.error('Error fetching IP address:', error));
+};
+
+// Call the function to log the IPv4 address
+getIPv4Address();
+
+fileSendButton.onclick = sendFile;
+
+// In the sendFile function, include the file type
+function sendFile() {
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            socket.emit('send-file', { 
+                fileName: file.name, 
+                fileContent,
+                fileType: file.type // Include the file type
+            });
+        };
+        reader.readAsArrayBuffer(file);
+        fileInput.value = '';
+    }
+}
+
+// Update the file-received handler
+socket.on('file-received', (data) => {
+  const { fileName, fileContent, fileType } = data;
+  const fileBlob = base64ToBlob(fileContent, fileType);
+  const fileUrl = URL.createObjectURL(fileBlob);
+  
+  const fileLink = document.createElement('a');
+  fileLink.href = fileUrl;
+  fileLink.download = fileName;
+  fileLink.textContent = `${fileName}`;
+  fileLink.className = 'file-download-link';
+  
+  const fileMessage = document.createElement('div');
+  fileMessage.className = 'senderMessage';
+  fileMessage.textContent = ``;
+  fileMessage.appendChild(fileLink);
+  
+  chatDisplay.appendChild(fileMessage);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+});
+
+function base64ToBlob(base64, type) {
+  const byteCharacters = atob(base64);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    const slice = byteCharacters.slice(offset, offset + 512);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, { type: type });
+}
+
+// Remove the getFileType function as we're now using the actual file type  
+
+        socket.on('file-error', (errorMessage) => {
+            console.error('File error:', errorMessage);
+        });
+// dark mode and light mode function
+
+      darkMode.addEventListener('click', () => {
+        document.body.style.color = 'black';
+        username.style.backgroundColor = 'white'
+        password.style.backgroundColor= 'white'
+        username.style.color = 'black'
+        password.style.color = 'black'
+        username.style.placeholderColor = 'black'
+        password.style.placeholderColor = 'black'
+        console.log('dark mode')  
+      })
+
+      lightMode.onclick = () => {
+        document.body.style.color = 'white';
+      }
+
+      function addStringAtStart(originalString, stringToAdd) {
+    return stringToAdd.padStart(1)
+  }
+  socket.on('connection', () => {
+    console.log('Connected to server');
+    socket.emit('join', userID)
+  });
+    </script>
+  </body>
+  </html>
