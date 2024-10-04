@@ -351,6 +351,7 @@
       myMessage.textContent = myMessage.textContent + '\n'+ msg;
       console.log('chatDisplay updated. New value:', myMessage.textContent);
       chatDisplay.scrollTop = myMessage.scrollHeight;    console.error('chatDisplay element not found');
+      input.scrollIntoView()
       //notification
       function showNotification() {
             if (Notification.permission === "granted") {
