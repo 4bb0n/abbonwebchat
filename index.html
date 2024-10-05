@@ -378,49 +378,28 @@
       Notification.requestPermission();
 
 // Function to save messages to local storage
+// Function to save messages to local storage
 function saveMessagesToLocalStorage(messages) {
   localStorage.setItem('chatMessages', JSON.stringify(messages));
 }
 
 // Function to load messages from local storage
 function loadMessagesFromLocalStorage() {
-  return JSON.parse(localStorage.getItem('chatMessages')) || [];
+  try {
+    return JSON.parse(localStorage.getItem('chatMessages')) || [];
+  } catch (error) {
+    console.error('Error loading messages from local storage:', error);
+    return [];
+  }
 }
 
 // Function to add a new message
 function addMessage(type, content) {
   let messages = loadMessagesFromLocalStorage();
-  messages.push({ type, content });
+  const newMessage = { type, content, timestamp: Date.now() };
+  messages.push(newMessage);
   saveMessagesToLocalStorage(messages);
-}
-
-// Modify the appendMessage function
-function appendMessage(msg) {
-  console.log("received message:", msg);
-  const chatDisplay = document.getElementById("chat-display");
-  const myMessage = document.createElement("div");
-  myMessage.classList.add("myMessage");
-  chatDisplay.appendChild(myMessage);
-  myMessage.textContent = myMessage.textContent + "\n" + msg;
-  console.log("chatDisplay updated. New value:", myMessage.textContent);
-  chatDisplay.scrollTop = chatDisplay.scrollHeight;
-  addMessage('received', msg);
-}
-
-// Modify the appendSenderMessage function
-function appendSenderMessage(msg) {
-  console.log("received message:", msg);
-  const chatDisplay = document.getElementById("chat-display");
-  const myMessage = document.createElement("div");
-  const whip = document.createElement("div");
-  myMessage.classList.add("senderMessage");
-  whip.classList.add("triangle");
-  chatDisplay.appendChild(myMessage);
-  myMessage.appendChild(whip);
-  myMessage.textContent = myMessage.textContent + "\n" + msg;
-  console.log("chatDisplay updated. New value:", myMessage.textContent);
-  chatDisplay.scrollTop = chatDisplay.scrollHeight;
-  addMessage('sender', msg);
+  return newMessage;
 }
 
 // Function to display messages
@@ -436,16 +415,10 @@ function displayMessages(messages) {
   });
 }
 
-// Load and display messages when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  const messages = loadMessagesFromLocalStorage();
-  displayMessages(messages);
-});
-
 // Modify your existing socket.on('chat message') handler
 socket.on('chat message', (msg) => {
-  appendMessage(msg);
-  // No need to call addMessage here, as appendMessage already does it
+  const newMessage = addMessage('received', msg);
+  appendMessage(newMessage.content);
 });
 
 // Modify your form submit event handler
@@ -454,10 +427,45 @@ form.addEventListener('submit', (e) => {
   if (input.value) {
     const username = document.getElementById("username").value;
     const senderMessage = input.value;
-    appendSenderMessage("YOU: " + senderMessage);
+    const newMessage = addMessage('sender', "YOU: " + senderMessage);
+    appendSenderMessage(newMessage.content);
     socket.emit('chat message', `${username} : ${senderMessage}`);
     input.value = '';
   }
+});
+
+// Keep your existing appendMessage and appendSenderMessage functions
+function appendMessage(msg) {
+  console.log("received message:", msg);
+  const chatDisplay = document.getElementById("chat-display");
+  const myMessage = document.createElement("div");
+  myMessage.classList.add("myMessage");
+  chatDisplay.appendChild(myMessage);
+  myMessage.textContent = msg;
+  console.log("chatDisplay updated. New value:", myMessage.textContent);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+}
+
+function appendSenderMessage(msg) {
+  console.log("sent message:", msg);
+  const chatDisplay = document.getElementById("chat-display");
+  const myMessage = document.createElement("div");
+  const whip = document.createElement("div");
+  myMessage.classList.add("senderMessage");
+  whip.classList.add("triangle");
+  chatDisplay.appendChild(myMessage);
+  myMessage.appendChild(whip);
+  myMessage.textContent = msg;
+  console.log("chatDisplay updated. New value:", myMessage.textContent);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+}
+
+// Load and display messages when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  const messages = loadMessagesFromLocalStorage();
+  displayMessages(messages);
+
+  // ... (keep the rest of your DOMContentLoaded event listener code)
 });
       //login
       loginBtn.onclick = () => {
@@ -610,107 +618,6 @@ form.addEventListener('submit', (e) => {
         console.log("Connected to server");
         socket.emit("join", userID);
       });
-
-      // ... (keep all previously defined functions)
-
-// Function to clear all messages
-// Function to save messages to local storage
-function saveMessagesToLocalStorage(messages) {
-  localStorage.setItem('chatMessages', JSON.stringify(messages));
-}
-
-// Function to load messages from local storage
-function loadMessagesFromLocalStorage() {
-  try {
-    const messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
-    // Remove duplicates
-    const uniqueMessages = messages.filter((message, index, self) =>
-      index === self.findIndex((t) => t.content === message.content && t.type === message.type)
-    );
-    return uniqueMessages;
-  } catch (error) {
-    console.error('Error loading messages from local storage:', error);
-    return [];
-  }
-}
-
-// Function to add a new message
-function addMessage(type, content) {
-  let messages = loadMessagesFromLocalStorage();
-  messages.push({ type, content });
-  saveMessagesToLocalStorage(messages);
-}
-
-// Function to display messages
-function displayMessages(messages) {
-  const chatDisplay = document.getElementById("chat-display");
-  chatDisplay.innerHTML = ''; // Clear existing messages
-  messages.forEach(message => {
-    if (message.type === 'sender') {
-      appendSenderMessage(message.content);
-    } else {
-      appendMessage(message.content);
-    }
-  });
-}
-
-// Function to clear all messages
-function clearAllMessages() {
-  if (confirm('Are you sure you want to delete all messages? This cannot be undone.')) {
-    localStorage.removeItem('chatMessages');
-    const chatDisplay = document.getElementById("chat-display");
-    chatDisplay.innerHTML = '';
-    console.log("All messages have been cleared");
-  }
-}
-
-// Function to clear local storage
-function clearLocalStorage() {
-  if (confirm('Are you sure you want to clear all local storage? This will remove all saved data.')) {
-    localStorage.clear();
-    alert('Local storage has been cleared. Please refresh the page.');
-  }
-}
-
-// Load and display messages when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  const messages = loadMessagesFromLocalStorage();
-  displayMessages(messages);
-
-  // Create and add the clear messages button
-  const clearMessagesButton = document.createElement('button');
-  clearMessagesButton.textContent = 'Clear All Messages';
-  clearMessagesButton.id = 'clearMessagesButton';
-  clearMessagesButton.onclick = clearAllMessages;
-
-  // Create and add the clear local storage button
-  const clearStorageButton = document.createElement('button');
-  clearStorageButton.textContent = 'Clear Local Storage';
-  clearStorageButton.id = 'clearStorageButton';
-  clearStorageButton.onclick = clearLocalStorage;
-
-  // Add buttons to the page
-  const chatDisplay = document.getElementById("chat-display");
-  chatDisplay.parentNode.insertBefore(clearMessagesButton, chatDisplay.nextSibling);
-  chatDisplay.parentNode.insertBefore(clearStorageButton, clearMessagesButton.nextSibling);
-});
-
-// Modify your existing socket.on('chat message') handler
-socket.on('chat message', (msg) => {
-  appendMessage(msg);
-});
-
-// Modify your form submit event handler
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (input.value) {
-    const username = document.getElementById("username").value;
-    const senderMessage = input.value;
-    appendSenderMessage("YOU: " + senderMessage);
-    socket.emit('chat message', `${username} : ${senderMessage}`);
-    input.value = '';
-  }
-});
 
 // Keep your existing appendMessage and appendSenderMessage functions
     </script>
