@@ -23,7 +23,7 @@
       }
 
       #chat-display {
-        height: auto;
+        height: 500px;
         width: 100%;
         font-size: 20px;
         background-color: #f5f5f5;
@@ -533,22 +533,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // In the sendFile function, include the file type
       function sendFile() {
-        const fileInput = document.getElementById("file-input");
-        const file = fileInput.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const fileContent = e.target.result;
-            socket.emit("send-file", {
-              fileName: file.name,
-              fileContent,
-              fileType: file.type, // Include the file type
-            });
-          };
-          reader.readAsArrayBuffer(file);
-          fileInput.value = "";
-        }
-      }
+  const fileInput = document.getElementById("file-input");
+  const file = fileInput.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const fileContent = e.target.result;
+      socket.emit("send-file", {
+        fileName: file.name,
+        fileContent: arrayBufferToBase64(fileContent), // Convert ArrayBuffer to Base64
+        fileType: file.type,
+      });
+    };
+    reader.readAsArrayBuffer(file);
+    fileInput.value = "";
+  }
+}
+
+// Helper function to convert ArrayBuffer to Base64
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
 
       // Update the file-received handler
       socket.on("file-received", (data) => {
