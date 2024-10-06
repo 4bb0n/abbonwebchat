@@ -379,6 +379,7 @@
       Notification.requestPermission();
 
 // Function to save messages to local storage
+// Function to save messages to local storage
 function saveMessagesToLocalStorage(messages) {
   localStorage.setItem('chatMessages', JSON.stringify(messages));
 }
@@ -433,6 +434,32 @@ form.addEventListener('submit', (e) => {
     input.value = '';
   }
 });
+
+// Keep your existing appendMessage and appendSenderMessage functions
+function appendMessage(msg) {
+  console.log("received message:", msg);
+  const chatDisplay = document.getElementById("chat-display");
+  const myMessage = document.createElement("div");
+  myMessage.classList.add("myMessage");
+  chatDisplay.appendChild(myMessage);
+  myMessage.textContent = msg;
+  console.log("chatDisplay updated. New value:", myMessage.textContent);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+}
+
+function appendSenderMessage(msg) {
+  console.log("sent message:", msg);
+  const chatDisplay = document.getElementById("chat-display");
+  const myMessage = document.createElement("div");
+  const whip = document.createElement("div");
+  myMessage.classList.add("senderMessage");
+  whip.classList.add("triangle");
+  chatDisplay.appendChild(myMessage);
+  myMessage.appendChild(whip);
+  myMessage.textContent = msg;
+  console.log("chatDisplay updated. New value:", myMessage.textContent);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+}
 
 // Load and display messages when the page loads
 document.addEventListener('DOMContentLoaded', () => {
