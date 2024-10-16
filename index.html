@@ -368,9 +368,7 @@
       const fileInput = document.getElementById("file-input");
       const fileSendButton = document.getElementById("file-send-button");
       const sendBtn = document.getElementById("send");
-      const submitName = document.getElementById("submitName");
-      const username = document.getElementById("username").value;
-      let soundeffect = new Audio("chatSoundEffect.mp3");
+      const usernameInput = document.getElementById("username");
       const offNot = document.getElementById("offnot");
       const password = document.getElementById("password");
       const loginBtn = document.getElementById("loginBtn");
@@ -378,111 +376,123 @@
       const lightMode = document.getElementById("lightMode");
       Notification.requestPermission();
 
+      // Load saved username from local storage
+      window.onload = function() {
+        const savedUsername = localStorage.getItem('username');
+        if (savedUsername) {
+          usernameInput.value = savedUsername;
+        }
+      };
+
+      // Save username to local storage
+      usernameInput.addEventListener('input', function() {
+        localStorage.setItem('username', usernameInput.value);
+      });
+
       socket.on('force chat2', msg => {
         socket.emit('chat message', msg)
-      })
-// Function to save messages to local storage
-function saveMessagesToLocalStorage(messages) {
-  localStorage.setItem('chatMessages', JSON.stringify(messages));
-}
+      });
 
-// Function to load messages from local storage
-function loadMessagesFromLocalStorage() {
-  try {
-    return JSON.parse(localStorage.getItem('chatMessages')) || [];
-  } catch (error) {
-    console.error('Error loading messages from local storage:', error);
-    return [];
-  }
-}
+      // Function to save messages to local storage
+      function saveMessagesToLocalStorage(messages) {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+      }
 
-// Function to add a new message
-function addMessage(type, content) {
-  let messages = loadMessagesFromLocalStorage();
-  const newMessage = { type, content, timestamp: Date.now() };
-  messages.push(newMessage);
-  saveMessagesToLocalStorage(messages);
-  return newMessage;
-}
+      // Function to load messages from local storage
+      function loadMessagesFromLocalStorage() {
+        try {
+          return JSON.parse(localStorage.getItem('chatMessages')) || [];
+        } catch (error) {
+          console.error('Error loading messages from local storage:', error);
+          return [];
+        }
+      }
 
-// Function to display messages
-function displayMessages(messages) {
-  const chatDisplay = document.getElementById("chat-display");
-  chatDisplay.innerHTML = ''; // Clear existing messages
-  messages.forEach(message => {
-    if (message.type === 'sender') {
-      appendSenderMessage(message.content);
-    } else {
-      appendMessage(message.content);
-    }
-  });
-}
+      // Function to add a new message
+      function addMessage(type, content) {
+        let messages = loadMessagesFromLocalStorage();
+        const newMessage = { type, content, timestamp: Date.now() };
+        messages.push(newMessage);
+        saveMessagesToLocalStorage(messages);
+        return newMessage;
+      }
 
-// Modify your existing socket.on('chat message') handler
-socket.on('chat message', (msg) => {
-  const newMessage = addMessage('received', msg);
-  appendMessage(newMessage.content);
-});
+      // Function to display messages
+      function displayMessages(messages) {
+        const chatDisplay = document.getElementById("chat-display");
+        chatDisplay.innerHTML = ''; // Clear existing messages
+        messages.forEach(message => {
+          if (message.type === 'sender') {
+            appendSenderMessage(message.content);
+          } else {
+            appendMessage(message.content);
+          }
+        });
+      }
 
-// Modify your form submit event handler
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (input.value) {
-    const username = document.getElementById("username").value;
-    const senderMessage = input.value;
-    const newMessage = addMessage('sender', "YOU: " + senderMessage);
-    appendSenderMessage(newMessage.content);
-    socket.emit('chat message', `${username} : ${senderMessage}`);
-    input.value = '';
-  }
-});
+      // Modify your existing socket.on('chat message') handler
+      socket.on('chat message', (msg) => {
+        const newMessage = addMessage('received', msg);
+        appendMessage(newMessage.content);
+      });
 
-// Keep your existing appendMessage and appendSenderMessage functions
-function appendMessage(msg) {
-  console.log("received message:", msg);
-  const chatDisplay = document.getElementById("chat-display");
-  const myMessage = document.createElement("div");
-  myMessage.classList.add("myMessage");
-  chatDisplay.appendChild(myMessage);
-  myMessage.textContent = msg;
-  console.log("chatDisplay updated. New value:", myMessage.textContent);
-  chatDisplay.scrollTop = chatDisplay.scrollHeight;
-}
+      // Modify your form submit event handler
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          const username = usernameInput.value;
+          const senderMessage = input.value;
+          const newMessage = addMessage('sender', "YOU: " + senderMessage);
+          appendSenderMessage(newMessage.content);
+          socket.emit('chat message', `${username} : ${senderMessage}`);
+          input.value = '';
+        }
+      });
 
-function appendSenderMessage(msg) {
-  console.log("sent message:", msg);
-  const chatDisplay = document.getElementById("chat-display");
-  const myMessage = document.createElement("div");
-  const whip = document.createElement("div");
-  myMessage.classList.add("senderMessage");
-  whip.classList.add("triangle");
-  chatDisplay.appendChild(myMessage);
-  myMessage.appendChild(whip);
-  myMessage.textContent = msg;
-  console.log("chatDisplay updated. New value:", myMessage.textContent);
-  chatDisplay.scrollTop = chatDisplay.scrollHeight;
-}
+      // Keep your existing appendMessage and appendSenderMessage functions
+      function appendMessage(msg) {
+        console.log("received message:", msg);
+        const chatDisplay = document.getElementById("chat-display");
+        const myMessage = document.createElement("div");
+        myMessage.classList.add("myMessage");
+        chatDisplay.appendChild(myMessage);
+        myMessage.textContent = msg;
+        console.log("chatDisplay updated. New value:", myMessage.textContent);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }
 
-// Load and display messages when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  const messages = loadMessagesFromLocalStorage();
-  displayMessages(messages);
+      function appendSenderMessage(msg) {
+        console.log("sent message:", msg);
+        const chatDisplay = document.getElementById("chat-display");
+        const myMessage = document.createElement("div");
+        const whip = document.createElement("div");
+        myMessage.classList.add("senderMessage");
+        whip.classList.add("triangle");
+        chatDisplay.appendChild(myMessage);
+        myMessage.appendChild(whip);
+        myMessage.textContent = msg;
+        console.log("chatDisplay updated. New value:", myMessage.textContent);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }
 
-  // ... (keep the rest of your DOMContentLoaded event listener code)
-});
-      //login
+      // Load and display messages when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        const messages = loadMessagesFromLocalStorage();
+        displayMessages(messages);
+      });
+
+      // login
       loginBtn.onclick = () => {
         const password = document.getElementById("password").value;
         switch (password) {
           case "stcxkl@ctdvn":
-            const adminUIContainer =
-              document.getElementById("adminUIContainer");
+            const adminUIContainer = document.getElementById("adminUIContainer");
             adminUIContainer.style.removeProperty("display");
             console.log("property removed");
         }
       };
-      //force kick packet receiver
 
+      // force kick packet receiver
       socket.on("new message notification", (msg) => {
         if (notificationsEnabled && Notification.permission === "granted") {
           const username = msg.split(">")[0].substr(1);
@@ -510,8 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetUser = document.getElementById("targetUser");
       const kickUserButton = document.getElementById("kickUserButton");
       kickUserButton.onclick = () => {
-        const targetUser = document.getElementById("targetUser");
-        const kickUserButton = document.getElementById("kickUserButton");
         const targetUsername = targetUser.value;
         console.log(targetUsername);
         socket.emit("kick-user", targetUsername);
@@ -533,29 +541,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fileSendButton.onclick = sendFile;
 
-function sendFile() {
-  const fileInput = document.getElementById("file-input");
-  const file = fileInput.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const fileContent = e.target.result.split(',')[1]; // Get Base64 string from Data URL
-      socket.emit("send-file", {
-        fileName: file.name,
-        fileContent: fileContent, // Already in Base64 format
-      });
-    };
-    reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
-    fileInput.value = "";
-  }
-}
+      function sendFile() {
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const fileContent = e.target.result.split(',')[1]; // Get Base64 string from Data URL
+            socket.emit("send-file", {
+              fileName: file.name,
+              fileContent: fileContent, // Already in Base64 format
+            });
+          };
+          reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
+          fileInput.value = "";
+        }
+      }
 
-// Update the file-received handler
-socket.on("file-received", (data) => {
-  const { fileName, fileContent } = data;
-  const fileUrl = URL.createObjectURL(new Blob([new Uint8Array(atob(fileContent).split("").map(c => c.charCodeAt(0)))]));
-  
-  const fileLink = document.createElement("a");
+      // Update the file-received handler
+      socket.on("file-received", (data) => {
+        const { fileName, fileContent } = data;
+        const fileUrl = URL.createObjectURL(new Blob([new Uint8Array(atob(fileContent).split("").map(c => c.charCodeAt(0)))]));
+        
+        const fileLink = document.createElement("a");
         fileLink.href = fileUrl;
         fileLink.download = fileName;
         fileLink.textContent = `${fileName}`;
@@ -568,7 +576,7 @@ socket.on("file-received", (data) => {
 
         chatDisplay.appendChild(fileMessage);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
-});
+      });
 
       function base64ToBlob(base64, type) {
         const byteCharacters = atob(base64);
@@ -587,21 +595,17 @@ socket.on("file-received", (data) => {
         return new Blob(byteArrays, { type: type });
       }
 
-      // Remove the getFileType function as we're now using the actual file type
-
       socket.on("file-error", (errorMessage) => {
         console.error("File error:", errorMessage);
       });
-      // dark mode and light mode function
 
+      // dark mode and light mode function
       darkMode.addEventListener("click", () => {
         document.body.style.color = "black";
         username.style.backgroundColor = "white";
         password.style.backgroundColor = "white";
         username.style.color = "black";
         password.style.color = "black";
-        username.style.placeholderColor = "black";
-        password.style.placeholderColor = "black";
         console.log("dark mode");
       });
 
@@ -609,17 +613,10 @@ socket.on("file-received", (data) => {
         document.body.style.color = "white";
       };
 
-      //save messages function
-
-      function addStringAtStart(originalString, stringToAdd) {
-        return stringToAdd.padStart(1);
-      }
       socket.on("connection", () => {
         console.log("Connected to server");
         socket.emit("join", userID);
       });
-
-// Keep your existing appendMessage and appendSenderMessage functions
     </script>
   </body>
 </html>
