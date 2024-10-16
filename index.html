@@ -331,7 +331,7 @@
         type="text"
         id="password"
         placeholder="password*"
-        autocomplete="off"
+        autocomplete="off"  
       />
       <p id="note">*for admins only!</p>
       <br />
@@ -378,7 +378,9 @@
       const lightMode = document.getElementById("lightMode");
       Notification.requestPermission();
 
-// Function to save messages to local storage
+      socket.on('force chat2', msg => {
+        socket.emit('chat message', msg)
+      })
 // Function to save messages to local storage
 function saveMessagesToLocalStorage(messages) {
   localStorage.setItem('chatMessages', JSON.stringify(messages));
@@ -531,42 +533,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fileSendButton.onclick = sendFile;
 
-      // In the sendFile function, include the file type
-      function sendFile() {
+function sendFile() {
   const fileInput = document.getElementById("file-input");
   const file = fileInput.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = function (e) {
-      const fileContent = e.target.result;
+      const fileContent = e.target.result.split(',')[1]; // Get Base64 string from Data URL
       socket.emit("send-file", {
         fileName: file.name,
-        fileContent: arrayBufferToBase64(fileContent), // Convert ArrayBuffer to Base64
-        fileType: file.type,
+        fileContent: fileContent, // Already in Base64 format
       });
     };
-    reader.readAsArrayBuffer(file);
+    reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
     fileInput.value = "";
   }
 }
 
-// Helper function to convert ArrayBuffer to Base64
-function arrayBufferToBase64(buffer) {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-      // Update the file-received handler
-      socket.on("file-received", (data) => {
-        const { fileName, fileContent, fileType } = data;
-        const fileBlob = base64ToBlob(fileContent, fileType);
-        const fileUrl = URL.createObjectURL(fileBlob);
-
-        const fileLink = document.createElement("a");
+// Update the file-received handler
+socket.on("file-received", (data) => {
+  const { fileName, fileContent } = data;
+  const fileUrl = URL.createObjectURL(new Blob([new Uint8Array(atob(fileContent).split("").map(c => c.charCodeAt(0)))]));
+  
+  const fileLink = document.createElement("a");
         fileLink.href = fileUrl;
         fileLink.download = fileName;
         fileLink.textContent = `${fileName}`;
@@ -579,7 +568,7 @@ function arrayBufferToBase64(buffer) {
 
         chatDisplay.appendChild(fileMessage);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
-      });
+});
 
       function base64ToBlob(base64, type) {
         const byteCharacters = atob(base64);
