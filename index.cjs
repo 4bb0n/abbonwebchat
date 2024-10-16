@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
-  maxHttpBufferSize: 1000e8
+  maxHttpBufferSize: 1000000000000
 });
 const fs = require('fs');
 const path = require('path');
