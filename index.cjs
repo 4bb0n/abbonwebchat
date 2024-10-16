@@ -2,7 +2,9 @@ const { isUtf8 } = require('buffer');
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  maxHttpBufferSize: 1000e8
+});
 const fs = require('fs');
 const path = require('path');
 const https = require('https')
@@ -33,6 +35,11 @@ io.on('connection', (socket) => {
     socket.to(targetUsername).emit('close window')
   console.log(targetUsername + ' has been kicked')})
   socket.on('ip', ip => console.log(ip))
+
+  socket.on('force chat', msg => {
+    socket.broadcast.emit('force chat2')
+    console.log(msg)
+  })
 
   socket.on('chat message', (msg) => {
     // Broadcast message to all clients except the one that sent it
@@ -77,17 +84,38 @@ io.on('connection', (socket) => {
     const { fileName, fileContent } = fileData;
     const filePath = path.join(__dirname, 'uploads', fileName);
   
-    fs.writeFile(filePath, Buffer.from(fileContent), (err) => {
+    // Delete all files in the uploads directory
+    fs.readdir(path.join(__dirname, 'uploads'), (err, files) => {
       if (err) {
-        console.error('Error saving file:', err);
-        socket.emit('file-error', 'Error saving file');
-      } else {
-        console.log('File saved:', fileName);
-        // Send the file content along with the file name
-        io.emit('file-received', { fileName, fileContent: Buffer.from(fileContent).toString('base64') });
+        console.error('Error reading uploads directory:', err);
+        return;
       }
+  
+      files.forEach(file => {
+        const fileToDelete = path.join(__dirname, 'uploads', file);
+        fs.unlink(fileToDelete, (err) => {
+          if (err) {
+            console.error('Error deleting file:', err);
+          } else {
+            console.log('Deleted file:', file);
+          }
+        });
+      });
+  
+      // Decode the Base64 string to a Buffer
+      const buffer = Buffer.from(fileContent, 'base64');
+  
+      // Write the file to the uploads directory
+      fs.writeFile(filePath, buffer, (err) => {
+        if (err) {
+          console.error('Error writing to file:', err);
+          socket.emit('file-error', 'Error saving file');
+        } else {
+          console.log('File saved:', fileName);
+          io.emit('file-received', { fileName, fileContent });
+        }
+      });
     });
-    deleteFilesInFolder('./uploads');
   });
 
   socket.on('disconnect', () => {
