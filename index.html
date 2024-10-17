@@ -309,6 +309,12 @@
         color: white;
         text-align: center;
       }
+      #ai{
+        position: absolute;
+        left:500px;
+        top: 800px;
+        width:1000px;
+      }
     </style>
   </head>
   <body>
@@ -342,6 +348,7 @@
     <button>join room</button>
     <br />
     <button id="offNot">TOGGLE NOTIFICATIONS</button>
+    <iframe src="https://workik.com/project/43634/ai_scripts" frameborder="0" id="ai" height="500px" width="500px"></iframe>
     <br />
     <hr />
     <h2>SETTINGS</h2>
@@ -375,6 +382,8 @@
       const darkMode = document.getElementById("darkMode");
       const lightMode = document.getElementById("lightMode");
       Notification.requestPermission();
+      const aiIframe = document.getElementById("ai");
+
 
       // Load saved username from local storage
       window.onload = function() {
