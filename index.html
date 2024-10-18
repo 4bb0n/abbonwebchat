@@ -550,8 +550,9 @@
 
       fileSendButton.onclick = sendFile;
 
+fileSendButton.onclick = sendFile;
+
       function sendFile() {
-        const fileInput = document.getElementById("file-input");
         const file = fileInput.files[0];
         if (file) {
           const reader = new FileReader();
@@ -566,6 +567,7 @@
           fileInput.value = "";
         }
       }
+
 
       // Update the file-received handler
       socket.on("file-received", (data) => {
