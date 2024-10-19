@@ -331,6 +331,9 @@
     </form>
     <input type="file" id="file-input" />
     <button id="file-send-button">SEND FILE</button>
+    <div id="progressContainer" style="display: none;">
+      <div id="progressBar" style="width: 0%; height: 20px; background-color: lime;"></div>
+  </div>
     <div id="userInfo">
       <input placeholder="username" id="username" autocomplete="off" /><br />
       <input
@@ -550,23 +553,55 @@
 
       fileSendButton.onclick = sendFile;
 
-fileSendButton.onclick = sendFile;
+function sendFile() {
+    const file = fileInput.files[0];
+    if (file) {
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        progressContainer.style.display = "block"; // Show progress container
+        progressBar.style.width = "0%"; // Reset progress bar
 
-      function sendFile() {
-        const file = fileInput.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
             const fileContent = e.target.result.split(',')[1]; // Get Base64 string from Data URL
             socket.emit("send-file", {
-              fileName: file.name,
-              fileContent: fileContent, // Already in Base64 format
+                fileName: file.name,
+                fileContent: fileContent, // Already in Base64 format
             });
-          };
-          reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
-          fileInput.value = "";
-        }
-      }
+        };
+
+        reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
+
+        // Create a new XMLHttpRequest to handle the upload progress
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:3000/uploads"); // Replace with your server endpoint
+
+        xhr.upload.addEventListener("progress", function (event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                progressBar.style.width = percentComplete + "%";
+            }
+        });
+
+        xhr.onload = function () {
+            progressContainer.style.display = "none"; // Hide progress container on completion
+            fileInput.value = ""; // Reset file input
+        };
+
+        xhr.onerror = function () {
+            console.error("An error occurred during the file upload.");
+        };
+
+        // Send the file using FormData
+        const formData = new FormData();
+        formData.append("file", file);
+        xhr.send(formData);
+    } else {
+        alert("Please select a file to upload.");
+    }
+}
 
 
       // Update the file-received handler
