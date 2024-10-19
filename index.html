@@ -331,8 +331,8 @@
     </form>
     <input type="file" id="file-input" />
     <button id="file-send-button">SEND FILE</button>
-    <div id="progressContainer" style="display: none;">
-      <div id="progressBar" style="width: 0%; height: 20px; background-color: lime;"></div>
+    <div id="progressContainer">
+      <div id="progressBar" style="width: 1%; height: 20px; background-color: lime;"></div>
   </div>
     <div id="userInfo">
       <input placeholder="username" id="username" autocomplete="off" /><br />
@@ -463,13 +463,11 @@
 
       // Keep your existing appendMessage and appendSenderMessage functions
       function appendMessage(msg) {
-        console.log("received message:", msg);
         const chatDisplay = document.getElementById("chat-display");
         const myMessage = document.createElement("div");
         myMessage.classList.add("myMessage");
         chatDisplay.appendChild(myMessage);
         myMessage.textContent = msg;
-        console.log("chatDisplay updated. New value:", myMessage.textContent);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
 
@@ -586,8 +584,8 @@ function sendFile() {
         });
 
         xhr.onload = function () {
-            progressContainer.style.display = "none"; // Hide progress container on completion
             fileInput.value = ""; // Reset file input
+            progressBar.style.width = "1%";
         };
 
         xhr.onerror = function () {
@@ -601,7 +599,7 @@ function sendFile() {
     } else {
         alert("Please select a file to upload.");
     }
-  fileInput.value = ""
+    fileInput.value = "";
 }
 
 
