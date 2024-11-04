@@ -452,6 +452,16 @@
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (input.value) {
+          input.value = input.value.replaceAll("sigma", "*FORBIDDEN WORD*")
+           .replaceAll("ohio", "*FORBIDDEN WORD*")
+           .replaceAll("skibidi", "*FORBIDDEN WORD*")
+           .replaceAll("rizzler", "*FORBIDDEN WORD*")
+           .replaceAll("rizz", "*FORBIDDEN WORD*")
+           .replaceAll("OHIO", "*FORBIDDEN WORD*")
+           .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+           .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+           .replaceAll("RIZZ", "*FORBIDDEN WORD*")  
+           .replaceAll("SIGMA", "*FORBIDDEN WORD*");
           const username = usernameInput.value;
           const senderMessage = input.value;
           const newMessage = addMessage('sender', "YOU: " + senderMessage);
@@ -475,11 +485,9 @@
         console.log("sent message:", msg);
         const chatDisplay = document.getElementById("chat-display");
         const myMessage = document.createElement("div");
-        const whip = document.createElement("div");
         myMessage.classList.add("senderMessage");
-        whip.classList.add("triangle");
+        myMessage.contentEditable = true;
         chatDisplay.appendChild(myMessage);
-        myMessage.appendChild(whip);
         myMessage.textContent = msg;
         console.log("chatDisplay updated. New value:", myMessage.textContent);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
