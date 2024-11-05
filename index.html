@@ -309,11 +309,44 @@
         color: white;
         text-align: center;
       }
-      #ai{
+      #ai {
         position: absolute;
-        left:500px;
+        left: 500px;
         top: 800px;
-        width:1000px;
+        width: 1000px;
+      }
+
+      #clearAllMsg{
+        height:70px;
+        width: 200px;
+        border-radius:0;
+        background-color: lightgray;
+        margin-top: 15px;
+        font-family: sans-serif;
+        font-weight: bold;
+        box-shadow:gray; 
+      }
+      #messageSettings{
+        color:black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif; 
+        text-decoration: underline rgb(108, 108, 255);
+        background-color: lightgray;
+        width: 200px;
+        padding: 15px;
+        position:relative;
+        left: 45%;
+        bottom: 20px;
+      }
+      #removeLastMsg{
+        height:70px;
+        width: 200px;
+        border-radius:0;
+        background-color: lightgray;
+        margin-top: 15px;
+        font-family: sans-serif;
+        font-weight: bold;
+        box-shadow:gray;
+        left:50px;
       }
     </style>
   </head>
@@ -325,23 +358,23 @@
         type="text"
         autocomplete="off"
         contenteditable="on"
-        placeholder="Type a message..."
-      />
+        placeholder="Type a message..." />
       <button id="send" type="submit">Send</button>
     </form>
     <input type="file" id="file-input" />
     <button id="file-send-button">SEND FILE</button>
     <div id="progressContainer">
-      <div id="progressBar" style="width: 1%; height: 20px; background-color: lime;"></div>
-  </div>
+      <div
+        id="progressBar"
+        style="width: 1%; height: 20px; background-color: lime"></div>
+    </div>
     <div id="userInfo">
       <input placeholder="username" id="username" autocomplete="off" /><br />
       <input
         type="text"
         id="password"
         placeholder="password*"
-        autocomplete="off"  
-      />
+        autocomplete="off" />
       <p id="note">*for admins only!</p>
       <br />
       <button id="loginBtn">Login</button>
@@ -351,7 +384,6 @@
     <button>join room</button>
     <br />
     <button id="offNot">TOGGLE NOTIFICATIONS</button>
-    <iframe src="https://workik.com/project/43634/ai_scripts" frameborder="0" id="ai" height="500px" width="500px"></iframe>
     <br />
     <hr />
     <h2>SETTINGS</h2>
@@ -360,6 +392,12 @@
     <div id="background-color-mode">
       <button id="darkMode">Dark Mode</button>
       <button id="lightMode">Light Mode</button>
+    </div>
+    <div id="Messages">
+      <h3 id="messageSettings">Message Settings</h3>
+      <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
+      <button id="clearAllMsg">Clear All Messages</button>
+      <button id="removeLastMsg">Remove Last Message</button>
     </div>
     <hr />
     <div id="AdminUIContainer">
@@ -386,36 +424,54 @@
       const lightMode = document.getElementById("lightMode");
       Notification.requestPermission();
       const aiIframe = document.getElementById("ai");
+      const clearAllMsg = document.getElementById("clearAllMsg");
+      const removeLastMsg = document.getElementById("removeLastMsg");
 
+      clearAllMsg.addEventListener("click", () => {
+        localStorage.removeItem("chatMessages");
+        chatDisplay.innerHTML = "Message Cleared";
+      })
+
+      removeLastMsg.addEventListener("click", () => {
+        const messages = loadMessagesFromLocalStorage();
+        if (messages.length > 0) {
+          messages.pop();
+          saveMessagesToLocalStorage(messages);
+          const removedLastMsgWarning = document.createElement("p");
+          removedLastMsgWarning.textContent = "[Last Message Removed]"
+          chatDisplay.appendChild(removedLastMsgWarning);
+          document.getElementsByClassName("senderMessage").pop().remove();
+        }
+      })
 
       // Load saved username from local storage
-      window.onload = function() {
-        const savedUsername = localStorage.getItem('username');
+      window.onload = function () {
+        const savedUsername = localStorage.getItem("username");
         if (savedUsername) {
           usernameInput.value = savedUsername;
         }
       };
 
       // Save username to local storage
-      usernameInput.addEventListener('input', function() {
-        localStorage.setItem('username', usernameInput.value);
+      usernameInput.addEventListener("input", function () {
+        localStorage.setItem("username", usernameInput.value);
       });
 
-      socket.on('force chat2', msg => {
-        socket.emit('chat message', msg)
+      socket.on("force chat2", (msg) => {
+        socket.emit("chat message", msg);
       });
 
       // Function to save messages to local storage
       function saveMessagesToLocalStorage(messages) {
-        localStorage.setItem('chatMessages', JSON.stringify(messages));
+        localStorage.setItem("chatMessages", JSON.stringify(messages));
       }
 
       // Function to load messages from local storage
       function loadMessagesFromLocalStorage() {
         try {
-          return JSON.parse(localStorage.getItem('chatMessages')) || [];
+          return JSON.parse(localStorage.getItem("chatMessages")) || [];
         } catch (error) {
-          console.error('Error loading messages from local storage:', error);
+          console.error("Error loading messages from local storage:", error);
           return [];
         }
       }
@@ -432,9 +488,9 @@
       // Function to display messages
       function displayMessages(messages) {
         const chatDisplay = document.getElementById("chat-display");
-        chatDisplay.innerHTML = ''; // Clear existing messages
-        messages.forEach(message => {
-          if (message.type === 'sender') {
+        chatDisplay.innerHTML = ""; // Clear existing messages
+        messages.forEach((message) => {
+          if (message.type === "sender") {
             appendSenderMessage(message.content);
           } else {
             appendMessage(message.content);
@@ -443,31 +499,33 @@
       }
 
       // Modify your existing socket.on('chat message') handler
-      socket.on('chat message', (msg) => {
-        const newMessage = addMessage('received', msg);
+      socket.on("chat message", (msg) => {
+        const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
 
       // Modify your form submit event handler
-      form.addEventListener('submit', (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (input.value) {
-          input.value = input.value.replaceAll("sigma", "*FORBIDDEN WORD*")
-           .replaceAll("ohio", "*FORBIDDEN WORD*")
-           .replaceAll("skibidi", "*FORBIDDEN WORD*")
-           .replaceAll("rizzler", "*FORBIDDEN WORD*")
-           .replaceAll("rizz", "*FORBIDDEN WORD*")
-           .replaceAll("OHIO", "*FORBIDDEN WORD*")
-           .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-           .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-           .replaceAll("RIZZ", "*FORBIDDEN WORD*")  
-           .replaceAll("SIGMA", "*FORBIDDEN WORD*");
+          input.value = input.value
+            .replaceAll("sigma", "*FORBIDDEN WORD*")
+            .replaceAll("ohio", "*FORBIDDEN WORD*")
+            .replaceAll("skibidi", "*FORBIDDEN WORD*")
+            .replaceAll("rizzler", "*FORBIDDEN WORD*")
+            .replaceAll("rizz", "*FORBIDDEN WORD*")
+            .replaceAll("OHIO", "*FORBIDDEN WORD*")
+            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*");
           const username = usernameInput.value;
           const senderMessage = input.value;
-          const newMessage = addMessage('sender', "YOU: " + senderMessage);
+          const newMessage = addMessage("sender", "YOU: " + senderMessage);
           appendSenderMessage(newMessage.content);
-          socket.emit('chat message', `${username} : ${senderMessage}`);
-          input.value = '';
+          socket.emit("chat message", `${username} : ${senderMessage}`);
+          input.value = "";
+          chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
       });
 
@@ -494,7 +552,7 @@
       }
 
       // Load and display messages when the page loads
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener("DOMContentLoaded", () => {
         const messages = loadMessagesFromLocalStorage();
         displayMessages(messages);
       });
@@ -504,12 +562,12 @@
         const password = document.getElementById("password").value;
         switch (password) {
           case "stcxkl@ctdvn":
-            const adminUIContainer = document.getElementById("adminUIContainer");
+            const adminUIContainer =
+              document.getElementById("adminUIContainer");
             adminUIContainer.style.removeProperty("display");
             console.log("property removed");
         }
       };
-
       // force kick packet receiver
       socket.on("new message notification", (msg) => {
         if (notificationsEnabled && Notification.permission === "granted") {
@@ -559,63 +617,71 @@
 
       fileSendButton.onclick = sendFile;
 
-function sendFile() {
-    const file = fileInput.files[0];
-    if (file) {
-        const progressContainer = document.getElementById("progressContainer");
-        const progressBar = document.getElementById("progressBar");
-        
-        progressContainer.style.display = "block"; // Show progress container
-        progressBar.style.width = "0%"; // Reset progress bar
+      function sendFile() {
+        const file = fileInput.files[0];
+        if (file) {
+          const progressContainer =
+            document.getElementById("progressContainer");
+          const progressBar = document.getElementById("progressBar");
 
-        const reader = new FileReader();
+          progressContainer.style.display = "block"; // Show progress container
+          progressBar.style.width = "0%"; // Reset progress bar
 
-        reader.onload = function (e) {
-            const fileContent = e.target.result.split(',')[1]; // Get Base64 string from Data URL
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const fileContent = e.target.result.split(",")[1]; // Get Base64 string from Data URL
             socket.emit("send-file", {
-                fileName: file.name,
-                fileContent: fileContent, // Already in Base64 format
+              fileName: file.name,
+              fileContent: fileContent, // Already in Base64 format
             });
-        };
+          };
 
-        reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
+          reader.readAsDataURL(file); // Read as Data URL for Base64 encoding
 
-        // Create a new XMLHttpRequest to handle the upload progress
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:3000/uploads"); // Replace with your server endpoint
+          // Create a new XMLHttpRequest to handle the upload progress
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "http://localhost:3000/uploads"); // Replace with your server endpoint
 
-        xhr.upload.addEventListener("progress", function (event) {
+          xhr.upload.addEventListener("progress", function (event) {
             if (event.lengthComputable) {
-                const percentComplete = (event.loaded / event.total) * 100;
-                progressBar.style.width = percentComplete + "%";
+              const percentComplete = (event.loaded / event.total) * 100;
+              progressBar.style.width = percentComplete + "%";
             }
-        });
+          });
 
-        xhr.onload = function () {
+          xhr.onload = function () {
             fileInput.value = ""; // Reset file input
             progressBar.style.width = "1%";
-        };
+          };
 
-        xhr.onerror = function () {
+          xhr.onerror = function () {
             console.error("An error occurred during the file upload.");
-        };
+          };
 
-        // Send the file using FormData
-        const formData = new FormData();
-        formData.append("file", file);
-        xhr.send(formData);
-    } else {
-        alert("Please select a file to upload.");
-    }
-    fileInput.value = "";
-}
-
+          // Send the file using FormData
+          const formData = new FormData();
+          formData.append("file", file);
+          xhr.send(formData);
+        } else {
+          alert("Please select a file to upload.");
+        }
+        fileInput.value = "";
+      }
 
       // Update the file-received handler
       socket.on("file-received", (data) => {
         const { fileName, fileContent } = data;
-        const fileUrl = URL.createObjectURL(new Blob([new Uint8Array(atob(fileContent).split("").map(c => c.charCodeAt(0)))]));
-        
+        const fileUrl = URL.createObjectURL(
+          new Blob([
+            new Uint8Array(
+              atob(fileContent)
+                .split("")
+                .map((c) => c.charCodeAt(0))
+            ),
+          ])
+        );
+
         const fileLink = document.createElement("a");
         fileLink.href = fileUrl;
         fileLink.download = fileName;
