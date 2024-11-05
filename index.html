@@ -6,7 +6,6 @@
     <title>Web Chat</title>
     <style>
       body {
-        background-color: whitesmoke;
         max-width: 100%;
         overflow-x: hidden;
       }
@@ -20,6 +19,7 @@
         font-family: monospace;
         background-color: rgb(0, 8, 33);
         color: white;
+        box-shadow: none;
       }
 
       #chat-display {
@@ -106,8 +106,8 @@
       }
       #chat-input {
         box-shadow: 3px 3px 2px;
-        border-width: 1px;
-        border-color: #dbdbdb;
+        border-width: 3px;
+        border-color: #000000;
         width: 85%;
         height: 50px;
         font-family: helvetica;
@@ -115,7 +115,8 @@
         color: black;
         border-radius: 30px;
         padding-left: 20px;
-        box-shadow: 0;
+        box-shadow: none;
+
       }
       #chat-input:active {
         border-color: #dbdbdb;
@@ -324,13 +325,17 @@
         margin-top: 15px;
         font-family: sans-serif;
         font-weight: bold;
-        box-shadow:gray; 
+        box-shadow:gray;
+        margin-bottom: 15px;
+        position:relative;
+        bottom: 12px;
+        left: 20px;
       }
       #messageSettings{
         color:black;
         font-family: Verdana, Geneva, Tahoma, sans-serif; 
         text-decoration: underline rgb(108, 108, 255);
-        background-color: lightgray;
+        background-color: rgb(157, 165, 255);
         width: 200px;
         padding: 15px;
         position:relative;
@@ -347,6 +352,28 @@
         font-weight: bold;
         box-shadow:gray;
         left:50px;
+        margin-left: 40px;
+      }
+      #darkMode{
+        border-radius: 2px;
+        background-color: rgb(0, 0, 85);
+        color: lightgray;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-weight: 600;
+        box-shadow: 3px 3px gray;
+      }
+      #lightMode{
+        border-radius: 2px;
+        position:relative;
+        left: 20px;
+        background-color: rgba(245, 245, 245, 0.905);
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: 600;
+      }
+      #speechBoxColour{
+        color: black;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -387,12 +414,16 @@
     <br />
     <hr />
     <h2>SETTINGS</h2>
+    <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <br />
-    <h3>speech box colour</h3>
+    <h3 id="speechBoxColour">speech box colour</h3>
+    <button id="darkBlueSpeechBox">Dark Blue</button>
+    <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <div id="background-color-mode">
       <button id="darkMode">Dark Mode</button>
       <button id="lightMode">Light Mode</button>
     </div>
+    <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <div id="Messages">
       <h3 id="messageSettings">Message Settings</h3>
       <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
@@ -426,6 +457,7 @@
       const aiIframe = document.getElementById("ai");
       const clearAllMsg = document.getElementById("clearAllMsg");
       const removeLastMsg = document.getElementById("removeLastMsg");
+      const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
 
       clearAllMsg.addEventListener("click", () => {
         localStorage.removeItem("chatMessages");
@@ -720,17 +752,26 @@
 
       // dark mode and light mode function
       darkMode.addEventListener("click", () => {
-        document.body.style.color = "black";
+        document.body.style.backgroundColor = "rgb(8, 0, 51)";
         username.style.backgroundColor = "white";
         password.style.backgroundColor = "white";
         username.style.color = "black";
         password.style.color = "black";
+        chatDisplay.style.backgroundColor = "#005678";
+        input.style.backgroundColor = "#6b6b6b";
+        input.style.color = "white";
+        input.placeholder.style.color = "white";
         console.log("dark mode");
-      });
+      })
 
-      lightMode.onclick = () => {
-        document.body.style.color = "white";
-      };
+      lightMode.addEventListener("click", () => {
+        document.body.style.backgroundColor = "white";
+        username.style.backgroundColor = "black";
+        password.style.backgroundColor = "black";
+        username.style.color = "white";
+        password.style.color = "white";
+        console.log("light mode");
+      })
 
       socket.on("connection", () => {
         console.log("Connected to server");
