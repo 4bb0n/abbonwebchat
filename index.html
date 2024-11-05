@@ -111,12 +111,12 @@
         width: 85%;
         height: 50px;
         font-family: helvetica;
-        background-color: white;
+        background-color: whitesmoke;
         color: black;
         border-radius: 30px;
         padding-left: 20px;
         box-shadow: none;
-
+        border-radius: 15px;
       }
       #chat-input:active {
         border-color: #dbdbdb;
@@ -374,6 +374,12 @@
         color: black;
         font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-weight: 600;
+      }
+      #darkBlueSpeechBox{
+        border-radius: 5px;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        background-color: darkblue;
+        color:white;
       }
     </style>
   </head>
@@ -770,7 +776,15 @@
         password.style.backgroundColor = "black";
         username.style.color = "white";
         password.style.color = "white";
+        chatDisplay.style.backgroundColor = "white";
+        input.style.backgroundColor = "#dadada";
+        input.style.color = "black";
+        input.placeholder.style.color = "black";
         console.log("light mode");
+      })
+
+      darkBlueSpeechBoxBtn.addEventListener("click", () => {
+        document.getElementsByClassName("senderMessage").style.backgroundImage = "linear-gradient(180deg, rgba(3,251,252,1) 23%, rgba(0,9,255,1) 100%);"
       })
 
       socket.on("connection", () => {
