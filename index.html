@@ -419,7 +419,7 @@
     <button id="offNot">TOGGLE NOTIFICATIONS</button>
     <br />
     <hr />
-    <h2>SETTINGS</h2>
+    <h2 id="settings">SETTINGS</h2>
     <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <br />
     <h3 id="speechBoxColour">speech box colour</h3>
@@ -464,7 +464,7 @@
       const clearAllMsg = document.getElementById("clearAllMsg");
       const removeLastMsg = document.getElementById("removeLastMsg");
       const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
-
+      const chatDisplayForm = document.getElementById("chat-display-form");
       clearAllMsg.addEventListener("click", () => {
         localStorage.removeItem("chatMessages");
         chatDisplay.innerHTML = "Message Cleared";
@@ -767,7 +767,25 @@
         input.style.backgroundColor = "#6b6b6b";
         input.style.color = "white";
         input.placeholder.style.color = "white";
-        console.log("dark mode");
+        const h3 = document.getElementsByTagName("h3");
+        const h2 = document.getElementsByTagName("h2");
+        const pre = document.getElementsByTagName("pre");
+        const p = document.getElementsByTagName("p");
+/*************  ✨ Codeium Command ⭐  *************/
+        for (let i = 0; i < h3.length; i++) {
+          h3[i].style.color = "white";
+        }
+        for (let i = 0; i < h2.length; i++) {
+          h2[i].style.color = "white";
+        }
+        for (let i = 0; i < pre.length; i++) {
+          pre[i].style.color = "white";
+        }
+        for (let i = 0; i < p.length; i++) {
+          p[i].style.color = "white";
+        }
+        
+/******  44e373d3-6bfa-4c98-9c44-a9c39e9088b4  *******/ 
       })
 
       lightMode.addEventListener("click", () => {
