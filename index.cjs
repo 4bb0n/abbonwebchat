@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     // Broadcast message to all clients except the one that sent it
     socket.broadcast.emit('chat message', msg);
-    socket.broadcast.emit('new message notification', msg);
+    io.emit('new message notification', msg);
     console.log(msg)
     
     // Append the message to the chat log file
@@ -70,7 +70,6 @@ io.on('connection', (socket) => {
 
   socket.on('sender message', msg => {
     socket.to(socket.id).emit('sender message', msg)
-    socket.broadcast.emit('notification', msg)
   })
 
   //force disconnecter
@@ -123,9 +122,22 @@ io.on('connection', (socket) => {
     console.log(`User disconnected. Total users: ${numUsers}`);
     socket.emit('user count', numUsers)
   });
+
+  socket.on("file-messages", (fileName) => {
+    fs.writeFile("fileMessages.txt", `${fileName} \n`, (err) => {
+      if (err) {
+        console.error("Error writing to file:", err);
+        socket.emit("file-error", "Error saving file");
+      }
+    })
+  })
+  socket.on("userjoined", (username, time) => {
+    socket.broadcast.emit("userjoined", username , time)
+    console.log(username + " has joined")
+  })
 });
 
-const deleteFilesInFolder = (folderPath) => {
+const deleteilesInFolder = (folderPath) => {
   fs.readdir(folderPath, (err, files) => {
       if (err) throw err;
 
