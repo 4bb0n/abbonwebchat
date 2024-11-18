@@ -402,9 +402,9 @@
         style="width: 1%; height: 20px; background-color: lime"></div>
     </div>
     <div id="userInfo">
-      <input placeholder="username" id="username" autocomplete="off" /><br />
+      <input placeholder="username" id="username" autocomplete="off" type="username"><br />
       <input
-        type="text"
+        type="password"
         id="password"
         placeholder="password*"
         autocomplete="off" />
@@ -415,6 +415,7 @@
     <pre id="userOnline"></pre>
     <input type="text" id="room" placeholder="room" />
     <button>join room</button>
+    <a href="index.html" download><button>test</button></a>
     <br />
     <button id="offNot">TOGGLE NOTIFICATIONS</button>
     <br />
@@ -465,6 +466,26 @@
       const removeLastMsg = document.getElementById("removeLastMsg");
       const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
       const chatDisplayForm = document.getElementById("chat-display-form");
+
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          console.log("Notification permission granted.");
+        } else {
+          console.log("Notification permission denied.");
+        }
+      });
+
+      function showNotification(msg) {
+        const username = msg.split(":")[0]; // Extract username from msg
+        const messageContent = msg.split(":").slice(1).join(":").trim(); // Extract message content
+        if (Notification.permission === "granted") {
+          new Notification(`New message from ${username.value}`, {
+            body: messageContent,
+          });
+          console.log("Notification sent" + messageContentx);
+        }
+      }
+
       clearAllMsg.addEventListener("click", () => {
         localStorage.removeItem("chatMessages");
         chatDisplay.innerHTML = "Message Cleared";
@@ -526,12 +547,11 @@
       // Function to display messages
       function displayMessages(messages) {
         const chatDisplay = document.getElementById("chat-display");
-        chatDisplay.innerHTML = ""; // Clear existing messages
         messages.forEach((message) => {
           if (message.type === "sender") {
             appendSenderMessage(message.content);
           } else {
-            appendMessage(message.content);
+            appendMessage(message.content); 
           }
         });
       }
@@ -540,6 +560,7 @@
       socket.on("chat message", (msg) => {
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
+        showNotification(msg);
       });
 
       // Modify your form submit event handler
@@ -581,6 +602,7 @@
         console.log("sent message:", msg);
         const chatDisplay = document.getElementById("chat-display");
         const myMessage = document.createElement("div");
+        const deleteBtn = document.createElement("button")
         myMessage.classList.add("senderMessage");
         myMessage.contentEditable = true;
         chatDisplay.appendChild(myMessage);
@@ -591,6 +613,9 @@
 
       // Load and display messages when the page loads
       document.addEventListener("DOMContentLoaded", () => {
+        const fileMessages = loadFileMessagesFromLocalStorage();
+        displayFileMessages(fileMessages);
+        
         const messages = loadMessagesFromLocalStorage();
         displayMessages(messages);
       });
@@ -608,17 +633,24 @@
       };
       // force kick packet receiver
       socket.on("new message notification", (msg) => {
-        if (notificationsEnabled && Notification.permission === "granted") {
-          const username = msg.split(">")[0].substr(1);
-          const message = msg.split(">")[1].trim();
-          new Notification(`New message from ${username}`, {
-            body: message,
+          let notification1 = new Notification(`New message from ${username.value}`, {
+            body: msg,
           });
-          soundeffect.play();
-        }
+          console.log(notification1)
       });
 
-      socket.on("sender message", appendMessage("You Joined"));
+      socket.on("sender message",
+      setTimeout(() => {
+      appendMessage("You Joined on " + new Date());
+      const username = localStorage.getItem("username");
+      socket.emit('userjoined', username)
+      addMessage("received", "You Joined on "+ new Date());
+    }, 100));
+
+    socket.on("userjoined", (username) => {
+      appendMessage(`${username} has joined`);
+      addMessage("received", `${username} has joined`);
+    })
 
       socket.on("notification", (msg) => {
         if (notificationsEnabled && Notification.permission === "granted") {
@@ -701,10 +733,28 @@
           const formData = new FormData();
           formData.append("file", file);
           xhr.send(formData);
-        } else {
-          alert("Please select a file to upload.");
         }
         fileInput.value = "";
+
+        const file1 = fileInput.files[0];
+    if (file1) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const fileContent = e.target.result.split(",")[1]; // Get Base64 string from Data URL
+            const fileUrl = URL.createObjectURL(new Blob([new Uint8Array(atob(fileContent).split("").map(c => c.charCodeAt(0)))]));
+            socket.emit("send-file", { fileName: file1.name, fileContent: fileContent });
+
+            // Save the file message in localStorage
+            const fileMessages = loadFileMessagesFromLocalStorage();
+            fileMessages.push(fileUrl);
+            saveFileMessagesToLocalStorage(fileMessages);
+            appendFileMessage(fileUrl); // Display immediately
+        };
+
+        reader.readAsDataURL(file1); // Read the file as Data URL
+    }
+
       }
 
       // Update the file-received handler
@@ -730,10 +780,83 @@
         fileMessage.className = "senderMessage";
         fileMessage.textContent = ``;
         fileMessage.appendChild(fileLink);
-
+      
         chatDisplay.appendChild(fileMessage);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
+
+        addFileMessage("received", fileName);  
       });
+
+  // Function to save file messages to local storage
+  function saveFileMessagesToLocalStorage(fileMessages) {
+    localStorage.setItem("fileMessages", JSON.stringify(fileMessages));
+    socket.emit("file-messages", fileMessages.textContent);
+  }
+
+  // Function to load file messages from local storage
+  function loadFileMessagesFromLocalStorage() {
+    try {
+      return JSON.parse(localStorage.getItem("fileMessages")) || [];
+    } catch (error) {
+      console.error("Error loading file messages from local storage:", error);
+      return [];
+    }
+  }
+
+  // Function to display file messages
+  function displayFileMessages(fileMessages) {
+    fileMessages.forEach((message) => {
+      appendFileMessage(message.content);
+    });
+  }
+
+  // Function to add a file message
+  function addFileMessage(type, content) {
+    let fileMessages = loadFileMessagesFromLocalStorage();
+    const newFileMessage = { type, content, timestamp: Date.now() };
+    fileMessages.push(newFileMessage);
+    saveFileMessagesToLocalStorage(fileMessages);
+    return newFileMessage;
+  }
+
+  // Append file message to chat display
+  function appendFileMessage(msg) {
+    const fileMessage = document.createElement("div");
+    const fileLink = document.createElement("a");
+    fileLink.textContent = msg;
+    fileLink.href = `/uploads/${msg}`;
+    fileLink.download = msg.split('/').pop(); // Use the file name as the download name
+    fileMessage.classList.add("senderMessage");
+    fileMessage.appendChild(fileLink);
+    chatDisplay.appendChild(fileMessage);
+    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    const test = localStorage.getItem("fileMessages");
+    console.log(msg);
+}
+
+  // Clear all messages
+  clearAllMsg.addEventListener("click", () => {
+    localStorage.removeItem("chatMessages");
+    localStorage.removeItem("fileMessages");
+    chatDisplay.innerHTML = "Message Cleared";
+  });
+
+  // Remove last message
+  removeLastMsg.addEventListener("click", () => {
+    const messages = loadMessagesFromLocalStorage();
+    const fileMessages = loadFileMessagesFromLocalStorage();
+    if (messages.length > 0) {
+      messages.pop();
+      saveMessagesToLocalStorage(messages);
+      chatDisplay.innerHTML = "Last Message Removed";
+      displayMessages(messages);
+    }
+    if (fileMessages.length > 0) {
+      fileMessages.pop();
+      saveFileMessagesToLocalStorage(fileMessages);
+      displayFileMessages(fileMessages);
+    }
+  });
 
       function base64ToBlob(base64, type) {
         const byteCharacters = atob(base64);
@@ -809,6 +932,8 @@
         console.log("Connected to server");
         socket.emit("join", userID);
       });
+
+
     </script>
   </body>
 </html>
