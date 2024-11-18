@@ -643,13 +643,13 @@
       setTimeout(() => {
       appendMessage("You Joined on " + new Date());
       const username = localStorage.getItem("username");
-      socket.emit('userjoined', username)
+      socket.emit('userjoined', username, new Date())
       addMessage("received", "You Joined on "+ new Date());
     }, 100));
 
-    socket.on("userjoined", (username) => {
-      appendMessage(`${username} has joined`);
-      addMessage("received", `${username} has joined`);
+    socket.on("userjoined", (username, time) => {
+      appendMessage(`${username} has joined on ` + time);
+      addMessage("received", `${username} has joined on `+time);
     })
 
       socket.on("notification", (msg) => {
