@@ -381,6 +381,22 @@
         background-color: darkblue;
         color:white;
       }
+      #targetUser{
+        border-radius: 5px;
+        height: 50px;
+        width: 200px;
+        text-align: center;
+      }
+      #kickUserButton{
+        height: 50px;
+        border-radius: 0;
+        position: relative;
+        left: 20px;
+        background-color: #dbdbdb;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: bold;
+        font-size: large;
+      }
     </style>
   </head>
   <body>
@@ -413,11 +429,9 @@
       <button id="loginBtn">Login</button>
     </div>
     <pre id="userOnline"></pre>
-    <input type="text" id="room" placeholder="room" />
-    <button>join room</button>
-    <a href="index.html" download><button>test</button></a>
+    <input type="text" id="room" placeholder="room" style="display: none" />
+    <button style="display: none">join room</button>
     <br />
-    <button id="offNot">TOGGLE NOTIFICATIONS</button>
     <br />
     <hr />
     <h2 id="settings">SETTINGS</h2>
@@ -438,9 +452,9 @@
       <button id="removeLastMsg">Remove Last Message</button>
     </div>
     <hr />
-    <div id="AdminUIContainer">
-      <h3 id="adminUI">Admin UI</h3>
-      <input type="text" placeholder="username to kick" id="targetUser" />
+    <div id="AdminUIContainer" style="display: none">
+      <h3 id="adminUI" style="color:red;">Admin Panel</h3>
+      <input type="text" placeholder="username to kick" id="targetUser"/>
       <button id="kickUserButton">Kick User</button>
     </div>
 
@@ -485,6 +499,15 @@
           console.log("Notification sent" + messageContentx);
         }
       }
+
+
+      loginBtn.addEventListener("click", () => {
+        const password = document.getElementById("password").value
+        if(password.value = "stcxkl@ctdvn"){
+          document.getElementById("AdminUIContainer").style.display = "initial"
+      }
+    }
+  )
 
       clearAllMsg.addEventListener("click", () => {
         localStorage.removeItem("chatMessages");
@@ -558,6 +581,17 @@
 
       // Modify your existing socket.on('chat message') handler
       socket.on("chat message", (msg) => {
+        msg = msg
+        .replaceAll("sigma", "*FORBIDDEN WORD*")
+            .replaceAll("ohio", "*FORBIDDEN WORD*")
+            .replaceAll("skibidi", "*FORBIDDEN WORD*")
+            .replaceAll("rizzler", "*FORBIDDEN WORD*")
+            .replaceAll("rizz", "*FORBIDDEN WORD*")
+            .replaceAll("OHIO", "*FORBIDDEN WORD*")
+            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*");
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
         showNotification(msg);
@@ -620,17 +654,6 @@
         displayMessages(messages);
       });
 
-      // login
-      loginBtn.onclick = () => {
-        const password = document.getElementById("password").value;
-        switch (password) {
-          case "stcxkl@ctdvn":
-            const adminUIContainer =
-              document.getElementById("adminUIContainer");
-            adminUIContainer.style.removeProperty("display");
-            console.log("property removed");
-        }
-      };
       // force kick packet receiver
       socket.on("new message notification", (msg) => {
           let notification1 = new Notification(`New message from ${username.value}`, {
@@ -670,9 +693,16 @@
         console.log(targetUsername);
         socket.emit("kick-user", targetUsername);
       };
-      socket.on("close window", () => {
-        window.close();
-      });
+      socket.on("kick-user", (targetUsername) => {
+        const username = document.getElementById("username");
+        console.log(targetUsername)
+        if(targetUsername == username.value){
+          let lastWords = prompt("You're about to be kicked! Any last words?")
+          appendMessage(username + " has been kicked! Their last words are: " + lastWords);
+          addMessage("received", username + " has been kicked! Their last words are: " + lastWords);
+          window.close()
+        }
+      })
 
       // Get the user's IPv4 address
       const getIPv4Address = () => {
