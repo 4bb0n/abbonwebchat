@@ -639,7 +639,6 @@ ${numUser}`;
       }
 
       function appendSenderMessage(msg) {
-        console.log("sent message:", msg);
         const chatDisplay = document.getElementById("chat-display");
         const myMessage = document.createElement("div");
         const deleteBtn = document.createElement("button")
@@ -700,17 +699,20 @@ ${numUser}`;
         socket.emit("kick-user", targetUsername);
       };
       socket.on("kick-user", (targetUsername) => {
+        kickUser(targetUsername)
+      })
+      function kickUser(targetUsername){
         const username = document.getElementById("username").value;
         console.log(targetUsername)
         if(targetUsername == username){
-          let lastWords = prompt("You're about to be kicked! Any last words?")
+          let lastWords = window.prompt("You're about to be kicked! Any last words?")
           appendMessage(username + " has been kicked! Their last words are: " + lastWords);
           socket.emit("chat message")
           addMessage("received", username + " has been kicked! Their last words are: " + lastWords);
+          window.focus()
           setTimeout(window.close(), 10)
         }
-      })
-
+      }
       // Get the user's IPv4 address
       const getIPv4Address = () => {
         fetch("https://api.ipify.org?format=json")
