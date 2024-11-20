@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
   socket.emit('IpAddressRequest')
 
   socket.on('kick-user', targetUsername => {
-    socket.emit('kick-user', targetUsername)
+    socket.broadcast.emit('kick-user', targetUsername)
   console.log(targetUsername + ' has been kicked!')
 })
 
