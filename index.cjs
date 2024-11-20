@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
   numUsers++;
   let date = new Date();
   console.log(`A user connected at ${date}. Total users: ${numUsers} with the id of ${socket.id}`);
-    io.emit('user count', numUsers)
+  io.emit('user count', numUsers)
 
 // ask for the user's IP address
   socket.emit('IpAddressRequest')
@@ -120,7 +120,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     numUsers--;
     console.log(`User disconnected. Total users: ${numUsers}`);
-    socket.emit('user count', numUsers)
+    io.emit('user count', numUsers)
   });
 
   socket.on("file-messages", (fileName) => {
