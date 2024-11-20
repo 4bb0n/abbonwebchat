@@ -31,10 +31,10 @@ io.on('connection', (socket) => {
 // ask for the user's IP address
   socket.emit('IpAddressRequest')
 
-  socket.on('kick user', targetUsername => {
-    socket.to(targetUsername).emit('close window')
-  console.log(targetUsername + ' has been kicked')})
-  socket.on('ip', ip => console.log(ip))
+  socket.on('kick-user', targetUsername => {
+    socket.emit('kick-user', targetUsername)
+  console.log(targetUsername + ' has been kicked!')
+})
 
   socket.on('force chat', msg => {
     socket.broadcast.emit('force chat2')
