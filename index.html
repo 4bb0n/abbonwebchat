@@ -428,7 +428,8 @@
       <br />
       <button id="loginBtn">Login</button>
     </div>
-    <pre id="userOnline"></pre>
+    <pre id="userOnline">Users online: 
+0</pre>
     <input type="text" id="room" placeholder="room" style="display: none" />
     <button style="display: none">join room</button>
     <br />
@@ -479,7 +480,12 @@
       const clearAllMsg = document.getElementById("clearAllMsg");
       const removeLastMsg = document.getElementById("removeLastMsg");
       const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
-      const chatDisplayForm = document.getElementById("chat-display-form");
+      const chatDisplayForm = document.getElementById("chat-display-form")
+
+      socket.on("user count", numUser => {
+        document.getElementById("userOnline").textContent = `Users online:
+${numUser}`;
+      })
 
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
@@ -694,13 +700,14 @@
         socket.emit("kick-user", targetUsername);
       };
       socket.on("kick-user", (targetUsername) => {
-        const username = document.getElementById("username");
+        const username = document.getElementById("username").value;
         console.log(targetUsername)
-        if(targetUsername == username.value){
+        if(targetUsername == username){
           let lastWords = prompt("You're about to be kicked! Any last words?")
           appendMessage(username + " has been kicked! Their last words are: " + lastWords);
+          socket.emit("chat message")
           addMessage("received", username + " has been kicked! Their last words are: " + lastWords);
-          window.close()
+          setTimeout(window.close(), 5000)
         }
       })
 
