@@ -707,7 +707,7 @@ ${numUser}`;
           appendMessage(username + " has been kicked! Their last words are: " + lastWords);
           socket.emit("chat message")
           addMessage("received", username + " has been kicked! Their last words are: " + lastWords);
-          window.close()
+          setTimeout(window.close(), 10)
         }
       })
 
