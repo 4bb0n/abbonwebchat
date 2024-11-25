@@ -35,17 +35,26 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('kick-user', targetUsername)
   console.log(targetUsername + ' has been kicked!')
 })
-
+socket.on("force disconnect", () => {
+  socket.disconnect();
+  console.log("force disconnected")
+})
   socket.on('force chat', msg => {
     socket.broadcast.emit('force chat2')
     console.log(msg)
   })
 
-  socket.on('chat message', (msg) => {
+  socket.on('chat message', (msg, room) => {
     // Broadcast message to all clients except the one that sent it
+    if(room == ''){
     socket.broadcast.emit('chat message', msg);
     io.emit('new message notification', msg);
     console.log(msg)
+    }
+    else{
+      socket.to(room).emit('chat message', msg);
+      socket.emit('join room', room);
+    }
     
     // Append the message to the chat log file
     const logEntry = `${msg}`+'\n';
@@ -67,6 +76,12 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('join room', (room) => {
+    socket.join(room);
+  })
+  socket.on('leave room', (room) => {
+    socket.leave(room);
+  })
 
   socket.on('sender message', msg => {
     socket.to(socket.id).emit('sender message', msg)
@@ -135,6 +150,12 @@ io.on('connection', (socket) => {
     socket.broadcast.emit("userjoined", username , time)
     console.log(username + " has joined")
   })
+  socket.emit('getName')
+
+  socket.on('getName2', (username, id) => {
+    socket.broadcast.emit('nameAndId', username, id)
+  })
+  //end of io.on('connection')
 });
 
 const deleteilesInFolder = (folderPath) => {
