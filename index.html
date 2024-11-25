@@ -397,6 +397,63 @@
         font-weight: bold;
         font-size: large;
       }
+      .kickMessage{
+        width: 1000px;
+        position: relative;
+        left: 20%;
+        text-align: center;
+        height: auto;
+        background-color: #dddce2;
+        opacity: 5;
+        margin: 10px;
+        border-radius: 10px;
+        color: red;
+        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        box-shadow: 0px 0px 5px red;
+      }
+      #room{
+        height: 50px;
+        border-radius: 2px;
+        background-color: lightgray;
+        color: black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-align: center;
+        box-shadow: 2px 2px 2px black;
+      }
+      #roomLeave{
+        position: relative;
+        top: 13px;
+        height: 50px;
+        border-radius: 2px;
+        background-color: lightgray;
+        color: black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-align: center;
+        box-shadow: 2px 2px 2px black;
+      }
+      #joinRoom{
+        position: relative;
+        background-color: rgb(61, 255, 80);
+        left: 15px;
+        border-radius: 0;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: bold;
+        font-size: 20;
+      }
+      #leaveRoom{
+        position: relative;
+        top: 10px;
+        background-color: rgb(250, 45, 45);
+        left: 15px;
+        border-radius: 0;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: bold;
+        font-size: 20;
+      }
     </style>
   </head>
   <body>
@@ -430,8 +487,11 @@
     </div>
     <pre id="userOnline">Users online: 
 0</pre>
-    <input type="text" id="room" placeholder="room" style="display: none" />
-    <button style="display: none">join room</button>
+    <input type="text" id="room" placeholder="room"/>
+    <button id="joinRoom">join room</button>
+    <br>
+    <input type="text" id="roomLeave" placeholder="room">
+    <button id="leaveRoom">leave room</button>
     <br />
     <br />
     <hr />
@@ -457,6 +517,10 @@
       <h3 id="adminUI" style="color:red;">Admin Panel</h3>
       <input type="text" placeholder="username to kick" id="targetUser"/>
       <button id="kickUserButton">Kick User</button>
+      <br>
+      <pre>Users Online:
+
+      </pre>
     </div>
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
@@ -480,7 +544,34 @@
       const clearAllMsg = document.getElementById("clearAllMsg");
       const removeLastMsg = document.getElementById("removeLastMsg");
       const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
-      const chatDisplayForm = document.getElementById("chat-display-form")
+      const chatDisplayForm = document.getElementById("chat-display-form");
+      const joinRoom = document.getElementById("joinRoom");
+      const leaveRoom = document.getElementById("leaveRoom");
+      const room = document.getElementById("room");
+      const roomLeave = document.getElementById("roomLeave");
+      const usersOnlineList = document.getElementById("usersOnlineList");
+
+      socket.on('getName', () => {
+        const username = document.getElementById("username").value;
+        socket.emit("getName2", username), socket.id;
+      })
+      
+      socket.on('nameAndId', (username, id) => {
+        setTimeout(() => {
+          usersOnlineList.textContent += `${username} : ${id}`
+          console.log('nameAndId', username, id)
+        }, 200)
+      })
+
+      leaveRoom.addEventListener("click", () => {
+        appendMessage(`You have left room: ${roomLeave.value}`);
+        socket.emit("leave room", roomLeave.value);
+      })
+
+      joinRoom.addEventListener("click", () => {
+        appendMessage(`You have joined room: ${room.value}`);
+        socket.emit("join room", room.value);
+      })
 
       socket.on("user count", numUser => {
         document.getElementById("userOnline").textContent = `Users online:
@@ -502,14 +593,15 @@ ${numUser}`;
           new Notification(`New message from ${username.value}`, {
             body: messageContent,
           });
-          console.log("Notification sent" + messageContentx);
+          console.log("Notification sent" + messageContent);
         }
       }
 
 
       loginBtn.addEventListener("click", () => {
-        const password = document.getElementById("password").value
-        if(password.value = "stcxkl@ctdvn"){
+        const password = document.getElementById("password").value;
+        localStorage.setItem("password", password);
+        if(password == "stcxkl@ctdvn"){
           document.getElementById("AdminUIContainer").style.display = "initial"
       }
     }
@@ -622,10 +714,14 @@ ${numUser}`;
           const senderMessage = input.value;
           const newMessage = addMessage("sender", "YOU: " + senderMessage);
           appendSenderMessage(newMessage.content);
-          socket.emit("chat message", `${username} : ${senderMessage}`);
+          const room = document.getElementById("room").value;
+          socket.emit("chat message", `${username} : ${senderMessage}`, room);
           input.value = "";
           chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
+        socket.on('join room', (room) => {
+
+        })
       });
 
       // Keep your existing appendMessage and appendSenderMessage functions
@@ -649,6 +745,14 @@ ${numUser}`;
         console.log("chatDisplay updated. New value:", myMessage.textContent);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
+      function appendKickMessage(msg) {
+        const chatDisplay = document.getElementById("chat-display");
+        const myMessage = document.createElement("div");
+        myMessage.classList.add("kickMessage");
+        chatDisplay.appendChild(myMessage);
+        myMessage.textContent = msg;
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }
 
       // Load and display messages when the page loads
       document.addEventListener("DOMContentLoaded", () => {
@@ -657,6 +761,12 @@ ${numUser}`;
         
         const messages = loadMessagesFromLocalStorage();
         displayMessages(messages);
+
+        const password = localStorage.getItem("password");
+        document.getElementById("password").value = password;
+        if(password == "stcxkl@ctdvn"){
+          document.getElementById("AdminUIContainer").style.display = "initial"
+      }
       });
 
       // force kick packet receiver
@@ -669,7 +779,7 @@ ${numUser}`;
 
       socket.on("sender message",
       setTimeout(() => {
-      appendMessage("You Joined on " + new Date());
+      appendMessage("You Joined on " + new Date() + ' your id is:              \n \n ' + socket.id);
       const username = localStorage.getItem("username");
       socket.emit('userjoined', username, new Date())
       addMessage("received", "You Joined on "+ new Date());
@@ -695,8 +805,9 @@ ${numUser}`;
       const kickUserButton = document.getElementById("kickUserButton");
       kickUserButton.onclick = () => {
         const targetUsername = targetUser.value;
-        console.log(targetUsername);
         socket.emit("kick-user", targetUsername);
+        appendKickMessage(`${targetUsername} has been kicked!`);
+        addKickMessage("received", `${targetUsername} has been kicked!`);
       };
       socket.on("kick-user", (targetUsername) => {
         kickUser(targetUsername)
@@ -706,11 +817,9 @@ ${numUser}`;
         console.log(targetUsername)
         if(targetUsername == username){
           let lastWords = window.prompt("You're about to be kicked! Any last words?")
-          appendMessage(username + " has been kicked! Their last words are: " + lastWords);
+          appendMessage("You have been kicked / Disconnected! Refresh the page to join again!");
           socket.emit("chat message")
-          addMessage("received", username + " has been kicked! Their last words are: " + lastWords);
-          window.focus()
-          setTimeout(window.close(), 10)
+          socket.emit("force disconnect")
         }
       }
       // Get the user's IPv4 address
