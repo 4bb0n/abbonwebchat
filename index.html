@@ -553,12 +553,12 @@
 
       socket.on('getName', () => {
         const username = document.getElementById("username").value;
-        socket.emit("getName2", username), socket.id;
+        socket.emit("getName2", username, socket.id);
       })
       
       socket.on('nameAndId', (username, id) => {
         setTimeout(() => {
-          usersOnlineList.textContent += `${username} : ${id}`
+          usersOnlineList.textContent = `${username} : ${id}`
           console.log('nameAndId', username, id)
         }, 200)
       })
@@ -719,9 +719,6 @@ ${numUser}`;
           input.value = "";
           chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
-        socket.on('join room', (room) => {
-
-        })
       });
 
       // Keep your existing appendMessage and appendSenderMessage functions
@@ -783,7 +780,7 @@ ${numUser}`;
       const username = localStorage.getItem("username");
       socket.emit('userjoined', username, new Date())
       addMessage("received", "You Joined on "+ new Date());
-    }, 100));
+    }, 200));
 
     socket.on("userjoined", (username, time) => {
       appendMessage(`${username} has joined on ` + time);
@@ -818,10 +815,14 @@ ${numUser}`;
         if(targetUsername == username){
           let lastWords = window.prompt("You're about to be kicked! Any last words?")
           appendMessage("You have been kicked / Disconnected! Refresh the page to join again!");
-          socket.emit("chat message")
-          socket.emit("force disconnect")
+          const targetUsername = targetUser.value;
+          socket.emit("force disconnect", targetUsername);
+          console.log('targetUsername = ' + targetUser.value)
         }
       }
+      socket.on('force disconnect broadcast alert message', targetUsername => {
+        appendKickMessage(targetUsername +' has been kicked!');
+      })
       // Get the user's IPv4 address
       const getIPv4Address = () => {
         fetch("https://api.ipify.org?format=json")
