@@ -785,9 +785,9 @@ ${numUser}`;
       addMessage("received", "You Joined on "+ new Date());
     })
 
-    socket.on("userjoined", (username, time) => {
-      appendMessage(`${username} has joined on ` + time);
-      addMessage("received", `${username} has joined on `+time);
+    socket.on("userjoined", (username, time, id) => {
+      appendMessage(`${username} has joined on `+ time + '. ID: ' + id);
+      addMessage("received", `${username} has joined on `+ time + '. ID: ' + id);
     })
 
       socket.on("notification", (msg) => {
@@ -817,10 +817,14 @@ ${numUser}`;
         console.log(targetUsername)
         if(targetUsername == username){
           let lastWords = window.prompt("You're about to be kicked! Any last words?")
+          const rickroll = document.createElement("iframe");
+          rickroll.src = "https://shattereddisk.github.io/rickroll/rickroll.mp4";
+          rickroll.width = "100%";
+          rickroll.height = "200px";
+          chatDisplay.appendChild(rickroll);
           appendMessage("You have been kicked / Disconnected! Refresh the page to join again!");
           const targetUsername = targetUser.value;
           socket.emit("force disconnect", targetUsername);
-          console.log('targetUsername = ' + targetUser.value)
         }
       }
       socket.on('force disconnect broadcast alert message', targetUsername => {
