@@ -776,11 +776,14 @@ ${numUser}`;
 
       socket.on("sender message",
       setTimeout(() => {
-      appendMessage("You Joined on " + new Date() + ' your id is:              \n \n ' + socket.id);
+      socket.emit('get socketID')
+    }, 50));
+    socket.on('socket ID', (id) => {
+      appendMessage("You Joined on " + new Date() + ' your id is:              \n \n ' + id);
       const username = localStorage.getItem("username");
       socket.emit('userjoined', username, new Date())
       addMessage("received", "You Joined on "+ new Date());
-    }, 200));
+    })
 
     socket.on("userjoined", (username, time) => {
       appendMessage(`${username} has joined on ` + time);
