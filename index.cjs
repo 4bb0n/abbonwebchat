@@ -35,9 +35,10 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('kick-user', targetUsername)
   console.log(targetUsername + ' has been kicked!')
 })
-socket.on("force disconnect", () => {
-  socket.disconnect();
+socket.on("force disconnect", (targetUsername) => {
+  io.emit('force disconnect broadcast alert message', targetUsername)
   console.log("force disconnected")
+  socket.disconnect();
 })
   socket.on('force chat', msg => {
     socket.broadcast.emit('force chat2')
@@ -153,7 +154,11 @@ socket.on("force disconnect", () => {
   socket.emit('getName')
 
   socket.on('getName2', (username, id) => {
-    socket.broadcast.emit('nameAndId', username, id)
+    socket.emit('nameAndId', username, id)
+  })
+
+  socket.on('get socketID', () =>{
+    socket.emit("socket ID", socket.id)
   })
   //end of io.on('connection')
 });
