@@ -332,15 +332,15 @@
         left: 20px;
       }
       #messageSettings{
+        position: relative;
         color:black;
         font-family: Verdana, Geneva, Tahoma, sans-serif; 
         text-decoration: underline rgb(108, 108, 255);
         background-color: rgb(157, 165, 255);
         width: 200px;
         padding: 15px;
-        position:relative;
-        left: 45%;
-        bottom: 20px;
+        left: 10px;
+        bottom: 8px;
       }
       #removeLastMsg{
         height:70px;
@@ -461,6 +461,42 @@
         height: 500px;
         width: 100%;
       }
+      #forceChatMsg{
+        border-radius: 5px;
+        height: 50px;
+        width: 200px;
+        text-align: center;
+      }
+      #forceChatName{
+        position: relative;
+        left: 20px;
+        border-radius: 5px;
+        height: 50px;
+        width: 200px;
+        text-align: center;
+      }
+      #forceChatBtn{
+        position: relative;
+        left: 40px;
+        height: 50px;
+        border-radius: 0;
+        position: relative;
+        background-color: #dbdbdb;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: bold;
+        font-size: large;
+        box-shadow: 0px 0px 5px gold;
+        color: red;
+      }
+      #kickUserButton:hover{
+        box-shadow: 0px 0px 5px red;
+      }
+      #forceChatBtn:hover{
+        box-shadow: 0px 0px 5px red;
+      }
+      button:hover{
+        box-shadow: 0px 0px 5px red;
+      }
     </style>
   </head>
   <body>
@@ -515,7 +551,6 @@
     <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <div id="Messages">
       <h3 id="messageSettings">Message Settings</h3>
-      <pre>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
       <button id="clearAllMsg">Clear All Messages</button>
       <button id="removeLastMsg">Remove Last Message</button>
     </div>
@@ -569,6 +604,7 @@
         const name = document.getElementById("forceChatName").value;
         const msg = forceChatMsg;
         socket.emit("force chat", msg, name);
+        forceChatMsg.value = '';
       })
 
       socket.on('force chat name check', (msg, name) => {
