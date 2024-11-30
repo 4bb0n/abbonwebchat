@@ -396,6 +396,9 @@
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-weight: bold;
         font-size: large;
+        animation-name: rainbowText;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
       }
       .kickMessage{
         width: 1000px;
@@ -453,6 +456,10 @@
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-weight: bold;
         font-size: 20;
+      }
+      .rickroll{
+        height: 500px;
+        width: 100%;
       }
     </style>
   </head>
@@ -518,9 +525,12 @@
       <input type="text" placeholder="username to kick" id="targetUser"/>
       <button id="kickUserButton">Kick User</button>
       <br>
-      <pre>Users Online:
-
-      </pre>
+      <div id="force-chat">
+        <h2 id="forceChat" style="color: red;">Force Chat</h2>
+        <input type="text" placeholder="message" id="forceChatMsg">
+        <input type="text" placeholder="name" id="forceChatName">
+        <button id="forceChatBtn">Force Chat</button>
+      </div>
     </div>
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
@@ -550,6 +560,27 @@
       const room = document.getElementById("room");
       const roomLeave = document.getElementById("roomLeave");
       const usersOnlineList = document.getElementById("usersOnlineList");
+      const forceChatBtn = document.getElementById("forceChatBtn");
+      const forceChatMsg = document.getElementById("forceChatMsg");
+      const forceChatName = document.getElementById("forceChatName");
+
+      forceChatBtn.addEventListener("click", () => {
+        const forceChatMsg = document.getElementById("forceChatMsg").value;
+        const name = document.getElementById("forceChatName").value;
+        const msg = forceChatMsg;
+        socket.emit("force chat", msg, name);
+      })
+
+      socket.on('force chat name check', (msg, name) => {
+        const username = document.getElementById("username").value;
+        console.log('received msg', msg, name)
+        if(username == name){
+          console.log('name matched', name)
+          socket.emit("chat message2", `${name}: ${msg}`);
+          appendSenderMessage(`${name}: ${msg}`);
+          addMessage('sender', `${name}: ${msg}`);
+        }
+      })
 
       socket.on('getName', () => {
         const username = document.getElementById("username").value;
@@ -637,10 +668,6 @@ ${numUser}`;
         localStorage.setItem("username", usernameInput.value);
       });
 
-      socket.on("force chat2", (msg) => {
-        socket.emit("chat message", msg);
-      });
-
       // Function to save messages to local storage
       function saveMessagesToLocalStorage(messages) {
         localStorage.setItem("chatMessages", JSON.stringify(messages));
@@ -676,8 +703,6 @@ ${numUser}`;
           }
         });
       }
-
-      // Modify your existing socket.on('chat message') handler
       socket.on("chat message", (msg) => {
         msg = msg
         .replaceAll("sigma", "*FORBIDDEN WORD*")
@@ -693,6 +718,7 @@ ${numUser}`;
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
         showNotification(msg);
+        console.log(msg);
       });
 
       // Modify your form submit event handler
@@ -817,10 +843,12 @@ ${numUser}`;
         console.log(targetUsername)
         if(targetUsername == username){
           let lastWords = window.prompt("You're about to be kicked! Any last words?")
-          const rickroll = document.createElement("iframe");
-          rickroll.src = "https://shattereddisk.github.io/rickroll/rickroll.mp4";
-          rickroll.width = "100%";
-          rickroll.height = "200px";
+          const rickroll = document.createElement("video");
+          rickroll.src = "https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1";
+          rickroll.classList.add("rickroll");
+          rickroll.muted = true;
+          rickroll.loop = true;
+          rickroll.playsInline = true;
           chatDisplay.appendChild(rickroll);
           appendMessage("You have been kicked / Disconnected! Refresh the page to join again!");
           const targetUsername = targetUser.value;
