@@ -148,7 +148,7 @@ socket.on("force disconnect", (targetUsername) => {
     })
   })
   socket.on("userjoined", (username, time) => {
-    socket.broadcast.emit("userjoined", username , time)
+    socket.broadcast.emit("userjoined", username , time, socket.id)
     console.log(username + " has joined")
   })
   socket.emit('getName')
@@ -159,6 +159,13 @@ socket.on("force disconnect", (targetUsername) => {
 
   socket.on('get socketID', () =>{
     socket.emit("socket ID", socket.id)
+  })
+
+  socket.on('force chat', (msg, name) => {
+    socket.broadcast.emit('force chat name check', msg, name)  
+  })
+  socket.on('chat message2', (msg) => {
+    socket.broadcast.emit('chat message', msg)
   })
   //end of io.on('connection')
 });
