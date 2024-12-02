@@ -766,7 +766,9 @@ ${numUser}`;
             .replaceAll("SIGMA", "*FORBIDDEN WORD*");
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
-        new Notification(msg)
+        if (!msg.startsWith(`$`)) {
+        showNotification(msg);
+        }
         console.log(msg);
       });
 
@@ -822,7 +824,6 @@ ${numUser}`;
         myMessage.contentEditable = true;
         chatDisplay.appendChild(myMessage);
         myMessage.textContent = msg;
-        console.log("chatDisplay updated. New value:", myMessage.textContent);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
       function appendKickMessage(msg) {
@@ -866,6 +867,7 @@ ${numUser}`;
       const username = localStorage.getItem("username");
       socket.emit('userjoined', username, new Date())
       addMessage("received", "You Joined on "+ new Date());
+      appendKickMessage("IF YOU'RE NOT GETTING NOTIFICATION FROM MESSAGES, GO TO SETTINGS AND ENABLE IT GLOBALLY (and for google chrome if you forgot to!)")
     })
 
     socket.on("userjoined", (username, time, id) => {
@@ -1170,7 +1172,6 @@ ${numUser}`;
       })
 
       socket.on("connection", () => {
-        console.log("Connected to server");
         socket.emit("join", userID);
       });
 
