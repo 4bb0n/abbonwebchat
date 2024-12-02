@@ -612,11 +612,12 @@
       const forceChatName = document.getElementById("forceChatName");
 
       forceChatBtn.addEventListener("click", () => {
-        const forceChatMsg = document.getElementById("forceChatMsg").value;
         const name = document.getElementById("forceChatName").value;
-        const msg = forceChatMsg;
+        const msg = forceChatMsg.value;
         socket.emit("force chat", msg, name);
-        forceChatMsg.value = '';
+        setTimeout(() =>{
+          forceChatMsg.value = '';
+        }, 100)
       })
 
       socket.on('force chat name check', (msg, name) => {
@@ -765,7 +766,7 @@ ${numUser}`;
             .replaceAll("SIGMA", "*FORBIDDEN WORD*");
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
-        showNotification(msg);
+        new Notification(msg)
         console.log(msg);
       });
 
@@ -788,6 +789,10 @@ ${numUser}`;
             .replaceAll("$kibidi", "*FORBIDDEN WORD*")
             .replaceAll("$IGMA", "*FORBIDDEN WORD*")
             .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+            //please, forgive me but I have to ban it! I have to write it down
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("shit", "*FORBIDDEN WORD*")
+            .replaceAll("bitch", "*FORBIDDEN WORD*")
           const username = usernameInput.value;
           const senderMessage = input.value;
           const newMessage = addMessage("sender", "YOU: " + senderMessage);
