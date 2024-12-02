@@ -49,7 +49,7 @@ socket.on("force disconnect", (targetUsername) => {
     // Broadcast message to all clients except the one that sent it
     if(room == ''){
     socket.broadcast.emit('chat message', msg);
-    io.emit('new message notification', msg);
+    socket.broadcast.emit('new message notification', msg);
     console.log(msg)
     }
     else{
@@ -184,7 +184,7 @@ const deleteilesInFolder = (folderPath) => {
 };
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000
 const HOST = '0.0.0.0';
 http.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
