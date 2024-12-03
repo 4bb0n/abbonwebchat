@@ -87,11 +87,6 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('sender message', msg => {
     socket.to(socket.id).emit('sender message', msg)
   })
-
-  //force disconnecter
-  socket.on('disconnect', userId => {
-    socket.disconnect()
-  })
   //log the ip address to the console
   socket.on('publicIP', ip => console.log(ip))
 
@@ -134,8 +129,10 @@ socket.on("force disconnect", (targetUsername) => {
   });
 
   socket.on('disconnect', () => {
+    let date = new Date()
     numUsers--;
     console.log(`User disconnected. Total users: ${numUsers}`);
+    socket.broadcast.emit("disconnected", numUsers, date)
     io.emit('user count', numUsers)
   });
 
