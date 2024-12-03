@@ -611,6 +611,10 @@
       const forceChatMsg = document.getElementById("forceChatMsg");
       const forceChatName = document.getElementById("forceChatName");
 
+      socket.on('disconnected', (numUser, date) => {
+        appendMessage(`A user disconnected on ${date}, ${numUser} users online`)
+      })
+
       forceChatBtn.addEventListener("click", () => {
         const name = document.getElementById("forceChatName").value;
         const msg = forceChatMsg.value;
@@ -670,10 +674,12 @@ ${numUser}`;
         const username = msg.split(":")[0]; // Extract username from msg
         const messageContent = msg.split(":").slice(1).join(":").trim(); // Extract message content
         if (Notification.permission === "granted") {
-          new Notification(`New message from ${username.value}`, {
+          let notifi = new Notification(`New message from ${username.value}`, {
             body: messageContent,
           });
-          console.log("Notification sent: " + messageContent);
+          setTimeout(() => {
+            notifi.close()
+          }, 2000)
         }
       }
 
