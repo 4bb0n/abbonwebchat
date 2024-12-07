@@ -8,6 +8,11 @@ const io = require('socket.io')(http, {
 const fs = require('fs');
 const path = require('path');
 const https = require('https')
+let numKickAccepted = 0;
+let numKickRejected = 0;
+let onlineUsers = [];
+let offlineUsers = [];
+let offlineMessages = {}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -53,8 +58,7 @@ socket.on("force disconnect", (targetUsername) => {
     console.log(msg)
     }
     else{
-      socket.to(room).emit('chat message', msg);
-      socket.emit('join room', room);
+      socket.to(room).emit('chat message', msg); 
     }
     
     // Append the message to the chat log file
@@ -79,6 +83,7 @@ socket.on("force disconnect", (targetUsername) => {
 
   socket.on('join room', (room) => {
     socket.join(room);
+    console.log(`User joined room ${room}`);
   })
   socket.on('leave room', (room) => {
     socket.leave(room);
@@ -164,6 +169,83 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('chat message2', (msg) => {
     socket.broadcast.emit('chat message', msg)
   })
+  socket.on('command', (command, username) => {
+    console.log(command)
+    let commandType = command.split(' ')[0]
+    let usernameForVoteKick = command.split(' ')[1]
+    if(commandType == '/votekick'){
+      socket.broadcast.emit('votekick', usernameForVoteKick)
+      numKickAccepted = 0;
+      numKickRejected = 0;
+    }
+    if(commandType == '/joincustomroom'){
+      let roomName = command.split(' ')[1]
+      socket.emit("join room", roomName)
+    }
+    if(commandType == '/leaveroom'){
+      let roomName = command.split(' ')[1]
+      socket.emit("leave room", roomName)
+    }
+    if(commandType == '/mail'){
+      let destinationUsername = command.split(' ')[1]
+      let message = command.split(' ').slice(2).join(" ");
+      offlineUsers.push(destinationUsername)
+      offlineMessages[destinationUsername] += `Mail from ${username}: ${message}_`
+      console.log(offlineMessages)
+      console.log(offlineUsers)
+      console.log(message)
+    }
+  })
+  socket.on("voteKickNameMatched", (username) => {
+    io.emit("voteKickNameMatched", username)
+  })
+  socket.on("chat message3", (msg) => {
+    socket.broadcast.emit("chat message", msg)
+  })
+  socket.on("kickAccepted", (username) => {
+    numKickAccepted++;
+    console.log("numKickAccepted = " +numKickAccepted)
+    if((numUsers / 2) < numKickAccepted){ 
+      io.emit("voteKickAccepted", username)
+    }
+    if(numKickRejected == numKickAccepted){
+      io.emit("voteKickDraw", username)
+    }
+  })
+  socket.on("kickRejected", (username) => {
+    console.log("numKickRejected = " +numKickRejected)
+    numKickRejected++;
+    if((numUsers / 2) < numKickRejected){
+      io.emit("voteKickRejected", username)
+    }
+    if(numKickAccepted == numKickRejected){
+      io.emit("voteKickDraw", username)
+    }
+  })
+  socket.emit('get name')
+  socket.on('name return', (username) => {
+    console.log(username)
+    onlineUsers.push(username)
+    console.log('online users: ' + onlineUsers)
+  })
+  setTimeout(() => {
+    socket.emit("get-name")
+  }, 1000)
+  socket.on('get-name', (username) => {
+      for(let i = 0; i < offlineUsers.length; i++){
+        if(offlineUsers[i] == username){
+          socket.emit("mail message", "You received a mail: "+offlineMessages[username])
+        }
+      }
+      delete offlineMessages[username]
+    
+  })
+  onlineUsers = removeDuplicates(onlineUsers);
+  offlineUsers = removeDuplicates(offlineUsers);
+  
+  function removeDuplicates(arr) {
+    return [...new Set(arr)];
+}
   //end of io.on('connection')
 });
 
