@@ -390,10 +390,13 @@
         height: 50px;
         width: 200px;
         text-align: center;
-        font-family: "Raleway", sans-serif;
-        font-weight: 500;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: bold;
         font-style: normal;
         font-optical-sizing: auto;
+      }
+      #targetUser::placeholder{
+        font-weight: 500;
       }
       #kickUserButton{
         height: 50px;
@@ -568,7 +571,7 @@
       <button id="send" type="submit">Send</button>
     </form>
     <div id="commandContainer">
-    <input type="text" id="command" placeholder="command">
+    <input type="text" id="command" placeholder="command | Type /help for help">
     <button id="sendCommandBtn">Send Command</button>
     </div>
     <div id="voteKickDiv" style="display: none">
@@ -670,6 +673,10 @@
       const rejectKick = document.getElementById("rejectKick");
       const username = document.getElementById("username");
       let voteName = "";
+
+      socket.on("help command", () => {
+        appendMessage(`Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help`);
+      })
 
       socket.on("get-name", () => {
         socket.emit("get-name", username.value);
@@ -907,9 +914,7 @@ ${numUser}`;
             .replaceAll("$IGMA", "*FORBIDDEN WORD*")
             .replaceAll("fuck", "*FORBIDDEN WORD*")
             .replaceAll("FUCK", "*FORBIDDEN WORD*")
-        const splitMsg = msg.split("_");
-        consol.log(splitMsg)
-        const newMessage = splitMsg.forEach((msg) => msg = addMessage("received", msg));
+        const newMessage = addMessage("received", msg)
         appendMessage(newMessage.content);
       });
 
