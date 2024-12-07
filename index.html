@@ -384,11 +384,16 @@
         background-color: darkblue;
         color:white;
       }
+      @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
       #targetUser{
         border-radius: 5px;
         height: 50px;
         width: 200px;
         text-align: center;
+        font-family: "Raleway", sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        font-optical-sizing: auto;
       }
       #kickUserButton{
         height: 50px;
@@ -509,6 +514,46 @@
       input:hover{
         box-shadow: 0px 0px 5px blue;
       }
+      .voteKickMessage{
+        width: 1000px;
+        position: relative;
+        height: auto;
+        background-color: #dddce2;
+        opacity: 5;
+        margin: 10px;
+        border-radius: 10px;
+        color: black;
+        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+      #command{
+        position: relative;
+        left: 20px;
+        border-radius: 5px;
+        height: 50px;
+        width: 400px;
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+      #sendCommandBtn{
+        position: relative;
+        left: 40px;
+        height: 50px;
+        border-radius: 0;
+        position: relative;
+        background-color: #dbdbdb;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-weight: bold;
+        width: 200px;
+      }
+      #commandContainer{
+        background-color: #dfdfdf;
+        width: 680px;
+      }
     </style>
   </head>
   <body>
@@ -522,6 +567,15 @@
         placeholder="Type a message..." />
       <button id="send" type="submit">Send</button>
     </form>
+    <div id="commandContainer">
+    <input type="text" id="command" placeholder="command">
+    <button id="sendCommandBtn">Send Command</button>
+    </div>
+    <div id="voteKickDiv" style="display: none">
+    <button id="acceptKick">Accept Kick</button>
+    <button id="rejectKick">Reject Kick</button>
+    </div>
+    <br>
     <input type="file" id="file-input" />
     <button id="file-send-button">SEND FILE</button>
     <div id="progressContainer">
@@ -580,7 +634,7 @@
       </div>
     </div>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
     <script src="index.cjs"></script>
     <script>
       const socket = io();
@@ -610,6 +664,83 @@
       const forceChatBtn = document.getElementById("forceChatBtn");
       const forceChatMsg = document.getElementById("forceChatMsg");
       const forceChatName = document.getElementById("forceChatName");
+      const sendCommandBtn = document.getElementById("sendCommandBtn");
+      const command = document.getElementById("command");
+      const acceptKickBtn = document.getElementById("acceptKick");
+      const rejectKick = document.getElementById("rejectKick");
+      const username = document.getElementById("username");
+      let voteName = "";
+
+      socket.on("get-name", () => {
+        socket.emit("get-name", username.value);
+      })
+
+      socket.on("get name", () => {
+        socket.emit("name return", username.value);
+      })
+
+      socket.on("leave room", room => {
+        document.getElementById("roomLeave").value = room;
+        leaveRoom.click();
+      })
+
+      socket.on("join room", room => {
+        document.getElementById("room").value = room;
+        joinRoom.click();
+      })
+
+      socket.on("voteKickDraw", (username) => {
+        appendKickMessage(`Vote kick drew for ${username}!`);
+      })
+
+      socket.on("voteKickAccepted", (username) => {
+        const name = document.getElementById("username").value;
+        appendKickMessage(`${username} has been kicked! Majority agreed to kick!`);
+            socket.emit("kick-user", username);
+      })
+
+      socket.on("voteKickRejected", (username) => {
+        appendKickMessage(`${username} has been kicked! Majority disagreed to kick!`);
+      })
+
+      acceptKickBtn.addEventListener("click", () => {
+        socket.emit("chat message3", `${username.value} has voted to kick!`);
+        socket.emit("kickAccepted", voteName)
+        appendMessage("You have voted to kick!");
+        voteKickDiv.style.display = "none";
+      })
+      rejectKick.addEventListener("click", () => {
+        socket.emit("chat message3", `${username.value} has rejected the kick!`);
+        socket.emit("kickRejected", voteName)
+        appendMessage("You have rejected the kick!");
+        voteKickDiv.style.display = "none";
+      })
+      socket.on('voteKickNameMatched', (username) => {
+        appendMessage(`${username} has been voted to kick! Majority is needed to complete the kick!`)
+        const voteKickDiv = document.getElementById("voteKickDiv");
+        voteName = username;
+        voteKickDiv.style.display = "initial";
+      })
+
+      socket.on('votekick', (username) => {
+        if(username == usernameInput.value){
+          socket.emit("voteKickNameMatched", username)
+        }
+      })
+
+      command.onkeydown = (e) => {
+        if (e.key === "Enter") {
+          const command = document.getElementById("command").value;
+        socket.emit("command", command, username.value);
+          document.getElementById("command").value = '';
+        }
+      };
+
+      sendCommandBtn.addEventListener("click", () => {
+        const command = document.getElementById("command").value;
+        socket.emit("command", command, username.values);
+          document.getElementById("command").value = '';
+      })
 
       socket.on('disconnected', (numUser, date) => {
         appendMessage(`A user disconnected on ${date}, ${numUser} users online`)
@@ -769,14 +900,41 @@ ${numUser}`;
             .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
             .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
             .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-            .replaceAll("SIGMA", "*FORBIDDEN WORD*");
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+            .replaceAll("$igma", "*FORBIDDEN WORD*")
+            .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+            .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("FUCK", "*FORBIDDEN WORD*")
+        const splitMsg = msg.split("_");
+        consol.log(splitMsg)
+        const newMessage = splitMsg.forEach((msg) => msg = addMessage("received", msg));
+        appendMessage(newMessage.content);
+      });
+
+      socket.on("mail message", (msg) => {
+        msg = msg
+        .replaceAll("sigma", "*FORBIDDEN WORD*")
+            .replaceAll("ohio", "*FORBIDDEN WORD*")
+            .replaceAll("skibidi", "*FORBIDDEN WORD*")
+            .replaceAll("rizzler", "*FORBIDDEN WORD*")
+            .replaceAll("rizz", "*FORBIDDEN WORD*")
+            .replaceAll("OHIO", "*FORBIDDEN WORD*")
+            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+            .replaceAll("$igma", "*FORBIDDEN WORD*")
+            .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+            .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("FUCK", "*FORBIDDEN WORD*")
+            .replaceAll("undefinedMail ", "")
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
-        if (!msg.startsWith(`$`)) {
-        showNotification(msg);
-        }
-        console.log(msg);
-      });
+      })
 
       // Modify your form submit event handler
       form.addEventListener("submit", (e) => {
@@ -854,6 +1012,7 @@ ${numUser}`;
         if(password == "stcxkl@ctdvn"){
           document.getElementById("AdminUIContainer").style.display = "initial"
       }
+      socket.emit("get-name", username.value);
       });
 
       // force kick packet receiver
