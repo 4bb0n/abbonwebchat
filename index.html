@@ -599,6 +599,7 @@
     </div>
     <pre id="userOnline">Users online: 
 0</pre>
+    <p id="usersOnlineNames"></p>
     <input type="text" id="room" placeholder="room"/>
     <button id="joinRoom">join room</button>
     <br>
@@ -672,10 +673,46 @@
       const acceptKickBtn = document.getElementById("acceptKick");
       const rejectKick = document.getElementById("rejectKick");
       const username = document.getElementById("username");
+      const usersOnlineNames = document.getElementById("usersOnlineNames");
       let voteName = "";
 
+      socket.on("clearMessageCommand", () => {
+        chatDisplay.innerHTML = "Messages Cleared";
+      })
+
+      socket.on("lightModeCommand", () => {
+        lightMode.click();
+      })
+
+      socket.on("darkModeCommand", () => {
+        darkMode.click();
+      })
+
+      socket.on("changeNameCommand", (name) => {
+        appendMessage("Name changed to " + name);
+        username.value = name;
+      })
+
+      socket.on("unknown command", () => {
+        appendMessage("Unknown command");
+      })
+
+      socket.on("updateOnlineUsers", (onlineUsers) => {
+        usersOnlineNames.textContent = onlineUsers;
+      })
+
+      socket.on("checkWhoIsOnline", () => {
+        socket.emit("checkWhoIsOnline", username.value);
+      })
+
+      chatDisplay.onscroll = () => {
+        if(chatDisplay.scrollTop == 0){
+          
+        }
+      }
+
       socket.on("help command", () => {
-        appendMessage(`Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help`);
+        appendMessage(`Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help, /changename, /clearMsg, /darkMode, /lightMode, /forceChat, /forceChatName`);
       })
 
       socket.on("get-name", () => {
