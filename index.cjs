@@ -7,7 +7,8 @@ const io = require('socket.io')(http, {
 });
 const fs = require('fs');
 const path = require('path');
-const https = require('https')
+const https = require('https');
+const { TIMEOUT } = require('dns');
 let numKickAccepted = 0;
 let numKickRejected = 0;
 let onlineUsers = [];
@@ -133,13 +134,25 @@ socket.on("force disconnect", (targetUsername) => {
     });
   });
 
+  let tempArray = []
+
   socket.on('disconnect', () => {
     let date = new Date()
     numUsers--;
     console.log(`User disconnected. Total users: ${numUsers}`);
     socket.broadcast.emit("disconnected", numUsers, date)
+    io.emit("checkWhoIsOnline")
     io.emit('user count', numUsers)
   });
+  socket.on('checkWhoIsOnline', (username) => {
+    tempArray.push(username)
+    let tempArray2 = [...new Set(tempArray)]
+    onlineUsers = tempArray2;
+    if(offlineMessages[username] == onlineUsers){
+      delete offlineMessages[username]
+    }
+    socket.emit("updateOnlineUsers", onlineUsers.join(", "))
+  })
 
   socket.on("file-messages", (fileName) => {
     fs.writeFile("fileMessages.txt", `${fileName} \n`, (err) => {
@@ -178,22 +191,52 @@ socket.on("force disconnect", (targetUsername) => {
       numKickAccepted = 0;
       numKickRejected = 0;
     }
-    if(commandType == '/joincustomroom'){
+    else if(commandType == '/joincustomroom'){
       let roomName = command.split(' ')[1]
       socket.emit("join room", roomName)
     }
-    if(commandType == '/leaveroom'){
+    else if(commandType == '/leaveroom'){
       let roomName = command.split(' ')[1]
       socket.emit("leave room", roomName)
     }
-    if(commandType == '/mail'){
+    else if(commandType == '/mail'){
       let destinationUsername = command.split(' ')[1]
       let message = command.split(' ').slice(2).join(" ");
-      offlineUsers.push(destinationUsername)
-      offlineMessages[destinationUsername] += `Mail from ${username}: ${message}_`
-      console.log(offlineMessages)
-      console.log(offlineUsers)
-      console.log(message)
+      if(!onlineUsers.includes(destinationUsername)){
+        offlineUsers.push(destinationUsername)
+        offlineMessages[destinationUsername] += `Mail from ${username}: ${message}_`
+        if(destinationUsername == ""){
+          socket.emit("mailSentNotificationCommand", "NO ONE! / Or to a new user", message)
+        }
+        else{
+        socket.emit("mailSentNotificationCommand", destinationUsername, message)
+        }
+        console.log(offlineMessages)
+        console.log(offlineUsers)
+        console.log(message)
+      }
+      else{
+        socket.broadcast.emit("online mail", destinationUsername, message)
+      }
+      }
+    else if(commandType == '/help'){
+      socket.emit('help command')
+    }
+    else if(commandType == '/changename'){
+      const username2 = command.split(' ')[1]
+      socket.emit("changeNameCommand", username2)
+    }
+    else if(commandType == '/clearMsg'){
+      socket.emit("clearMessagesCommand")
+    }
+    else if(commandType == '/darkmode'){
+      socket.emit("darkModeCommand")
+    }
+    else if(commandType == '/lightmode'){
+      socket.emit("lightModeCommand")
+    }
+    else{
+      socket.emit("unknown command")
     }
   })
   socket.on("voteKickNameMatched", (username) => {
@@ -233,12 +276,11 @@ socket.on("force disconnect", (targetUsername) => {
   }, 1000)
   socket.on('get-name', (username) => {
       for(let i = 0; i < offlineUsers.length; i++){
-        if(offlineUsers[i] == username){
+        if(offlineUsers[i] == username &&  offlineMessages[username] != undefined){
           socket.emit("mail message", "You received a mail: "+offlineMessages[username])
         }
       }
       delete offlineMessages[username]
-    
   })
   onlineUsers = removeDuplicates(onlineUsers);
   offlineUsers = removeDuplicates(offlineUsers);
@@ -246,7 +288,11 @@ socket.on("force disconnect", (targetUsername) => {
   function removeDuplicates(arr) {
     return [...new Set(arr)];
 }
+for(let i = 0; i < 5; i++){
+  io.emit("checkWhoIsOnline", onlineUsers)
+  socket.emit("checkWhoIsOnline", onlineUsers)
   //end of io.on('connection')
+}
 });
 
 const deleteilesInFolder = (folderPath) => {
