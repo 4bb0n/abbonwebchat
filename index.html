@@ -833,13 +833,23 @@
       })
 
       leaveRoom.addEventListener("click", () => {
-        appendMessage(`You have left room: ${roomLeave.value}`);
+        if(roomLeave.value){
         socket.emit("leave room", roomLeave.value);
+        appendMessage(`You have left room: ${roomLeave.value}`);
+        }
+        else{
+          appendMessage("Please enter a room name!");
+        }
       })
 
       joinRoom.addEventListener("click", () => {
-        appendMessage(`You have joined room: ${room.value}`);
+        if(room.value){
         socket.emit("join room", room.value);
+        appendMessage(`You have joined room: ${room.value}`);
+        }
+        else{
+          appendMessage("Please enter a room name!");
+        }
       })
 
       socket.on("user count", numUser => {
@@ -894,14 +904,6 @@ ${numUser}`;
           document.getElementsByClassName("senderMessage").pop().remove();
         }
       })
-
-      // Load saved username from local storage
-      window.onload = function () {
-        const savedUsername = localStorage.getItem("username");
-        if (savedUsername) {
-          usernameInput.value = savedUsername;
-        }
-      };
 
       // Save username to local storage
       usernameInput.addEventListener("input", function () {
@@ -1064,10 +1066,16 @@ ${numUser}`;
         if(password == "stcxkl@ctdvn"){
           document.getElementById("AdminUIContainer").style.display = "initial"
       }
+      const savedUsername = localStorage.getItem("username");
+      if (savedUsername) {
+        username.value = savedUsername;
+      }
+      else{
       socket.emit("get-name", username.value);
       if(!username.value){
         username.value = "NoName"
       }
+    }
       });
 
       // force kick packet receiver
@@ -1091,7 +1099,6 @@ ${numUser}`;
     })
 
     socket.on("userjoined", (username, time, id) => {
-      username.value = "NoName"
       appendMessage(`${username} has joined on `+ time + '. ID: ' + id);
       addMessage("received", `${username} has joined on `+ time + '. ID: ' + id);
     })
@@ -1110,10 +1117,12 @@ ${numUser}`;
       const targetUser = document.getElementById("targetUser");
       const kickUserButton = document.getElementById("kickUserButton");
       kickUserButton.onclick = () => {
+        if(targetUser.value){
         const targetUsername = targetUser.value;
         socket.emit("kick-user", targetUsername);
         appendKickMessage(`${targetUsername} has been kicked!`);
         addKickMessage("received", `${targetUsername} has been kicked!`);
+        }
       };
       socket.on("kick-user", (targetUsername) => {
         kickUser(targetUsername)
@@ -1389,7 +1398,9 @@ ${numUser}`;
       })
 
       darkBlueSpeechBoxBtn.addEventListener("click", () => {
-        document.getElementsByClassName("senderMessage").style.backgroundImage = "linear-gradient(180deg, rgba(3,251,252,1) 23%, rgba(0,9,255,1) 100%);"
+        for(let i = 0; i < document.getElementsByClassName("senderMessage").length; i++){
+          document.getElementsByClassName("senderMessage")[i].style.backgroundImage = "linear-gradient(180deg, rgba(3,251,252,1) 23%, rgba(0,9,255,1) 100%);" 
+        }
       })
 
       socket.on("connection", () => {
