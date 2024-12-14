@@ -30,9 +30,9 @@
         font-family: sans-serif;
         padding-top: 10px;
         padding-bottom: 10px;
-        border-width: 10px;
         border-color: black;
         overflow-y: scroll;
+        border-width: 2px;
       }
       .myMessage {
         width: 1000px;
@@ -557,10 +557,63 @@
         background-color: #dfdfdf;
         width: 680px;
       }
+      .goodBtn{
+        background-color: rgb(224, 224, 224);
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        border-radius: 0;
+        width: 100px;
+        height: 50px;
+        position: relative;
+      }
+      #showDirectMessages{
+        position: relative;
+        margin-bottom: 10px;
+        width: 130px;
+        height: 60px;
+      }
+      #directMsg{
+        position: relative;
+        background-color: #b0b1ff;
+        height: 100px;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      #toggleDirectMsgVisibility{
+        position: relative;
+        bottom: 10px;
+        left: 1200px;
+        height: 30px;
+        font-size: normal;
+        width: 300px;
+      }
+      #wiki{
+        position: relative;
+        left: 1300px;
+        bottom: 80px;
+        width: 200px;
+        height: 30px;
+      }
+      #showUploadedFiles{
+        width: 300px;
+        height: 40px;
+      }
+      .fileMessage{
+        position: relative;
+        right: 0;
+      }
+      #fileUploads{
+        width: 350px;
+        height: 300px;
+        overflow-y: scroll;
+        padding-bottom: 20px;
+      }
     </style>
   </head>
   <body>
-    <div id="chat-display" readonly></div>
+    <div id="directMsg">
+    </div>
+    <button id="toggleDirectMsgVisibility" class="goodBtn">Show / Hide Direct Messages</button>
+    <div id="chat-display" readonly style="border-width: 2px;"></div>
     <form id="chat-form">
       <input
         id="chat-input"
@@ -574,6 +627,7 @@
     <input type="text" id="command" placeholder="command | Type /help for help">
     <button id="sendCommandBtn">Send Command</button>
     </div>
+    <button id="wiki" class="goodBtn">Help Wiki </button>
     <div id="voteKickDiv" style="display: none">
     <button id="acceptKick">Accept Kick</button>
     <button id="rejectKick">Reject Kick</button>
@@ -585,6 +639,10 @@
       <div
         id="progressBar"
         style="width: 1%; height: 20px; background-color: lime"></div>
+    </div>
+    <button id="showUploadedFiles" class="goodBtn">Show Uploaded Files</button>
+    <div id="fileUploads" style="display: none;">
+    <div id="uploadedFiles"></div>
     </div>
     <div id="userInfo">
       <input placeholder="username" id="username" autocomplete="off" type="username"><br />
@@ -674,7 +732,59 @@
       const rejectKick = document.getElementById("rejectKick");
       const username = document.getElementById("username");
       const usersOnlineNames = document.getElementById("usersOnlineNames");
+      const directMsgDiv = document.getElementById("directMsg");
+      const toggleVisibilityDirectMsgBtn = document.getElementById("toggleDirectMsgVisibility");
+      const wikiBtn = document.getElementById("wiki");
+      const showUploadedFilesBtn = document.getElementById("showUploadedFiles");
+      const fileUploads = document.getElementById("fileUploads")
+      let directMsgPerson = "";
+      let targetDirectMsgPerson = "";
       let voteName = "";
+      let toggleVisibilityDirectMsgBtnVAR = 1;
+      let appendMessageOrder = 0;
+
+      showUploadedFilesBtn.onmouseover = () => {
+        document.getElementById("fileUploads").style.display = "block"
+        document.getElementById("fileUploads").style.backgroundColor = "lightgray"
+      }
+      fileUploads.onmouseleave = () => {
+        document.getElementById("fileUploads").style.display = "none"
+        document.getElementById("fileUploads").style.backgroundColor = "white"
+      }
+
+      wikiBtn.addEventListener("click", () => {
+        window.open('/info.html')
+      })
+
+      toggleVisibilityDirectMsgBtn.addEventListener("click", () => {
+        if(toggleVisibilityDirectMsgBtnVAR == 1){
+          directMsgDiv.style.display = "none"
+          toggleVisibilityDirectMsgBtnVAR -= 1
+        }
+        else{
+          directMsgDiv.style.display = "inherit"
+          directMsgDiv.style.backgroundColor = "#b0b1ff"
+          directMsgDiv.style.width = "100%"
+          directMsgDiv.style.height = "100px"
+          directMsgDiv.style.marginBottom = "20px"
+          toggleVisibilityDirectMsgBtnVAR += 1
+        }
+      })
+
+      socket.on("connected", (username) => {
+        const button = document.createElement("button");
+        button.textContent = username;
+        button.style.backgroundColor = "white";
+        button.style.color = "black";
+        button.style.margin = "10px";
+        button.style.padding = "10px";
+        button.style.border = "none";
+        directMsgDiv.appendChild(button);
+        button.addEventListener("click", () => {
+          appendMessage("You are now talking to "+ username)
+          directMsgPerson = username;
+        })
+      })
 
       socket.on("online mail", (destinationUsername, message) => {
         if(username.value == destinationUsername){
@@ -708,21 +818,19 @@
       })
 
       socket.on("updateOnlineUsers", (onlineUsers) => {
-        usersOnlineNames.textContent = onlineUsers;
+        let tempArray2 = [...new Set(onlineUsers)]
+        usersOnlineNames.textContent = tempArray2[0];
+        if(!usersOnlineNames.textContent == ''){
+          usersOnlineNames += tempArray2[-1]
+        }
       })
 
       socket.on("checkWhoIsOnline", () => {
         socket.emit("checkWhoIsOnline", username.value);
       })
 
-      chatDisplay.onscroll = () => {
-        if(chatDisplay.scrollTop == 0){
-          
-        }
-      }
-
       socket.on("help command", () => {
-        appendMessage(`Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help, /changename, /clearMsg, /darkMode, /lightMode, /forceChat, /forceChatName`);
+        appendMessage(`Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help, /changename, /clearMsg, /darkMode, /lightMode`);
       })
 
       socket.on("get-name", () => {
@@ -945,7 +1053,7 @@ ${numUser}`;
           }
         });
       }
-      socket.on("chat message", (msg) => {
+      socket.on("chat message", (msg, senderName) => {
         msg = msg
         .replaceAll("sigma", "*FORBIDDEN WORD*")
             .replaceAll("ohio", "*FORBIDDEN WORD*")
@@ -963,8 +1071,17 @@ ${numUser}`;
             .replaceAll("$IGMA", "*FORBIDDEN WORD*")
             .replaceAll("fuck", "*FORBIDDEN WORD*")
             .replaceAll("FUCK", "*FORBIDDEN WORD*")
+        if(senderName == username.value){
+          console.log("direct message received")
+          console.log(username.value)
+          const newMessage = addMessage("received", msg)
+          appendMessage(newMessage.content);
+        }
+        else{
+        console.log("global message received")
         const newMessage = addMessage("received", msg)
         appendMessage(newMessage.content);
+        }
       });
 
       socket.on("mail message", (msg) => {
@@ -1018,11 +1135,36 @@ ${numUser}`;
           const newMessage = addMessage("sender", "YOU: " + senderMessage);
           appendSenderMessage(newMessage.content);
           const room = document.getElementById("room").value;
-          socket.emit("chat message", `${username} : ${senderMessage}`, room);
+          socket.emit("chat message", `${username} : ${senderMessage}`, room, directMsgPerson);
           input.value = "";
           chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
       });
+
+      function removeBrainRot(msg){
+        msg = msg
+        .replaceAll("sigma", "*FORBIDDEN WORD*")
+            .replaceAll("ohio", "*FORBIDDEN WORD*")
+            .replaceAll("skibidi", "*FORBIDDEN WORD*")
+            .replaceAll("rizzler", "*FORBIDDEN WORD*")
+            .replaceAll("rizz", "*FORBIDDEN WORD*")
+            .replaceAll("OHIO", "*FORBIDDEN WORD*")
+            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+            .replaceAll("$igma", "*FORBIDDEN WORD*")
+            .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+            .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("FUCK", "*FORBIDDEN WORD*")
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("shit", "*FORBIDDEN WORD*")
+            .replaceAll("bitch", "*FORBIDDEN WORD*")
+            .replaceAll("undefinedMail ", "")
+            return msg;
+      }
 
       // Keep your existing appendMessage and appendSenderMessage functions
       function appendMessage(msg) {
@@ -1056,9 +1198,8 @@ ${numUser}`;
       // Load and display messages when the page loads
       document.addEventListener("DOMContentLoaded", () => {
         const fileMessages = loadFileMessagesFromLocalStorage();
-        displayFileMessages(fileMessages);
-        
         const messages = loadMessagesFromLocalStorage();
+        displayFileMessages(fileMessages);
         displayMessages(messages);
 
         const password = localStorage.getItem("password");
@@ -1076,6 +1217,8 @@ ${numUser}`;
         username.value = "NoName"
       }
     }
+
+      socket.emit("connected", username.value);
       });
 
       // force kick packet receiver
@@ -1297,11 +1440,11 @@ ${numUser}`;
     const fileMessage = document.createElement("div");
     const fileLink = document.createElement("a");
     fileLink.textContent = msg;
-    fileLink.href = `/uploads/${msg}`;
+    fileLink.href = ("/download")
     fileLink.download = msg.split('/').pop(); // Use the file name as the download name
-    fileMessage.classList.add("senderMessage");
+    fileMessage.classList.add("fileMessage");
     fileMessage.appendChild(fileLink);
-    chatDisplay.appendChild(fileMessage);
+    document.getElementById("uploadedFiles").appendChild(fileMessage);
     chatDisplay.scrollTop = chatDisplay.scrollHeight;
     const test = localStorage.getItem("fileMessages");
     console.log(msg);
