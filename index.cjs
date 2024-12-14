@@ -51,12 +51,13 @@ socket.on("force disconnect", (targetUsername) => {
     console.log(msg)
   })
 
-  socket.on('chat message', (msg, room) => {
+  socket.on('chat message', (msg, room, username) => {
     // Broadcast message to all clients except the one that sent it
     if(room == ''){
-    socket.broadcast.emit('chat message', msg);
+    socket.broadcast.emit('chat message', msg, username);
     socket.broadcast.emit('new message notification', msg);
     console.log(msg)
+    console.log(`directMsg = ${username}`)
     }
     else{
       socket.to(room).emit('chat message', msg); 
@@ -151,7 +152,7 @@ socket.on("force disconnect", (targetUsername) => {
     if(offlineMessages[username] == onlineUsers){
       delete offlineMessages[username]
     }
-    socket.emit("updateOnlineUsers", onlineUsers.join(", "))
+    socket.emit("updateOnlineUsers", onlineUsers)
   })
 
   socket.on("file-messages", (fileName) => {
@@ -291,8 +292,23 @@ socket.on("force disconnect", (targetUsername) => {
 for(let i = 0; i < 5; i++){
   io.emit("checkWhoIsOnline", onlineUsers)
   socket.emit("checkWhoIsOnline", onlineUsers)
-  //end of io.on('connection')
 }
+socket.on("directMsgUserId", (username) => {
+  io.emit("directMsgUserIdCheck", username)
+})
+socket.on("directMsgUserIdReturnCheck", (id) => {
+  io.emit("directMsgUserIdReturn", id)
+})
+socket.on("connected", (username) => {
+  io.emit("connected", username)
+})
+app.get('/info.html', (req, res) => {
+  res.sendFile(__dirname + '/info.html')
+})
+app.get('/download', (req, res) => {
+  res.send('/uploads/')
+})
+//end of io.on('connection')
 });
 
 const deleteilesInFolder = (folderPath) => {
