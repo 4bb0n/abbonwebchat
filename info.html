@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLOSE PAGE!</title>
+    <style>
+        pre{
+            font-size: large;
+        }
+        button{
+            height: 40px;
+            width: 300px;
+            font-size: large;
+            background-color: aqua;
+        }
+    </style>
+</head>
+<body>
+    <h1>Abbon's web chat wiki</h1>
+    <pre>
+        Hi, I'm Abbon, the owner of this web chat application. I coded most of it and with some little help of AI.
+        This web chat have a lot of features that are unique to other chat applications. But miss some.
+
+                                            <h2>Rooms</h2>
+        There are rooms that you can join or leave. Rooms are used to privately messaging to someone by using their
+        ID that you will receive when they join. Or you could make a custom room by pressing join room or use command.
+        You could leave room by put the room name in the leave room input box and press leave room.
+
+        (You don't need to click join room if you're joining a room ID to privately talk to someone and not with a group.)
+        (Also notice that you can join multiple rooms)
+
+                                    <h2>Login, Name and Password</h2>
+        Login, currently is only used for admins that know the password. It is used for admins to access the Admin Panel
+        for advanced features like force someone to say something or kick an user.
+
+        Username is the name everyone will see you when you talk as. It will show "name: message". If this is the first
+        time ever a user join or has no name, the name will be show as NoName.
+                                            <h2>Commands</h2>
+        commands can be used in the command input box. Here is the list of commands currently and their usage.
+
+        /help                               - shows a list of command
+        /votekick [username]                - vote to kick someone out (anyone can do this) Majority need to accept the
+                                              vote for the kick to be successful.
+        /mail [username] [message message.] - Sends a message to someone while they're offline, the mail will be received
+                                              1 second after the user joined. Server restarts for updates CAN delete the
+                                              mail.
+        /joincustomroom [room]              - joins you to a custom room.
+        /leaveroom [room]                   - leave a room.
+        /changename [name]                  - change your name without needing to interact with the username box.
+        /clearMsg                           - Clear All Messages.
+        /darkMode                           - Enable dark mode.
+        /lightMode                          - Enable Light Mode.
+
+                                             <h2>Files</h2>
+        Files can be send using the file input box to choose a file and click the send file button to send it. File can be
+        receive directly through the chat display where all the messages are displayed there. Files that are sent and then
+        reloaded (or page revisited) are stored inside an area under send file area and can be seen when hover your mouse
+        over the Show Uploaded Files button. The Files will disappear after mouse leaving the area.
+                                            <h2>Messages</h2>
+        Messages is very simple and sending them is very basic like other chat applications. To send a message the normal way,
+        you type in the Type A Message input box and click send or press enter on your keyboard. There are also other ways of
+        sending a message like using /mail or being forced to send by force chat (Admins Only!)
+                                          <h2>Direct Messaging</h2>
+        Direct Messaging is just to put simply, talking to someone privately with a click of a button without needing to know
+        their ID or using rooms. When a user join, it will automatically update and add a new user to the direct message users
+        on the top of the web page.
+    </pre>
+    <button id="backBtn">Back</button>
+    <script>
+        const backBtn = document.getElementById("backBtn")
+        backBtn.onclick = () => {
+            window.open('/index.html', "_self")
+        }
+    </script>
+    <script src="index.cjs"></script>
+</body>
+</html>
