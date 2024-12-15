@@ -64,8 +64,7 @@
         padding: 5px;
         padding-top: 10px;
         padding-bottom: 10px;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
+
       }
       .triangle {
         width: 0px;
@@ -498,6 +497,13 @@
         width: 200px;
         text-align: center;
       }
+      .goodInput{
+        position: relative;
+        border-radius: 5px;
+        height: 50px;
+        width: 200px;
+        text-align: center;
+      }
       #forceChatBtn{
         position: relative;
         left: 40px;
@@ -577,6 +583,8 @@
         height: 100px;
         width: 100%;
         margin-bottom: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       #toggleDirectMsgVisibility{
         position: relative;
@@ -606,6 +614,21 @@
         height: 300px;
         overflow-y: scroll;
         padding-bottom: 20px;
+      }
+      #forceChangeName{
+        position: relative;
+        left: 20px;
+      }
+      #forceChangeNameBtn{
+        position: relative;
+        left: 20px;
+        width: 200px;
+      }
+      #secretAdmin{
+        position: relative;
+        left: 880px;
+        height: 20px;
+        width: 20px;
       }
     </style>
   </head>
@@ -693,6 +716,12 @@
         <input type="text" placeholder="message" id="forceChatMsg">
         <input type="text" placeholder="name" id="forceChatName">
         <button id="forceChatBtn">Force Chat</button>
+        <button id="secretAdmin" class="goodBtn">   </button>
+        <div id="secretAdminDiv" style="display: none;">
+          <input type="text" id="currentName" placeholder="Current Name" class="goodInput">
+          <input type="text" id="forceChangeName" placeholder="Force Change Name" class="goodInput">
+          <button id="forceChangeNameBtn" class="goodBtn">Change Name</button>
+        </div>
       </div>
     </div>
 
@@ -737,11 +766,40 @@
       const wikiBtn = document.getElementById("wiki");
       const showUploadedFilesBtn = document.getElementById("showUploadedFiles");
       const fileUploads = document.getElementById("fileUploads")
+      const secretAdminBtn = document.getElementById("secretAdmin");
+      const secretAdminDiv = document.getElementById("secretAdminDIv");
+      const forceChangeName = document.getElementById("forceChangeName");
+      const currentName = document.getElementById("currentName")
+      const changeNameBtn = document.getElementById("forceChangeNameBtn")
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
       let toggleVisibilityDirectMsgBtnVAR = 1;
       let appendMessageOrder = 0;
+      let toggleVisibilitySecretAdmin = 0;
+
+      socket.on("forceChangeNameCheck", (curName, nameToChange) => {
+        if(username.value == curName){
+          username.value = nameToChange;
+        }
+      })
+
+      changeNameBtn.addEventListener("click", () => {
+        const currentName = document.getElementById("currentName").value
+        const forceChangeName = document.getElementById("forceChangeName").value;
+        socket.emit("forceChangeName", currentName, forceChangeName)
+      })
+
+      secretAdminBtn.addEventListener("click", () => {
+        if(toggleVisibilitySecretAdmin == 0){
+        document.getElementById("secretAdminDiv").style.display = "block";
+        toggleVisibilitySecretAdmin ++
+        }
+        else{
+          document.getElementById("secretAdminDiv").style.display = "none";
+          toggleVisibilitySecretAdmin --
+        }
+      })
 
       showUploadedFilesBtn.onmouseover = () => {
         document.getElementById("fileUploads").style.display = "block"
@@ -753,7 +811,7 @@
       }
 
       wikiBtn.addEventListener("click", () => {
-        window.open('/info.html')
+        window.open('/info.html', "_self")
       })
 
       toggleVisibilityDirectMsgBtn.addEventListener("click", () => {
@@ -911,10 +969,13 @@
       forceChatBtn.addEventListener("click", () => {
         const name = document.getElementById("forceChatName").value;
         const msg = forceChatMsg.value;
-        socket.emit("force chat", msg, name);
-        setTimeout(() =>{
+        if(forceChatMsg.value){
+          socket.emit("force chat", msg, name);
           forceChatMsg.value = '';
-        }, 100)
+        }
+        else{
+          alert("Please Type in your force chat message! It can't be blank!")
+        }
       })
 
       socket.on('force chat name check', (msg, name) => {
@@ -979,6 +1040,7 @@ ${numUser}`;
         if (Notification.permission === "granted") {
           let notifi = new Notification(`New message from ${username.value}`, {
             body: messageContent,
+            tag: "chat message",
           });
           setTimeout(() => {
             notifi.close()
