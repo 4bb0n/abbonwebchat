@@ -14,6 +14,8 @@ let numKickRejected = 0;
 let onlineUsers = [];
 let offlineUsers = [];
 let offlineMessages = {}
+let getUsersOnlineArray = [];
+let bannedUsers = {};
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -183,7 +185,7 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('chat message2', (msg) => {
     socket.broadcast.emit('chat message', msg)
   })
-  socket.on('command', (command, username) => {
+  socket.on('command', (command, username, adminPerm) => {
     console.log(command)
     let commandType = command.split(' ')[0]
     let usernameForVoteKick = command.split(' ').slice(1).join(" ")
@@ -236,6 +238,17 @@ socket.on("force disconnect", (targetUsername) => {
     else if(commandType == '/lightmode'){
       socket.emit("lightModeCommand")
     }
+    else if(commandType == '/ban'){
+      if(adminPerm){
+        let banVictim = command.split(" ")[1]
+        let banDuration = command.split(" ")[2]
+        let banReason = command.split(" ").slice(3)
+        socket.broadcast.emit("banCommand", banVictim, banDuration, banReason)
+      }
+        else{
+          socket.emit("chat message4", "You do not have permission to use this command");
+        }
+    }
     else{
       socket.emit("unknown command")
     }
@@ -268,7 +281,7 @@ socket.on("force disconnect", (targetUsername) => {
   })
   socket.emit('get name')
   socket.on('name return', (username) => {
-    console.log(username)
+    console.log(username);
     onlineUsers.push(username)
     console.log('online users: ' + onlineUsers)
   })
@@ -293,12 +306,6 @@ for(let i = 0; i < 5; i++){
   io.emit("checkWhoIsOnline", onlineUsers)
   socket.emit("checkWhoIsOnline", onlineUsers)
 }
-socket.on("directMsgUserId", (username) => {
-  io.emit("directMsgUserIdCheck", username)
-})
-socket.on("directMsgUserIdReturnCheck", (id) => {
-  io.emit("directMsgUserIdReturn", id)
-})
 socket.on("connected", (username) => {
   io.emit("connected", username)
 })
@@ -314,10 +321,41 @@ app.get('/index.html', (req, res) => {
 socket.on("forceChangeName", (curName, nameToChange) => {
   socket.broadcast.emit("forceChangeNameCheck", curName, nameToChange)
 })
+socket.on("getUsersOnline", () => {
+  socket.broadcast.emit("getUsersOnlineCheck", onlineUsers)
+})
+socket.on("returnUsersOnlineCheck", username => {
+  getUsersOnlineArray.push(username);
+  getUsersOnlineArray = removeDuplicates(getUsersOnlineArray);
+  io.emit("updateOnlineUsers2", getUsersOnlineArray)
+  console.log("getUsersOnlineArray = " + getUsersOnlineArray)
+})
+socket.on('userBanned', (banVictim, banDuration, banReason) => {
+  io.emit("userBannedBroadcast", banVictim, banDuration, banReason)
+  bannedUsers[banVictim] = [banDuration]
+  setTimeout(() => {
+    delete bannedUsers[banVictim];
+  }, banDuration * 1000)
+  console.log(bannedUsers)
+})
+socket.on("getNameServer", username => {
+  if(bannedUsers[username] == undefined){
+    return;
+  }
+  else if(bannedUsers[username] !== undefined){
+    socket.emit("userIsBanned")
+  }
+})
+setTimeout(() => {
+  getNameServer()
+}, 1000)
+function getNameServer(){
+  io.emit("getNameServer")
+}
 //end of io.on('connection')
 });
 
-const deleteilesInFolder = (folderPath) => {
+const deleteFilesInFolder = (folderPath) => {
   fs.readdir(folderPath, (err, files) => {
       if (err) throw err;
 
