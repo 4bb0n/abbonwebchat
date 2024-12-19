@@ -53,10 +53,10 @@ socket.on("force disconnect", (targetUsername) => {
     console.log(msg)
   })
 
-  socket.on('chat message', (msg, room, username) => {
+  socket.on('chat message', (msg, room, username, textColour) => {
     // Broadcast message to all clients except the one that sent it
     if(room == ''){
-    socket.broadcast.emit('chat message', msg, username);
+    socket.broadcast.emit('chat message', msg, username, textColour);
     socket.broadcast.emit('new message notification', msg);
     console.log(msg)
     console.log(`directMsg = ${username}`)
@@ -146,6 +146,7 @@ socket.on("force disconnect", (targetUsername) => {
     socket.broadcast.emit("disconnected", numUsers, date)
     io.emit("checkWhoIsOnline")
     io.emit('user count', numUsers)
+    io.emit("updateOnlineUsers2", numUsers)
   });
   socket.on('checkWhoIsOnline', (username) => {
     tempArray.push(username)
