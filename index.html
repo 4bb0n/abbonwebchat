@@ -650,18 +650,33 @@
         position: relative;
         left: 40rem;
       }
-      #redChatmessageTextColour {
+      #redChatMessageTextColour {
         background-color: red;
         position: relative;
         left: 40rem;
       }
-      #yellowChatMessagetextColour {
+      #yellowChatMessageTextColour {
         background-color: yellow;
         position: relative;
         left: 40rem;
       }
-      #greenChatMessagetextColour {
+      #greenChatMessageTextColour {
         background-color: green;
+        position: relative;
+        left: 40rem;
+      }
+      #pinkChatMessageTextColour {
+        background-color: pink;
+        position: relative;
+        left: 40rem;
+      }
+      #blueChatMessageTextColour {
+        background-color: blue;
+        position: relative;
+        left: 40rem;
+      }
+      #purpleChatMessageTextColour {
+        background-color: purple;
         position: relative;
         left: 40rem;
       }
@@ -676,6 +691,15 @@
       }
       .green {
         color: green;
+      }
+      .pink {
+        color: pink;
+      }
+      .blue{
+        color: blue;
+      }
+      .purple{
+        color: purple;
       }
     </style>
   </head>
@@ -753,18 +777,14 @@ Users online:
     <br />
     <h3 id="speechBoxColour">chat message text colour</h3>
 
-    <button
-      id="blackChatMessageTextColour"
-      style="height: 50px; width: 50px"></button>
-    <button
-      id="redChatmessageTextColour"
-      style="height: 50px; width: 50px"></button>
-    <button
-      id="yellowChatMessagetextColour"
-      style="height: 50px; width: 50px"></button>
-    <button
-      id="greenChatMessagetextColour"
-      style="height: 50px; width: 50px"></button>
+    <button id="blackChatMessageTextColour"style="height: 50px; width: 50px"></button>
+    <button id="redChatMessageTextColour"style="height: 50px; width: 50px"></button>
+    <button id="yellowChatMessageTextColour"style="height: 50px; width: 50px"></button>
+    <button id="greenChatMessageTextColour"style="height: 50px; width: 50px"></button>
+    <br>
+    <button id="pinkChatMessageTextColour" style="height: 50px; width: 50px"></button>
+    <button id="blueChatMessageTextColour" style="height: 50px; width: 50px"></button>
+    <button id="purpleChatMessageTextColour" style="height: 50px; width: 50px"></button>
     <pre>
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre
     >
@@ -856,18 +876,13 @@ Users online:
       const forceChangeName = document.getElementById("forceChangeName");
       const currentName = document.getElementById("currentName");
       const changeNameBtn = document.getElementById("forceChangeNameBtn");
-      const blackChatMessageTextColour = document.getElementById(
-        "blackChatMessageTextColour"
-      );
-      const redChatMessageTextColour = document.getElementById(
-        "redChatMessageTextColour"
-      );
-      const greenChatMessageTextColour = document.getElementById(
-        "greenChatMessageTextColour"
-      );
-      const yellowChatMessageTextColour = document.getElementById(
-        "yellowChatMessageTextColour"
-      );
+      const blackChatMessageTextColour = document.getElementById("blackChatMessageTextColour");
+      const redChatMessageTextColour = document.getElementById("redChatMessageTextColour");
+      const greenChatMessageTextColour = document.getElementById("greenChatMessageTextColour");
+      const yellowChatMessageTextColour = document.getElementById("yellowChatMessageTextColour");
+      const pinkChatMessageTextColour = document.getElementById("pinkChatMessageTextColour");
+      const blueChatMessageTextColour = document.getElementById("blueChatMessageTextColour");
+      const purpleChatMessageTextColour = document.getElementById("purpleChatMessageTextColour");
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
@@ -876,6 +891,48 @@ Users online:
       let toggleVisibilitySecretAdmin = 0;
       let adminPerm = false;
       let chatMessageTextColour = "";
+
+      purpleChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "purple";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      })
+
+      blueChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "blue";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      })
+
+      pinkChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "pink";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      })
+
+      yellowChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "yellow";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      })
+
+      greenChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "green";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      });
+
+      redChatMessageTextColour.addEventListener("click", () => {
+        chatMessageTextColour = "red";
+        appendMessage(
+          `Your chat message text colour is now ${chatMessageTextColour}`
+        );
+      })
 
       blackChatMessageTextColour.addEventListener("click", () => {
         chatMessageTextColour = "black";
@@ -1311,31 +1368,13 @@ ${numUser}`;
         if (desUsername == username.value) {
           console.log("direct message received");
           const newMessage = addMessage("received", msg);
-          switch (textColour) {
-            case "black":
-              newMessage.classList.add("black");
-              break;
-            case "white":
-              newMessage.classList.add("white");
-              break;
-            case "red":
-              newMessage.classList.add("red");
-              break;
-            case "green":
-              newMessage.classList.add("green");
-              break;
-            case "blue":
-              newMessage.classList.add("yellow");
-              break;
-            default:
-              appendMessage(newMessage.content);
-              break;
-          }
+          appendMessage(newMessage.content);
         } else if (desUsername == "") {
           console.log("global message received");
           const newMessage = addMessage("received", msg);
-          appendMessage(newMessage.content);
+          appendMessage(newMessage.content, textColour);
         }
+        console.log(textColour)
       });
 
       socket.on("mail message", (msg) => {
@@ -1427,10 +1466,36 @@ ${numUser}`;
       }
 
       // Keep your existing appendMessage and appendSenderMessage functions
-      function appendMessage(msg) {
+      function appendMessage(msg, textColour) {
         const chatDisplay = document.getElementById("chat-display");
         const newMessage = document.createElement("div");
         newMessage.classList.add("newMessage");
+        switch (textColour) {
+            case "black":
+              newMessage.classList.add("black");
+              break;
+            case "white":
+              newMessage.classList.add("white");
+              break;
+            case "red":
+              newMessage.classList.add("red");
+              break;
+            case "green":
+              newMessage.classList.add("green");
+              break;
+            case "blue":
+              newMessage.classList.add("blue");
+              break;
+            case "yellow":
+              newMessage.classList.add("yellow");
+              break;
+            case "pink":
+              newMessage.classList.add("pink");
+              break;
+            case "purple":
+              newMessage.classList.add("purple");
+              break;
+          }
         chatDisplay.appendChild(newMessage);
         newMessage.textContent = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
@@ -1443,20 +1508,29 @@ ${numUser}`;
         newMessage.classList.add("senderMessage");
         switch (chatMessageTextColour) {
           case "black":
-            newMessage.classList.add("black");
-            break;
-          case "white":
-            newMessage.classList.add("white");
-            break;
-          case "red":
-            newMessage.classList.add("red");
-            break;
-          case "green":
-            newMessage.classList.add("green");
-            break;
-          case "blue":
-            newMessage.classList.add("yellow");
-            break;
+              newMessage.classList.add("black");
+              break;
+            case "white":
+              newMessage.classList.add("white");
+              break;
+            case "red":
+              newMessage.classList.add("red");
+              break;
+            case "green":
+              newMessage.classList.add("green");
+              break;
+            case "blue":
+              newMessage.classList.add("blue");
+              break;
+            case "yellow":
+              newMessage.classList.add("yellow");
+              break;
+            case "pink":
+              newMessage.classList.add("pink");
+              break;
+            case "purple":
+              newMessage.classList.add("purple");
+              break;
         }
         newMessage.contentEditable = true;
         chatDisplay.appendChild(newMessage);
