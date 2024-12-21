@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+        #backBtn{
+            position: relative;
+            top: 600px;
+            right: 600px;
+            height: 40px;
+            width: 300px;
+            font-size: large;
+            background-color: aqua;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+        }
+        .users{
+            width: 80%;
+            height: 50px;
+            font-size: 25px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <div id="usersContainer">
+
+    </div>
+    <button id="backBtn">Back</button>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script>
+        const socket = io()
+
+        const backBtn = document.getElementById('backBtn')
+
+        backBtn.addEventListener('click', () => {
+            window.open('/', '_self')
+        })
+
+        socket.on('adminGetUsernameReturn', users => {
+            users.forEach(user => {
+                const button = document.createElement('button')
+                const kickBtn = document.createElement('button')
+                kickBtn.textContent = 'KICK'
+                button.textContent = user
+                button.classList.add('users')
+                button.appendChild(kickBtn)
+                document.getElementById('usersContainer').appendChild(button)
+            })
+            console.log(users)
+        })
+        document.addEventListener('DOMContentLoaded', () => {
+            socket.emit("adminGetUsername")
+        })
+        function getName() {
+        socket.emit("get-name-function");
+      }
+    </script>
+</body>
+</html>
