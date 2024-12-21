@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        input{
+            height: 40px;
+            width: 225px;
+            border-radius: 10px;
+            font-size: 20px;
+            border-width: 1px;
+            font-family: monospace;
+            background-color: rgb(0, 8, 33);
+            color: white;
+            box-shadow: none;
+            margin-top: 3px;
+        }
+        #password{
+            position: relative;
+        }
+        #loginBtn{
+            position: relative;
+            height: 50px;
+            width: 200px;
+            font-size: large;
+            margin-top: 10px;
+            background-color: lightgray;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px black;
+        }
+        #loginBtn:hover{
+            background-color: rgb(200, 200, 200);
+        }
+        #loginForm{
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Account</h1>
+    <br>
+    <div id="loginForm">
+    <input id="username" placeholder="username"><br>
+    <input id="password" placeholder="password" type="password"><br>
+    <button id="loginBtn">Login</button>
+    </div>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script>
+        const socket = io()
+              document.getElementById("loginBtn").addEventListener("click", () => {
+        const password = document.getElementById("password").value;
+        localStorage.setItem("password", password);
+        if (password == "stcxkl@ctdvn") {
+          socket.emit("loginCorrect")
+        } else {
+          return;
+        }
+      });
+      socket.on("loggedIn", () => {
+        localStorage.setItem("adminId", '2405')
+        window.open('/', "_self")
+      })
+    </script>
+</body>
+</html>
