@@ -16,6 +16,7 @@ let offlineUsers = [];
 let offlineMessages = {}
 let getUsersOnlineArray = [];
 let bannedUsers = {};
+let usersFunction = [];
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 let numUsers = 0;
 const chatLogPath = path.join(__dirname, 'messages.txt');
 io.on('connection', (socket) => {
+  let fileToDownload = ""
   numUsers++;
   let date = new Date();
   console.log(`A user connected at ${date}. Total users: ${numUsers} with the id of ${socket.id}`);
@@ -45,13 +47,8 @@ io.on('connection', (socket) => {
 })
 socket.on("force disconnect", (targetUsername) => {
   io.emit('force disconnect broadcast alert message', targetUsername)
-  console.log("force disconnected")
   socket.disconnect();
 })
-  socket.on('force chat', msg => {
-    socket.broadcast.emit('force chat2')
-    console.log(msg)
-  })
 
   socket.on('chat message', (msg, room, username, textColour) => {
     // Broadcast message to all clients except the one that sent it
@@ -59,29 +56,16 @@ socket.on("force disconnect", (targetUsername) => {
     socket.broadcast.emit('chat message', msg, username, textColour);
     socket.broadcast.emit('new message notification', msg);
     console.log(msg)
-    console.log(`directMsg = ${username}`)
     }
     else{
       socket.to(room).emit('chat message', msg); 
     }
-    
-    // Append the message to the chat log file
-    const logEntry = `${msg}`+'\n';
-    fs.appendFile(chatLogPath, logEntry, err => {
-      if (err) {
-        console.error('Error writing to chat log:', err);
-        socket.emit('log-error', 'Failed to log chat message');
-      } else {
-        socket.emit('log-success', 'Message logged');
-      }
-    });
   });
   fs.readFileSync('messages.txt', 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading chat log:', err);
     } else {
       io.emit('chat log', data);
-      console.log(data)
     }
   });
 
@@ -102,6 +86,7 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('send-file', (fileData) => {
     const { fileName, fileContent } = fileData;
     const filePath = path.join(__dirname, 'uploads', fileName);
+    fileToDownload = __dirname + filePath;
   
     // Delete all files in the uploads directory
     fs.readdir(path.join(__dirname, 'uploads'), (err, files) => {
@@ -131,7 +116,7 @@ socket.on("force disconnect", (targetUsername) => {
           socket.emit('file-error', 'Error saving file');
         } else {
           console.log('File saved:', fileName);
-          io.emit('file-received', { fileName, fileContent });
+          io.emit('file-received', {fileName, fileContent });
         }
       });
     });
@@ -282,8 +267,8 @@ socket.on("force disconnect", (targetUsername) => {
   })
   socket.emit('get name')
   socket.on('name return', (username) => {
-    console.log(username);
     onlineUsers.push(username)
+    socket.emit("adminGetUsernameReturn", onlineUsers)
     console.log('online users: ' + onlineUsers)
   })
   setTimeout(() => {
@@ -314,7 +299,8 @@ app.get('/info.html', (req, res) => {
   res.sendFile(__dirname + '/info.html')
 })
 app.get('/download', (req, res) => {
-  res.send('/uploads/')
+  res.send(fileToDownload)
+  res.download(fileToDownload)
 })
 app.get('/index.html', (req, res) => {
   res.sendFile(__dirname + '/index.html')
@@ -353,21 +339,32 @@ setTimeout(() => {
 function getNameServer(){
   io.emit("getNameServer")
 }
+app.get('/account.html', (req, res) => {
+  res.sendFile(__dirname + '/account.html')
+})
+socket.on("loginCorrect", () => {
+  socket.emit("loggedIn")
+  console.log('received login')
+})
+app.get('/adminPanel.html', (req, res) => {
+  res.sendFile(__dirname + '/adminPanel.html')
+})
+socket.on('chat message4', (msg, room, username, textColour) => {
+  // Broadcast message to all clients except the one that sent it
+  if(room == ''){
+  socket.broadcast.emit('chat message', msg, username, textColour);
+  socket.broadcast.emit('new message notification', msg);
+  console.log(msg)
+  }
+  else{
+    socket.to(room).emit('chat message', msg); 
+  }
+});
+socket.on("chat message5", msg => {
+  socket.broadcast.emit('chat message5', msg);
+})
 //end of io.on('connection')
 });
-
-const deleteFilesInFolder = (folderPath) => {
-  fs.readdir(folderPath, (err, files) => {
-      if (err) throw err;
-
-      files.forEach(file => {
-          const filePath = path.join(folderPath, file);
-          fs.unlink(filePath, (err) => {
-              if (err) throw err;
-          });
-      });
-  });
-};
 
 
 const PORT = 3000
