@@ -23,12 +23,112 @@
             box-shadow: 2px 2px 2px;
         }
         .users{
+            position: relative;
             width: 80%;
             height: 50px;
             font-size: 25px;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
             text-align: left;
+            background-color: lightgray;
+            border: none;
+            margin-top: 3px;
         }
+        .kickBtn{
+            position: absolute;
+            left: 1100px;
+            height: 30px;
+            width: 70px;
+            font-size: 15px;
+            background-color: rgb(255, 66, 66);
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+        }
+        .forceChatInput{
+            position: absolute;
+            height: 30px;
+            width: 70px;
+            font-size: 15px;
+        }
+        .forceChatBtn{
+            position: absolute;
+            left: 500px;
+            bottom: 5px;
+            height: 40px;
+            width: 100px;
+            font-size: 15px;
+            background-color: orange;
+            animation-name: rainbowBackground;
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+        }
+        .forceChatInput{
+            position: absolute;
+            left: 270px;
+            bottom: 5px;
+            height: 40px;
+            width: 200px;
+            font-size: 15px;
+            box-shadow: 2px 2px 2px;
+        }
+        @keyframes rainbowBackground {
+            10% {
+                background-color: red;
+            }
+            20% {
+                background-color: orangered;
+            }
+            25% {
+                background-color: rgb(255, 111, 0);
+            }
+            30% {
+                background-color: yellow;
+            }
+            35% {
+                background-color: yellowgreen;
+            }
+            40% {
+                background-color: lime;
+            }
+            45% {
+                background-color: springgreen;
+            }
+            50% {
+                background-color: cyan;
+            }
+            55% {
+                background-color: lightblue;
+            }
+            60% {
+                background-color: blue;
+            }
+            65% {
+                background-color: mediumpurple;
+            }
+            70% {
+                background-color: magenta;
+            }
+            75% {
+                background-color: fuchsia;
+            }
+            80% {
+                background-color: violet;
+            }
+            85% {
+                background-color: indigo;
+            }
+            90% {
+                background-color: darkviolet;
+            }
+            95% {
+                background-color: darkorchid;
+            }
+            100% {
+                background-color: darkmagenta;
+            }
+            }
+            
     </style>
 </head>
 <body>
@@ -41,27 +141,43 @@
     <script src="index.cjs"></script>
     <script>
         const socket = io()
-
         const backBtn = document.getElementById('backBtn')
 
         backBtn.addEventListener('click', () => {
             window.open('/', '_self')
         })
 
-        socket.on('adminGetUsernameReturn', users => {
+        socket.on('updateOnlineUsers2', users => {
             users.forEach(user => {
                 const button = document.createElement('button')
                 const kickBtn = document.createElement('button')
+                const forceChatInput = document.createElement('input')
+                const forceChatBtn = document.createElement('button')
+                forceChatInput.placeholder = 'message'
+                forceChatInput.classList.add('forceChatInput')
+                forceChatBtn.classList.add('forceChatBtn')
+                forceChatBtn.textContent = 'Force Chat'
                 kickBtn.textContent = 'KICK'
+                kickBtn.classList.add('kickBtn')
                 button.textContent = user
                 button.classList.add('users')
                 button.appendChild(kickBtn)
+                button.appendChild(forceChatInput)
+                button.appendChild(forceChatBtn)
+                kickBtn.addEventListener('click', () => {
+                    socket.emit('kick-user', user)
+                    button.remove()
+                })
+                forceChatBtn.addEventListener('click', () => {
+                    socket.emit('force chat', forceChatInput.value, user)
+                    forceChatInput.value = ''
+                })
                 document.getElementById('usersContainer').appendChild(button)
             })
             console.log(users)
         })
         document.addEventListener('DOMContentLoaded', () => {
-            socket.emit("adminGetUsername")
+            socket.emit("returnUsersOnlineCheck", localStorage.getItem("username"));
         })
         function getName() {
         socket.emit("get-name-function");
