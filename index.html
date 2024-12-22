@@ -763,7 +763,7 @@
     <button id="wiki" class="goodBtn" class="rightSideBarElement">Help Wiki</button>
     <br>
     <button id="updateLog" class="goodBtn" class="rightSideBarElement">Update Log</button>
-    <button id="adminPanelBtn" class="goodBtn" class="rightSideBarElement">Admin Panel</button>
+    <button id="adminPanelBtn" class="goodBtn" class="rightSideBarElement" style="display: none">Admin Panel</button>
     <button id="accountBtn" class="goodBtn rightSideBarElement">Account</button>
     </div>
     
@@ -1658,7 +1658,9 @@ ${numUser}`;
         const adminId = localStorage.getItem("adminId");
         if(adminId == "2405"){
         adminPermissions = true;
+        adminPerm = true;
         document.getElementById("AdminUIContainer").style.display = "initial";
+        document.getElementById("adminPanelBtn").style.display = "initial";
         appendMessage("You have admin permissions!");
         console.log('adminPermGranted')
         }
