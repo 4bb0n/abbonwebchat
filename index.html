@@ -130,7 +130,7 @@
         position: relative;
         bottom: 30px;
         left: 70px;
-        top: 50px;
+        top: 70px;
       }
       #loginBtn:hover {
         background-color: rgb(240, 240, 240);
@@ -257,14 +257,14 @@
         font-family: Trebuchet MS, sans-serif;
         font-weight: bold;
         box-shadow: 2px 2px 2px;
-        position: relative;
-        left: 20px;
-        top: 50px;
+        position: absolute;
+        left: 81rem;
+        top: 670px;
       }
       #userInfo {
-        position: relative;
+        position: absolute;
         left: 1059px;
-        bottom: 100px;
+        top: 680px;
       }
       #file-send-button {
         height: 40px;
@@ -602,10 +602,9 @@
       }
       #wiki {
         position: relative;
-        left: 1300px;
-        bottom: 80px;
         width: 200px;
-        height: 30px;
+        height: 50px;
+        margin-top: 5px;
       }
       #showUploadedFiles {
         width: 300px;
@@ -701,6 +700,40 @@
       .purple{
         color: purple;
       }
+      #updateLog {
+        position: relative;
+        width: 200px;
+        height: 50px;
+        margin-top: 5px;
+      }
+      #rightSideBarContainer {
+        position: absolute;
+        left: 1300px;
+        width: 200px;
+      }
+      .rightSideBarElement{
+        position: relative;
+        width: 200px;
+        height: 50px;
+        margin-top: 5px;
+      }
+      .rightSideBarElement:hover{
+        box-shadow: 0px 0px 0px 5px blue;
+      }
+      #adminPanelBtn {
+        position: relative;
+        width: 200px;
+        margin-top: 5px;
+      }
+      #adminPanelBtn:hover{
+        box-shadow: 0px 0px 0px 5px blue;
+      }
+      #updateLog:hover{
+        box-shadow: 0px 0px 0px 5px blue;
+      }
+      #wiki:hover{
+        box-shadow: 0px 0px 0px 5px blue;
+      }
     </style>
   </head>
   <body>
@@ -725,7 +758,15 @@
         placeholder="command | Type /help for help" />
       <button id="sendCommandBtn">Send Command</button>
     </div>
-    <button id="wiki" class="goodBtn">Help Wiki</button>
+    
+    <div id="rightSideBarContainer">
+    <button id="wiki" class="goodBtn" class="rightSideBarElement">Help Wiki</button>
+    <br>
+    <button id="updateLog" class="goodBtn" class="rightSideBarElement">Update Log</button>
+    <button id="adminPanelBtn" class="goodBtn" class="rightSideBarElement">Admin Panel</button>
+    <button id="accountBtn" class="goodBtn rightSideBarElement">Account</button>
+    </div>
+    
     <div id="voteKickDiv" style="display: none">
       <button id="acceptKick">Accept Kick</button>
       <button id="rejectKick">Reject Kick</button>
@@ -742,18 +783,17 @@
     <div id="fileUploads" style="display: none">
       <div id="uploadedFiles"></div>
     </div>
-    <div id="userInfo">
-      <input
-        placeholder="username"
-        id="username"
-        autocomplete="off"
-        type="username" /><br />
+    <input
+    placeholder="username"
+    id="username"
+    autocomplete="off"
+    type="username" />
+    <div id="userInfo" style="display: none;"><br />
       <input
         type="password"
         id="password"
         placeholder="password*"
         autocomplete="off" />
-      <p id="note">*for admins only!</p>
       <br />
       <button id="loginBtn">Login</button>
     </div>
@@ -883,6 +923,9 @@ Users online:
       const pinkChatMessageTextColour = document.getElementById("pinkChatMessageTextColour");
       const blueChatMessageTextColour = document.getElementById("blueChatMessageTextColour");
       const purpleChatMessageTextColour = document.getElementById("purpleChatMessageTextColour");
+      const showUpdateLogBtn = document.getElementById("updateLog");
+      const accountBtn = document.getElementById("accountBtn");
+      const adminPanelBtn = document.getElementById("adminPanelBtn");
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
@@ -891,6 +934,47 @@ Users online:
       let toggleVisibilitySecretAdmin = 0;
       let adminPerm = false;
       let chatMessageTextColour = "";
+
+      socket.on("chat message5", (msg, desUsername, textColour) => {
+        msg = msg
+          .replaceAll("sigma", "*FORBIDDEN WORD*")
+          .replaceAll("ohio", "*FORBIDDEN WORD*")
+          .replaceAll("skibidi", "*FORBIDDEN WORD*")
+          .replaceAll("rizzler", "*FORBIDDEN WORD*")
+          .replaceAll("rizz", "*FORBIDDEN WORD*")
+          .replaceAll("OHIO", "*FORBIDDEN WORD*")
+          .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+          .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+          .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+          .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+          .replaceAll("$igma", "*FORBIDDEN WORD*")
+          .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+          .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+          .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+          .replaceAll("fuck", "*FORBIDDEN WORD*")
+          .replaceAll("FUCK", "*FORBIDDEN WORD*");
+        if (desUsername == username.value) {
+          console.log("direct message received");
+          const newMessage = addMessage("received", msg);
+          appendMessage(newMessage.content);
+        } else if (desUsername == "") {
+          console.log("global message received");
+          const newMessage = addMessage("received", msg);
+          appendMessage(newMessage.content, textColour);
+        }
+      });
+
+      adminPanelBtn.addEventListener("click", () => {
+        window.open("/adminPanel.html","_self")
+      })
+
+      accountBtn.addEventListener("click", () => {
+        window.open("/account.html","_self")
+      })
+
+      showUpdateLogBtn.addEventListener("click", () => {
+        window.open("https://github.com/4bb0n/abbonwebchat/commits/main/")
+      })
 
       purpleChatMessageTextColour.addEventListener("click", () => {
         chatMessageTextColour = "purple";
@@ -1008,6 +1092,7 @@ Users online:
             button.classList.add("directMsgBtns");
             directMsgDiv.appendChild(button);
             button.addEventListener("click", () => {
+              chatDisplay.textContent = "";
               appendMessage("You are now talking to " + user);
               directMsgPerson = user;
             });
@@ -1073,6 +1158,7 @@ Users online:
         button.classList.add("directMsgBtns");
         directMsgDiv.appendChild(button);
         button.addEventListener("click", () => {
+          chatDisplay.textContent = "";
           appendMessage("You are now talking to " + username);
           directMsgPerson = username;
         });
@@ -1230,10 +1316,33 @@ Users online:
       socket.on("force chat name check", (msg, name) => {
         const username = document.getElementById("username").value;
         if (username == name) {
-          console.log("name matched, ready to kick!", name);
-          socket.emit("chat message2", `${name}: ${msg}`);
-          appendSenderMessage(`YOU: ${msg}`);
-          addMessage("sender", `${name}: ${msg}`);
+          msg = msg
+          .replaceAll("sigma", "*FORBIDDEN WORD*")
+            .replaceAll("ohio", "*FORBIDDEN WORD*")
+            .replaceAll("skibidi", "*FORBIDDEN WORD*")
+            .replaceAll("rizzler", "*FORBIDDEN WORD*")
+            .replaceAll("rizz", "*FORBIDDEN WORD*")
+            .replaceAll("OHIO", "*FORBIDDEN WORD*")
+            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+            .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+            .replaceAll("$igma", "*FORBIDDEN WORD*")
+            .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+            .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+            .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+            //please, forgive me but I have to ban it! I have to write it down
+            .replaceAll("fuck", "*FORBIDDEN WORD*")
+            .replaceAll("shit", "*FORBIDDEN WORD*")
+            .replaceAll("bitch", "*FORBIDDEN WORD*");
+          const username = usernameInput.value;
+          const senderMessage = msg;
+          const newMessage = addMessage("sender", "YOU: " + senderMessage);
+          appendSenderMessage(newMessage.content);
+          const room = document.getElementById("room").value;
+          socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour);
+          input.value = "";
+          chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
       });
 
@@ -1273,22 +1382,12 @@ ${numUser}`;
             body: messageContent,
             tag: "chat message",
           });
+          console.log("Notification sent");
           setTimeout(() => {
             notifi.close();
           }, 2000);
         }
       }
-
-      loginBtn.addEventListener("click", () => {
-        const password = document.getElementById("password").value;
-        localStorage.setItem("password", password);
-        if (password == "stcxkl@ctdvn") {
-          document.getElementById("AdminUIContainer").style.display = "initial";
-          adminPerm = true;
-        } else {
-          adminPerm = false;
-        }
-      });
 
       clearAllMsg.addEventListener("click", () => {
         localStorage.removeItem("chatMessages");
@@ -1374,7 +1473,6 @@ ${numUser}`;
           const newMessage = addMessage("received", msg);
           appendMessage(newMessage.content, textColour);
         }
-        console.log(textColour)
       });
 
       socket.on("mail message", (msg) => {
@@ -1428,13 +1526,7 @@ ${numUser}`;
           const newMessage = addMessage("sender", "YOU: " + senderMessage);
           appendSenderMessage(newMessage.content);
           const room = document.getElementById("room").value;
-          socket.emit(
-            "chat message",
-            `${username} : ${senderMessage}`,
-            room,
-            directMsgPerson,
-            chatMessageTextColour
-          );
+          socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour);
           input.value = "";
           chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
@@ -1552,13 +1644,6 @@ ${numUser}`;
         const messages = loadMessagesFromLocalStorage();
         displayFileMessages(fileMessages);
         displayMessages(messages);
-
-        const password = localStorage.getItem("password");
-        document.getElementById("password").value = password;
-        if (password == "stcxkl@ctdvn") {
-          document.getElementById("AdminUIContainer").style.display = "initial";
-          adminPerm = true;
-        }
         const savedUsername = localStorage.getItem("username");
         if (savedUsername) {
           username.value = savedUsername;
@@ -1570,6 +1655,14 @@ ${numUser}`;
         }
         socket.emit("getUsersOnline");
         socket.emit("connected", username.value);
+        const adminId = localStorage.getItem("adminId");
+        if(adminId == "2405"){
+        adminPermissions = true;
+        document.getElementById("AdminUIContainer").style.display = "initial";
+        appendMessage("You have admin permissions!");
+        console.log('adminPermGranted')
+        }
+        console.log(adminId)
       });
 
       // force kick packet receiver
@@ -1929,19 +2022,6 @@ ${numUser}`;
         input.style.backgroundColor = "#dadada";
         input.style.color = "black";
         input.placeholder.style.color = "black";
-      });
-
-      darkBlueSpeechBoxBtn.addEventListener("click", () => {
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("senderMessage").length;
-          i++
-        ) {
-          document.getElementsByClassName("senderMessage")[
-            i
-          ].style.backgroundImage =
-            "linear-gradient(180deg, rgba(3,251,252,1) 23%, rgba(0,9,255,1) 100%);";
-        }
       });
 
       socket.on("connection", () => {
