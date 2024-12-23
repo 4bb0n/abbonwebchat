@@ -24,7 +24,7 @@
 
       #chat-display {
         height: 400px;
-        width: 100%;
+        width: 86%;
         font-size: 20px;
         background-color: #f5f5f5;
         font-family: sans-serif;
@@ -103,7 +103,7 @@
         box-shadow: 3px 3px 2px;
         border-width: 3px;
         border-color: #000000;
-        width: 85%;
+        width: 75%;
         height: 50px;
         font-family: helvetica;
         background-color: whitesmoke;
@@ -148,9 +148,9 @@
       #note {
         font-size: 10x;
         position: relative;
-        left: 70px;
+        left: 68rem;
+        bottom: 150px;
         color: red;
-        top: 50px;
       }
       #file-input {
         height: 50px;
@@ -253,13 +253,11 @@
       }
       #username {
         height: 40px;
+        width: 200px;
         text-align: center;
         font-family: Trebuchet MS, sans-serif;
         font-weight: bold;
         box-shadow: 2px 2px 2px;
-        position: absolute;
-        left: 81rem;
-        top: 670px;
       }
       #userInfo {
         position: absolute;
@@ -585,17 +583,19 @@
         height: 60px;
       }
       #directMsg {
-        position: relative;
-        background-color: #b0b1ff;
+        position: sticky;
+        top: 0;
+        background-color: darkgray;
         height: 100px;
         width: 100%;
         margin-bottom: 20px;
         overflow-y: scroll;
+        opacity: 10;
       }
       #toggleDirectMsgVisibility {
         position: relative;
         bottom: 10px;
-        left: 1200px;
+        left: 1000px;
         height: 30px;
         font-size: normal;
         width: 300px;
@@ -707,9 +707,13 @@
         margin-top: 5px;
       }
       #rightSideBarContainer {
-        position: absolute;
-        left: 1300px;
-        width: 200px;
+        position: fixed;
+        text-align: center;
+        background-color: limegreen;
+        top: 0;
+        left: 1310px;
+        width: 210px;
+        height: 100%
       }
       .rightSideBarElement{
         position: relative;
@@ -765,6 +769,7 @@
     <button id="updateLog" class="goodBtn" class="rightSideBarElement">Update Log</button>
     <button id="adminPanelBtn" class="goodBtn" class="rightSideBarElement" style="display: none">Admin Panel</button>
     <button id="accountBtn" class="goodBtn rightSideBarElement">Account</button>
+    <input placeholder="username" id="username" autocomplete="off" type="username" class="rightSideBarElement">
     </div>
     
     <div id="voteKickDiv" style="display: none">
@@ -783,11 +788,6 @@
     <div id="fileUploads" style="display: none">
       <div id="uploadedFiles"></div>
     </div>
-    <input
-    placeholder="username"
-    id="username"
-    autocomplete="off"
-    type="username" />
     <div id="userInfo" style="display: none;"><br />
       <input
         type="password"
@@ -1375,7 +1375,7 @@ ${numUser}`;
       });
 
       function showNotification(msg) {
-        const username = msg.split(":")[0]; // Extract username from msg
+        const username = msg.split(" :")[0]; // Extract username from msg
         const messageContent = msg.split(":").slice(1).join(":").trim(); // Extract message content
         if (Notification.permission === "granted") {
           let notifi = new Notification(`New message from ${username.value}`, {
@@ -1464,14 +1464,17 @@ ${numUser}`;
           .replaceAll("$IGMA", "*FORBIDDEN WORD*")
           .replaceAll("fuck", "*FORBIDDEN WORD*")
           .replaceAll("FUCK", "*FORBIDDEN WORD*");
+          let senderName = msg.split(" :")[0]
         if (desUsername == username.value) {
           console.log("direct message received");
           const newMessage = addMessage("received", msg);
           appendMessage(newMessage.content);
+          showNotification(msg);
         } else if (desUsername == "") {
           console.log("global message received");
           const newMessage = addMessage("received", msg);
           appendMessage(newMessage.content, textColour);
+          showNotification(msg);
         }
       });
 
@@ -1686,9 +1689,6 @@ ${numUser}`;
             }
           );
         }
-        setTimeout(() => {
-          notification1.close();
-        }, 2000);
       });
 
       socket.on(
