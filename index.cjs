@@ -16,7 +16,7 @@ let offlineUsers = [];
 let offlineMessages = {}
 let getUsersOnlineArray = [];
 let bannedUsers = {};
-let usersFunction = [];
+let accountCreated = {}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -28,9 +28,9 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// Keep track of the number of connected users
 let numUsers = 0;
 const chatLogPath = path.join(__dirname, 'messages.txt');
+//start of IO.on('connection')
 io.on('connection', (socket) => {
   let fileToDownload = ""
   numUsers++;
@@ -38,7 +38,6 @@ io.on('connection', (socket) => {
   console.log(`A user connected at ${date}. Total users: ${numUsers} with the id of ${socket.id}`);
   io.emit('user count', numUsers)
 
-// ask for the user's IP address
   socket.emit('IpAddressRequest')
 
   socket.on('kick-user', targetUsername => {
@@ -131,16 +130,17 @@ socket.on("force disconnect", (targetUsername) => {
     socket.broadcast.emit("disconnected", numUsers, date)
     io.emit("checkWhoIsOnline")
     io.emit('user count', numUsers)
-    io.emit("updateOnlineUsers2", numUsers)
   });
   socket.on('checkWhoIsOnline', (username) => {
     tempArray.push(username)
     let tempArray2 = [...new Set(tempArray)]
     onlineUsers = tempArray2;
+    getUsersOnlineArray = onlineUsers;
     if(offlineMessages[username] == onlineUsers){
       delete offlineMessages[username]
     }
     socket.emit("updateOnlineUsers", onlineUsers)
+    io.emit("updateOnlineUsers3", onlineUsers)
   })
 
   socket.on("file-messages", (fileName) => {
@@ -269,7 +269,6 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('name return', (username) => {
     onlineUsers.push(username)
     socket.emit("adminGetUsernameReturn", onlineUsers)
-    console.log('online users: ' + onlineUsers)
   })
   setTimeout(() => {
     socket.emit("get-name")
@@ -362,6 +361,13 @@ socket.on('chat message4', (msg, room, username, textColour) => {
 });
 socket.on("chat message5", msg => {
   socket.broadcast.emit('chat message5', msg);
+})
+app.get('/signup.html', (req, res) => {
+  res.sendFile(__dirname + '/signup.html')
+})
+socket.on("createAccount", (username, password) => {
+  accountCreated[username] = password;
+  console.log(accountCreated)
 })
 //end of io.on('connection')
 });
