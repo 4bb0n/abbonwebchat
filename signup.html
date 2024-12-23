@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+        input{
+            height: 40px;
+            width: 225px;
+            border-radius: 10px;
+            font-size: 20px;
+            border-width: 1px;
+            font-family: monospace;
+            background-color: rgb(0, 8, 33);
+            color: white;
+            box-shadow: none;
+            bottom: 40px;
+            margin-top: 10px;
+        }
+        #password{
+            position: relative;
+        }
+        #username{
+            position: relative;
+            bottom: 40px;
+        }
+        #createAccountBtn{
+            position: relative;
+            height: 50px;
+            width: 200px;
+            font-size: large;
+            margin-top: 10px;
+            background-color: whitesmoke;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px black;
+        }
+        #createAccountBtn:hover{
+            background-color: rgb(226, 226, 226);
+        }
+        #loginForm{
+            position: relative;
+            align-content: center;
+            left: 550px;
+            margin-top: 100px;
+            background-color: darkgray;
+            width: 400px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>By creating an account, no one else can have the same name as you!</h1>
+    <div id="loginForm">
+    <input type="text" id="username" placeholder="username"><br>
+    <input type="text" id="password" placeholder="password"><br>
+    <button id="createAccountBtn">Create Account</button>
+    </div>
+    <script src="index.cjs"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const createAccountBtn = document.getElementById("createAccountBtn");
+        createAccountBtn.onclick = () => {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            socket.emit("createAccount", username, password);
+        };
+    </script>
+</body>
+</html>
