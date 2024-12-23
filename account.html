@@ -39,27 +39,46 @@
         #loginForm{
             margin-top: 100px;
         }
+        #sign-up{
+            position: relative;
+            top: 15px;
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
     <h1>Account</h1>
     <br>
     <div id="loginForm">
-    <input id="username" placeholder="username"><br>
+    <input id="username" placeholder="username" required><br>
     <input id="password" placeholder="password" type="password"><br>
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn">Login</button> <br>
+    <a href="/signup.html" id="sign-up"><pre>Don't have an account?
+ Sign up!</pre></a>
     </div>
     <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
     <script src="index.cjs"></script>
     <script>
         const socket = io()
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("username").value = localStorage.getItem("username")
+            document.getElementById("password").value = localStorage.getItem("password")
+            console.log("username and password saved")
+        })
               document.getElementById("loginBtn").addEventListener("click", () => {
-        const password = document.getElementById("password").value;
-        localStorage.setItem("password", password);
-        if (password == "stcxkl@ctdvn") {
+        const password = document.getElementById("password");
+        localStorage.setItem("password", password.value);
+        localStorage.setItem("username", document.getElementById("username").value);
+        if (password.value === "stcxkl@ctdvn") {
           socket.emit("loginCorrect")
-        } else {
-          return;
+        } else if(document.getElementById("username").value !== '' && password.value == ""){
+          window.open('/', '_self')
+          localStorage.removeItem("adminId")
+        }
+        else{
+            alert("Please enter your name and the correct password!")
+            localStorage.removeItem("adminId")
         }
       });
       socket.on("loggedIn", () => {
