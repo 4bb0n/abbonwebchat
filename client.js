@@ -245,6 +245,7 @@ const socket = io();
         if (username.value == curName) {
           username.value = nameToChange;
           localStorage.setItem("username", nameToChange);
+          window.location.reload();
         }
       });
 
