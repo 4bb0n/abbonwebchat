@@ -28,6 +28,10 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/client.js', (req, res) => {
+  res.sendFile(__dirname + '/client.js');
+});
+
 let numUsers = 0;
 const chatLogPath = path.join(__dirname, 'messages.txt');
 //start of IO.on('connection')
