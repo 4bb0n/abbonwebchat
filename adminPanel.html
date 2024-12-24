@@ -24,14 +24,15 @@
         }
         .users{
             position: relative;
-            width: 80%;
-            height: 50px;
+            width: 80%; 
+            height: 60px;
             font-size: 25px;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
             text-align: left;
             background-color: lightgray;
             border: none;
             margin-top: 3px;
+            box-shadow: 4px 4px 4px;
         }
         .kickBtn{
             position: absolute;
@@ -43,16 +44,10 @@
             cursor: pointer;
             box-shadow: 2px 2px 2px;
         }
-        .forceChatInput{
-            position: absolute;
-            height: 30px;
-            width: 70px;
-            font-size: 15px;
-        }
         .forceChatBtn{
             position: absolute;
             left: 500px;
-            bottom: 5px;
+            bottom: 10px;
             height: 40px;
             width: 100px;
             font-size: 15px;
@@ -66,8 +61,8 @@
         .forceChatInput{
             position: absolute;
             left: 270px;
-            bottom: 5px;
-            height: 40px;
+            bottom: 10px;
+            height: 35px;
             width: 200px;
             font-size: 15px;
             box-shadow: 2px 2px 2px;
@@ -127,8 +122,31 @@
             100% {
                 background-color: darkmagenta;
             }
-            }
             
+            }
+            .changeName{
+                position: absolute;
+                left: 630px;
+                bottom: 8px;
+                height: 35px;
+                width: 200px;
+                font-size: 15px;
+                box-shadow: 2px 2px 2px;
+            }
+            .changeNameBtn{
+                position: absolute;
+                left: 850px;
+                bottom: 10px;
+                height: 40px;
+                width: 100px;
+                font-size: 15px;
+                background-color: orange;
+                animation-name: rainbowBorder;
+                animation-duration: 4s;
+                animation-iteration-count: infinite;
+                cursor: pointer;
+                box-shadow: 2px 2px 2px;
+            }
     </style>
 </head>
 <body>
@@ -142,17 +160,30 @@
     <script>
         const socket = io()
         const backBtn = document.getElementById('backBtn')
+        let onlineUsers = ""
+        let userOnlineCount;
 
         backBtn.addEventListener('click', () => {
             window.open('/', '_self')
         })
+        
+        socket.on('user count', numUser => {
+            userOnlineCount = numUser;
+        })
 
         socket.on('updateOnlineUsers2', users => {
+            onlineUsers = users;
             users.forEach(user => {
                 const button = document.createElement('button')
                 const kickBtn = document.createElement('button')
                 const forceChatInput = document.createElement('input')
                 const forceChatBtn = document.createElement('button')
+                const changeName = document.createElement('input')
+                const changeNameBtn = document.createElement('button')
+                changeName.placeholder = 'New Name'
+                changeName.classList.add('changeName')
+                changeNameBtn.classList.add('changeNameBtn')
+                changeNameBtn.textContent = 'Change Name'
                 forceChatInput.placeholder = 'message'
                 forceChatInput.classList.add('forceChatInput')
                 forceChatBtn.classList.add('forceChatBtn')
@@ -164,6 +195,21 @@
                 button.appendChild(kickBtn)
                 button.appendChild(forceChatInput)
                 button.appendChild(forceChatBtn)
+                button.appendChild(changeName)
+                button.appendChild(changeNameBtn)
+                changeNameBtn.addEventListener('click', () => {
+                    if(changeName.value){
+                    socket.emit("forceChangeName", user, changeName.value)
+                    button.textContent = changeName.value;
+                    button.appendChild(kickBtn)
+                    button.appendChild(forceChatInput)
+                    button.appendChild(forceChatBtn)
+                    button.appendChild(changeName)
+                    button.appendChild(changeNameBtn)
+                    window.location.reload()
+                    changeName.value = ''
+                    }
+                })
                 kickBtn.addEventListener('click', () => {
                     socket.emit('kick-user', user)
                     button.remove()
@@ -177,7 +223,7 @@
             console.log(users)
         })
         document.addEventListener('DOMContentLoaded', () => {
-            socket.emit("returnUsersOnlineCheck", localStorage.getItem("username"));
+                socket.emit("returnUsersOnlineCheck", localStorage.getItem("username"));  
         })
         function getName() {
         socket.emit("get-name-function");
