@@ -49,9 +49,10 @@
             align-content: center;
             left: 550px;
             margin-top: 100px;
-            background-color: darkgray;
+            background-color: lightgray;
             width: 400px;
             height: 400px;
+            box-shadow: 4px 4px 4px black;
         }
     </style>
 </head>
@@ -70,7 +71,15 @@
         createAccountBtn.onclick = () => {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            socket.emit("createAccount", username, password);
+            socket.emit("checkForSameName", username);
+            if(username && password) {
+            const account = [username, password]
+            localStorage.setItem("account", account);
+            window.open('/', '_self');
+            }
+            else{
+                alert("Pleaase enter your username and password")
+            }
         };
     </script>
 </body>
