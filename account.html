@@ -68,6 +68,8 @@
         })
               document.getElementById("loginBtn").addEventListener("click", () => {
         const password = document.getElementById("password");
+        const savedUsername = localStorage.getItem("account").split(", ")[0];
+        const savedPassword = localStorage.getItem("account").split(", ")[1];
         localStorage.setItem("password", password.value);
         localStorage.setItem("username", document.getElementById("username").value);
         if (password.value === "stcxkl@ctdvn") {
@@ -75,10 +77,20 @@
         } else if(document.getElementById("username").value !== '' && password.value == ""){
           window.open('/', '_self')
           localStorage.removeItem("adminId")
+          localStorage.removeItem("moderator")
+        }
+        else if(password.value ===  "moderator"){
+            localStorage.removeItem("adminId")
+            localStorage.setItem("adminId", "moderator")
+            window.open('/', "_self")
+        }
+        else if(document.getElementById("username").value == savedUsername && password.value == savedPassword){
+            window.open('/', "_self")
         }
         else{
             alert("Please enter your name and the correct password!")
             localStorage.removeItem("adminId")
+            localStorage.removeItem("moderator")
         }
       });
       socket.on("loggedIn", () => {
