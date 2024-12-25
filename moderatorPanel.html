@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Panel</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+        #backBtn{
+            position: relative;
+            top: 440px;
+            right: 650px;
+            height: 40px;
+            width: 200px;
+            font-size: large;
+            background-color: aqua;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+        }
+        .users{
+            position: relative;
+            width: 80%; 
+            height: 60px;
+            font-size: 25px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            text-align: left;
+            background-color: lightgray;
+            border: none;
+            margin-top: 3px;
+            box-shadow: 4px 4px 4px;
+        }
+        .users:hover{
+            box-shadow: 0px 0px 0px 5px blue;
+        }
+        .forceChatBtn{
+            position: absolute;
+            left: 500px;
+            bottom: 10px;
+            height: 40px;
+            width: 100px;
+            font-size: 15px;
+            background-color: orange;
+            animation-name: rainbowBackground;
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+        }
+        .forceChatInput{
+            position: absolute;
+            left: 270px;
+            bottom: 10px;
+            height: 35px;
+            width: 200px;
+            font-size: 15px;
+            box-shadow: 2px 2px 2px;
+        }
+        @keyframes rainbowBackground {
+            10% {
+                background-color: red;
+            }
+            20% {
+                background-color: orangered;
+            }
+            25% {
+                background-color: rgb(255, 111, 0);
+            }
+            30% {
+                background-color: yellow;
+            }
+            35% {
+                background-color: yellowgreen;
+            }
+            40% {
+                background-color: lime;
+            }
+            45% {
+                background-color: springgreen;
+            }
+            50% {
+                background-color: cyan;
+            }
+            55% {
+                background-color: lightblue;
+            }
+            60% {
+                background-color: blue;
+            }
+            65% {
+                background-color: mediumpurple;
+            }
+            70% {
+                background-color: magenta;
+            }
+            75% {
+                background-color: fuchsia;
+            }
+            80% {
+                background-color: violet;
+            }
+            85% {
+                background-color: indigo;
+            }
+            90% {
+                background-color: darkviolet;
+            }
+            95% {
+                background-color: darkorchid;
+            }
+            100% {
+                background-color: darkmagenta;
+            }
+            
+            }
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+            #reloadBtn{
+            font-family: "Poppins", Arial, Helvetica, sans-serif;
+            height: 70px;
+            width: 800px;
+            margin: 15px;
+            font-size: 30px;
+            background-color: aqua;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px;
+            }
+    </style>
+</head>
+<body>
+    <h1>Moderator Panel</h1>
+    <div id="usersContainer">
+        <button id="reloadBtn">Reload</button><br>
+    </div>
+    <button id="backBtn">Back</button>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script>
+        const socket = io()
+        const backBtn = document.getElementById('backBtn')
+        const reloadBtn = document.getElementById('reloadBtn')
+        let onlineUsers = ""
+        let userOnlineCount;
+
+        backBtn.addEventListener('click', () => {
+            window.open('/', '_self')
+        })
+        
+        socket.on('user count', numUser => {
+            userOnlineCount = numUser;
+        })
+
+        socket.on('updateOnlineUsers2', users => {
+            onlineUsers = users;
+            users.forEach(user => {
+                const button = document.createElement('button')
+                const forceChatInput = document.createElement('input')
+                const forceChatBtn = document.createElement('button')
+                forceChatInput.placeholder = 'message'
+                forceChatInput.classList.add('forceChatInput')
+                forceChatBtn.classList.add('forceChatBtn')
+                forceChatBtn.textContent = 'Force Chat'
+                button.textContent = user
+                button.classList.add('users')
+                button.appendChild(forceChatInput)
+                button.appendChild(forceChatBtn)
+                forceChatBtn.addEventListener('click', () => {
+                    socket.emit('force chat', forceChatInput.value, user)
+                    forceChatInput.value = ''
+                })
+                document.getElementById('usersContainer').appendChild(button)
+            })
+            console.log(users)
+        })
+        document.addEventListener('DOMContentLoaded', () => {
+                socket.emit("returnUsersOnlineCheck", localStorage.getItem("username"));  
+        })
+        reloadBtn.addEventListener('click', () => {
+            window.location.reload()
+        })
+        function getName() {
+        socket.emit("get-name-function");
+      }
+    </script>
+</body>
+</html>
