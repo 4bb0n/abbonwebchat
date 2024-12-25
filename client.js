@@ -62,6 +62,22 @@ const socket = io();
       let adminPerm = false;
       let chatMessageTextColour = "";
 
+      document.getElementById("moderatorPanel").addEventListener("click", () => {
+        window.open("moderatorPanel.html", "_self");
+      })
+
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter" && e.shiftKey) {
+          const cursorPos = input.selectionStart;
+          const textBefore = input.value.substring(0, cursorPos);
+          const textAfter = input.value.substring(cursorPos);
+          input.value = textBefore + '\n' + textAfter;
+
+          input.selectionStart = cursorPos + 1;
+          input.selectionEnd = cursorPos + 1;
+        }
+      })
+
       roomLeave.addEventListener("keypress", e => {
         if (e.key === "Enter") {
           leaveRoom.click();
@@ -642,39 +658,41 @@ ${numUser}`;
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
-
-      // Modify your form submit event handler
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (input.value) {
-          input.value = input.value
-            .replaceAll("sigma", "*FORBIDDEN WORD*")
-            .replaceAll("ohio", "*FORBIDDEN WORD*")
-            .replaceAll("skibidi", "*FORBIDDEN WORD*")
-            .replaceAll("rizzler", "*FORBIDDEN WORD*")
-            .replaceAll("rizz", "*FORBIDDEN WORD*")
-            .replaceAll("OHIO", "*FORBIDDEN WORD*")
-            .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-            .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-            .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-            .replaceAll("SIGMA", "*FORBIDDEN WORD*")
-            .replaceAll("$igma", "*FORBIDDEN WORD*")
-            .replaceAll("$kibidi", "*FORBIDDEN WORD*")
-            .replaceAll("$IGMA", "*FORBIDDEN WORD*")
-            .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
-            //please, forgive me but I have to ban it! I have to write it down
-            .replaceAll("fuck", "*FORBIDDEN WORD*")
-            .replaceAll("shit", "*FORBIDDEN WORD*")
-            .replaceAll("bitch", "*FORBIDDEN WORD*");
-          const username = usernameInput.value;
-          const senderMessage = input.value;
-          const newMessage = addMessage("sender", "YOU: " + senderMessage);
-          appendSenderMessage(newMessage.content);
-          const room = document.getElementById("room").value;
-          socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour);
-          input.value = "";
-          chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && event.shiftKey === false && input.value) {
+          if (input.value) {
+            input.value = input.value
+              .replaceAll("sigma", "*FORBIDDEN WORD*")
+              .replaceAll("ohio", "*FORBIDDEN WORD*")
+              .replaceAll("skibidi", "*FORBIDDEN WORD*")
+              .replaceAll("rizzler", "*FORBIDDEN WORD*")
+              .replaceAll("rizz", "*FORBIDDEN WORD*")
+              .replaceAll("OHIO", "*FORBIDDEN WORD*")
+              .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+              .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+              .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+              .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+              .replaceAll("$igma", "*FORBIDDEN WORD*")
+              .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+              .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+              .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+              //please, forgive me but I have to ban it! I have to write it down
+              .replaceAll("fuck", "*FORBIDDEN WORD*")
+              .replaceAll("shit", "*FORBIDDEN WORD*")
+              .replaceAll("bitch", "*FORBIDDEN WORD*")
+            const username = usernameInput.value;
+            const senderMessage = input.value;
+            const newMessage = addMessage("sender", "YOU: " + senderMessage);
+            appendSenderMessage(newMessage.content);
+            const room = document.getElementById("room").value;
+            socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour);
+            input.value = "";
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+            }
         }
+      })
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
       });
 
       function removeBrainRot(msg) {
@@ -770,6 +788,9 @@ ${numUser}`;
               break;
         }
         newMessage.contentEditable = true;
+        let newerMessage = document.createElement("pre")
+        newerMessage.textContent = msg;
+        newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessage);
         newMessage.textContent = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
@@ -811,6 +832,7 @@ ${numUser}`;
         }
         else if(adminId == "moderator"){
           document.getElementById("AdminUIContainer").style.display = "initial";
+          document.getElementById("moderatorPanel").style.display = "initial";
           appendMessage("You have moderator permissions!");
         }
         else{
