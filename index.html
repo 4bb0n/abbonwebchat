@@ -23,7 +23,7 @@
       }
 
       #chat-display {
-        height: 400px;
+        height: 600px;
         width: 86%;
         font-size: 20px;
         background-color: #f5f5f5;
@@ -33,9 +33,12 @@
         border-color: black;
         overflow-y: scroll;
         border-width: 2px;
+        border: 8px solid rgb(0, 0, 81);
+        border-radius: 10px;
+        scrollbar-color: black lightblue;
       }
       .newMessage {
-        width: 1000px;
+        width: 850px;
         position: relative;
         height: auto;
         background-color: #dddce2;
@@ -50,7 +53,7 @@
         overflow-wrap: break-word;
       }
       .senderMessage {
-        width: 1000px;
+        width: 850px;
         position: relative;
         left: 31%;
         height: auto;
@@ -112,6 +115,11 @@
         padding-left: 20px;
         box-shadow: none;
         border-radius: 15px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow-y:visible;
+        font-size: large;
       }
       #chat-input:active {
         border-color: #dbdbdb;
@@ -153,7 +161,8 @@
         color: red;
       }
       #file-input {
-        height: 50px;
+        height: 15px;
+        width: 10px;
         border-radius: 0;
         border: solid 5px black;
         background-color: white;
@@ -584,15 +593,15 @@
         height: 60px;
       }
       #directMsg {
-        position: sticky;
+        position: fixed;
         z-index: 1000;
         top: 0;
-        background-color: darkgray;
+        background-color: #2f3136;
         height: 100px;
         width: 100%;
         margin-bottom: 20px;
         overflow-y: scroll;
-        opacity: 10;
+        border: 4px solid #5865F2;
       }
       #toggleDirectMsgVisibility {
         position: relative;
@@ -617,6 +626,7 @@
         right: 0;
       }
       #fileUploads {
+        position: absolute;
         width: 350px;
         height: 300px;
         overflow-y: scroll;
@@ -707,7 +717,8 @@
         position: fixed;
         z-index: 1001;
         text-align: center;
-        background-color: limegreen;
+        background-color: #2f3136;
+        border-left: 4px solid #5865F2;
         top: 0;
         left: 1310px;
         width: 210px;
@@ -736,6 +747,22 @@
       #wiki:hover{
         box-shadow: 0px 0px 0px 5px blue;
       }
+      #moderatorPanel{
+        width: 200px;
+        margin-top: 5px;
+      }
+      #moderatorPanel:hover{
+        box-shadow: 0px 0px 0px 5px blue;
+      }
+      #selectFile{
+        background-color: rgb(0, 208, 255);
+        height: 50px;
+        width: 50px;
+        padding: 10px;
+        font-size: larger;
+        cursor: pointer;
+        border: 4px solid black;
+      }
     </style>
   </head>
   <body>
@@ -745,12 +772,7 @@
     </button>
     <div id="chat-display" readonly style="border-width: 2px"></div>
     <form id="chat-form">
-      <input
-        id="chat-input"
-        type="text"
-        autocomplete="off"
-        contenteditable="on"
-        placeholder="Type a message..." />
+      <textarea id="chat-input" type="text" autocomplete="off" contenteditable="on" placeholder="Type a message..."></textarea>
       <button id="send" type="submit">Send</button>
     </form>
     <div id="commandContainer">
@@ -765,6 +787,7 @@
     <button id="wiki" class="goodBtn" class="rightSideBarElement">Help Wiki</button>
     <br>
     <button id="updateLog" class="goodBtn" class="rightSideBarElement">Update Log</button>
+    <button id="moderatorPanel" class="goodBtn" class="rightSideBarElement" style="display: none;">Moderator Panel</button>
     <button id="adminPanelBtn" class="goodBtn" class="rightSideBarElement" style="display: none">Admin Panel</button>
     <button id="accountBtn" class="goodBtn rightSideBarElement">Account</button>
     <input type="text" id="room" placeholder="Join Room" class="rightSideBarElement" />
@@ -786,7 +809,8 @@
       <button id="rejectKick">Reject Kick</button>
     </div>
     <br />
-    <input type="file" id="file-input" />
+    <input type="file" id="file-input" style="display:none">
+    <label id="selectFile" for="file-input">Select File</label>
     <button id="file-send-button">SEND FILE</button>
     <div id="progressContainer">
       <div
@@ -840,12 +864,11 @@ Users online:
     </div>
     <hr />
     <div id="AdminUIContainer" style="display: none">
-      <h3 id="adminUI" style="color: red">Admin Panel</h3>
+      <h3 id="adminUI" style="color: red">Moderator Panel</h3>
       <input type="text" placeholder="username to kick" id="targetUser" />
       <button id="kickUserButton">Kick User</button>
       <br />
       <div id="force-chat">
-        <h2 id="forceChat" style="color: red">Force Chat</h2>
         <input type="text" placeholder="message" id="forceChatMsg" />
         <input type="text" placeholder="name" id="forceChatName" />
         <button id="forceChatBtn">Force Chat</button>
