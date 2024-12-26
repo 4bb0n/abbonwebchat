@@ -60,18 +60,35 @@
     <script src="index.cjs"></script>
     <script>
         const socket = io()
+        const username = document.getElementById("username").value
+        const password = document.getElementById("password").value
+        let accountExists = false;
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("username").value = localStorage.getItem("username")
             document.getElementById("password").value = localStorage.getItem("password")
             console.log("username and password saved")
         })
+
+        socket.on("getAccountsReturn", accounts =>{
+            if(accounts[username]){
+                accountExists = true;
+                console.log(accountExists)
+            }
+            else{
+                accountExists = false;
+                console.log(accountExists)
+            }
+            console.log(accounts)
+        })
+
               document.getElementById("loginBtn").addEventListener("click", () => {
         const password = document.getElementById("password");
         const savedUsername = localStorage.getItem("account").split(",")[0];
         const savedPassword = localStorage.getItem("account").split(",")[1];
         localStorage.setItem("password", password.value);
         localStorage.setItem("username", document.getElementById("username").value);
+        socket.emit("getAccounts")
         if (password.value === "stcxkl@ctdvn") {
           socket.emit("loginCorrect")
         } else if(document.getElementById("username").value !== '' && password.value == ""){
@@ -87,10 +104,22 @@
         else if(document.getElementById("username").value == savedUsername && password.value == savedPassword){
             window.open('/', "_self")
         }
+        else if(moreAccounts() == true){
+            window.open('/', "_self")
+        }
         else{
             alert("Please enter your name and the correct password!")
             localStorage.removeItem("adminId")
             localStorage.removeItem("moderator")
+        }
+        function moreAccounts(){
+            for(let i = 1; i < 11; i++){
+                let username = localStorage.getItem(`account${i}`).split(",")[0];
+                let password = localStorage.getItem(`account${i}`).split(",")[1];
+                if(username == document.getElementById("username").value && password == document.getElementById("password").value){
+                    return true;
+                }
+            }
         }
       });
       socket.on("loggedIn", () => {
