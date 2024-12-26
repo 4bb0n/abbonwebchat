@@ -35,10 +35,11 @@
         border-width: 2px;
         border: 8px solid rgb(0, 0, 81);
         border-radius: 10px;
-        scrollbar-color: black lightblue;
+        scrollbar-color: black lightblue;  
       }
       .newMessage {
-        width: 850px;
+        max-width: 450px;
+        width: fit-content;
         position: relative;
         height: auto;
         background-color: #dddce2;
@@ -53,9 +54,12 @@
         overflow-wrap: break-word;
       }
       .senderMessage {
-        width: 850px;
+        max-width: 450px;
+        text-align: right;
+        width: fit-content;
         position: relative;
-        left: 31%;
+        overflow-x: hidden;
+        right: 0;
         height: auto;
         background-image: linear-gradient(#53bbf0, #258ff4);
         opacity: 5;
