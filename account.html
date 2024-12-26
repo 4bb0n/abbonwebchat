@@ -68,8 +68,8 @@
         })
               document.getElementById("loginBtn").addEventListener("click", () => {
         const password = document.getElementById("password");
-        const savedUsername = localStorage.getItem("account").split(", ")[0];
-        const savedPassword = localStorage.getItem("account").split(", ")[1];
+        const savedUsername = localStorage.getItem("account").split(",")[0];
+        const savedPassword = localStorage.getItem("account").split(",")[1];
         localStorage.setItem("password", password.value);
         localStorage.setItem("username", document.getElementById("username").value);
         if (password.value === "stcxkl@ctdvn") {
