@@ -53,6 +53,7 @@ const socket = io();
       const showUpdateLogBtn = document.getElementById("updateLog");
       const accountBtn = document.getElementById("accountBtn");
       const adminPanelBtn = document.getElementById("adminPanelBtn");
+      const showEmojisBtn = document.getElementById("showEmojisBtn");
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
@@ -62,20 +63,62 @@ const socket = io();
       let adminPerm = false;
       let chatMessageTextColour = "";
 
-      document.getElementById("moderatorPanel").addEventListener("click", () => {
-        window.open("moderatorPanel.html", "_self");
+      document.getElementById("smile").onclick = () => {input.value += "😀"};
+      document.getElementById("grinning").onclick = () => {input.value += "🙂"};
+      document.getElementById("laughing").onclick = () => {input.value += "🤣"};
+      document.getElementById("sad").onclick = () => {input.value += "🙁"};
+      document.getElementById("panic").onclick = () => {input.value += "😱"};
+      document.getElementById("thumbsup").onclick = () => {input.value += "👍"};
+      document.getElementById("thumbsdown").onclick = () => {input.value += "👎"};
+
+      document.getElementById("emojis").onmouseleave = () => {
+        document.getElementById("emojis").style.display = "none";
+      }
+
+      showEmojisBtn.addEventListener("mouseover", () => {
+        document.getElementById("emojis").style.display = "block";
       })
 
-      input.addEventListener("keydown", e => {
-        if (e.key === "Enter" && e.shiftKey) {
-          const cursorPos = input.selectionStart;
-          const textBefore = input.value.substring(0, cursorPos);
-          const textAfter = input.value.substring(cursorPos);
-          input.value = textBefore + '\n' + textAfter;
+      sendBtn.addEventListener("click", () => {
+        input.value = input.value
+        .replaceAll("sigma", "*FORBIDDEN WORD*")
+        .replaceAll("ohio", "*FORBIDDEN WORD*")
+        .replaceAll("skibidi", "*FORBIDDEN WORD*")
+        .replaceAll("rizzler", "*FORBIDDEN WORD*")
+        .replaceAll("rizz", "*FORBIDDEN WORD*")
+        .replaceAll("OHIO", "*FORBIDDEN WORD*")
+        .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+        .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+        .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+        .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+        .replaceAll("$igma", "*FORBIDDEN WORD*")
+        .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+        .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+        .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+        //please, forgive me but I have to ban it! I have to write it down
+        .replaceAll("fuck", "*FORBIDDEN WORD*")
+        .replaceAll("shit", "*FORBIDDEN WORD*")
+        .replaceAll("bitch", "*FORBIDDEN WORD*");
+      const username = usernameInput.value;
+      const senderMessage = input.value;
+      const newMessage = addMessage("sender", "YOU: " + senderMessage);
+      appendSenderMessage(newMessage.content);
+      const room = document.getElementById("room").value;
+      socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour);
+      input.value = "";
+      chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      })
 
-          input.selectionStart = cursorPos + 1;
-          input.selectionEnd = cursorPos + 1;
-        }
+      socket.on("checkIfMissedMessages", (msg) => {
+        appendMessage(msg);
+        addMessage("received", msg);
+      })
+
+      socket.on("checkIfMissedMessagesName", () => {
+        socket.emit("checkIfMissedMessages", username.value);
+      })
+      document.getElementById("moderatorPanel").addEventListener("click", () => {
+        window.open("moderatorPanel.html", "_self");
       })
 
       roomLeave.addEventListener("keypress", e => {
@@ -249,8 +292,10 @@ const socket = io();
             button.classList.add("directMsgBtns");
             directMsgDiv.appendChild(button);
             button.addEventListener("click", () => {
-              chatDisplay.textContent = "";
-              appendMessage("You are now talking to " + user);
+                chatDisplay.textContent = "";
+                setTimeout(() => {
+                  appendMessage("You are now talking to " + user);
+                }, 1000);
               directMsgPerson = user;
             });
           });
@@ -317,7 +362,9 @@ const socket = io();
         directMsgDiv.appendChild(button);
         button.addEventListener("click", () => {
           chatDisplay.textContent = "";
-          appendMessage("You are now talking to " + username);
+          setTimeout(() => {
+            appendMessage("You are now talking to " + user);
+          }, 1000);
           directMsgPerson = username;
         });
       });
@@ -723,7 +770,10 @@ ${numUser}`;
       // Keep your existing appendMessage and appendSenderMessage functions
       function appendMessage(msg, textColour) {
         const chatDisplay = document.getElementById("chat-display");
+        const receivedMessageContainer = document.createElement("div");
         const newMessage = document.createElement("div");
+        receivedMessageContainer.classList.add("receivedMessageContainer");
+        receivedMessageContainer.appendChild(newMessage)
         newMessage.classList.add("newMessage");
         switch (textColour) {
             case "black":
@@ -751,7 +801,7 @@ ${numUser}`;
               newMessage.classList.add("purple");
               break;
           }
-        chatDisplay.appendChild(newMessage);
+        chatDisplay.appendChild(receivedMessageContainer);
         newMessage.textContent = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
@@ -759,7 +809,10 @@ ${numUser}`;
       function appendSenderMessage(msg) {
         const chatDisplay = document.getElementById("chat-display");
         const newMessage = document.createElement("div");
+        const newMessageContainer = document.createElement("div");
         const deleteBtn = document.createElement("button");
+        newMessageContainer.classList.add("senderMessageContainer");
+        newMessageContainer.appendChild(newMessage);
         newMessage.classList.add("senderMessage");
         switch (chatMessageTextColour) {
           case "black":
@@ -791,7 +844,7 @@ ${numUser}`;
         let newerMessage = document.createElement("pre")
         newerMessage.textContent = msg;
         newMessage.appendChild(newerMessage)
-        chatDisplay.appendChild(newMessage);
+        chatDisplay.appendChild(newMessageContainer);
         newMessage.textContent = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
@@ -838,6 +891,7 @@ ${numUser}`;
         else{
           appendMessage("You have no permissions. (lowest permission level)");
         }
+        socket.emit("join room", "Home")
       });
 
       // force kick packet receiver
@@ -947,7 +1001,7 @@ ${numUser}`;
       // Call the function to log the IPv4 address
       getIPv4Address();
 
-      fileSendButton.onclick = sendFile;
+      sendBtn.onclick = sendFile;
 
       function sendFile() {
         const file = fileInput.files[0];
@@ -1097,8 +1151,9 @@ ${numUser}`;
       function appendFileMessage(msg) {
         const fileMessage = document.createElement("div");
         const fileLink = document.createElement("a");
+        let fileToDownload = msg.split("/").pop(); // Use the file name as the download name
         fileLink.textContent = msg;
-        fileLink.href = "/download";
+        fileLink.href = ('/fileToDownload')
         fileLink.download = msg.split("/").pop(); // Use the file name as the download name
         fileMessage.classList.add("fileMessage");
         fileMessage.appendChild(fileLink);
