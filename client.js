@@ -70,7 +70,18 @@ const socket = io();
       document.getElementById("panic").onclick = () => {input.value += "😱"};
       document.getElementById("thumbsup").onclick = () => {input.value += "👍"};
       document.getElementById("thumbsdown").onclick = () => {input.value += "👎"};
-
+      document.getElementById("crying").onclick = () => {input.value += "😭"};
+      document.getElementById("skull").onclick = () => {input.value += "💀"};
+      document.getElementById("poo").onclick = () => {input.value += "💩"};
+      document.getElementById("apple").onclick = () => {input.value += "🍏"};
+      document.getElementById("banana").onclick = () => {input.value += "🍌"};
+      document.getElementById("pizza").onclick = () => {input.value += "🍕"};
+      document.getElementById("chips").onclick = () => {input.value += "🍟"};
+      document.getElementById("hamburger").onclick = () => {input.value += "🍔"};
+      document.getElementById("bone").onclick = () => {input.value += "🦴"};
+      document.getElementById("disgust").onclick = () => {input.value += "🤮"};
+      document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
+      document.getElementById("coolGuy").onclick = () => {input.value += "👀"};
       document.getElementById("emojis").onmouseleave = () => {
         document.getElementById("emojis").style.display = "none";
       }
