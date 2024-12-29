@@ -273,29 +273,21 @@
       }
       #username {
         position: relative;
-        left: 10px;
         height: 40px;
         width: 180px;
         text-align: center;
         font-family: Trebuchet MS, sans-serif;
         font-weight: bold;
+        color: white; 
+      }
+      #username:hover{
+        background-color: white;
+        color: black;
       }
       #userInfo{
         position: absolute;
         left: 1059px;
         top: 680px;
-      }
-      #file-send-button {
-        height: 40px;
-        border-radius: 0;
-        background-color: rgb(0, 0, 41);
-        color: white;
-        position: relative;
-        top: 5px;
-        left: 25px;
-        box-shadow: 2px 2px 2px lime;
-        border-left: solid 10px rgb(0, 179, 255);
-        top: 30px;
       }
       @keyframes border-left-appear {
         0% {
@@ -312,13 +304,6 @@
         100% {
           border-right: solid 10px red;
         }
-      }
-      #file-send-button:hover {
-        background-color: rgb(0, 0, 70);
-        animation-name: border-left-appear;
-        animation-duration: 0.5s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
       }
       h3 {
         color: white;
@@ -452,30 +437,31 @@
       }
       #room {
         height: 40px;
-        width: 180px;
-        border-radius: 2px;
-        background-color: rgb(172, 172, 172);
+        width: 200px;
+        border-radius: 0;
+        background-color: rgb(164, 216, 170);
         color: black;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         text-align: center;
         margin-top: 10px;
-        border-radius: 10px;
+        border: none;
       }
       #room:hover {
         box-shadow: none;
       }
       #roomLeave {
         position: relative;
+        left: 3px;
         height: 40px;
-        width: 180px;
-        border-radius: 2px;
-        background-color: rgb(172, 172, 172);
+        width: 200px;
+        background-color: rgb(228, 167, 167);
         color: black;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 5px;
         margin-bottom: 10px;
-        border-radius: 10px;
+        border-radius: 0;
+        border: none;
       }
       #roomLeave:hover {
         box-shadow: none;
@@ -628,12 +614,9 @@
       }
       #wiki {
         position: relative;
-        width: 200px;
+        width: 220px;
         height: 50px;
-        margin-top: 5px;
         box-shadow: none;
-        border-radius: 15px;
-        margin-top: 10px;
         border: none;
         color: rgb(99, 99, 99);
       }
@@ -747,14 +730,10 @@
       }
       #updateLog {
         position: relative;
-        width: 200px;
+        width: 220px;
         height: 50px;
-        margin-top: 5px;
-        border-radius: 15px;
         border: none;
-        margin-top: 10px;
         color: rgb(99, 99, 99);
-        box-shadow: 4px 4px 6px gray;
       }
       #rightSideBarContainer {
         position: fixed;
@@ -769,35 +748,22 @@
       }
       .rightSideBarElement{
         position: relative;
-        width: 200px;
+        width: 220px;
         height: 50px;
-        margin-top: 10px;
-        border-radius: 15px;
         border: none;
         color: rgb(99, 99, 99);
-        box-shadow: 4px 4px 6px gray;
       }
       .rightSideBarElement:hover{
-        box-shadow: 0px 0px 0px 5px blue;
+        background-color: rgb(230, 230, 230);
+        box-shadow: none;
       }
       #adminPanelBtn {
         position: relative;
-        width: 200px;
+        width: 220px;
         margin-top: 5px;
-        border-radius: 15px;
         border: none;
         margin-top: -10px;
         color: rgb(99, 99, 99);
-        box-shadow: 4px 4px 6px gray;
-      }
-      #adminPanelBtn:hover{
-        box-shadow: 0px 0px 0px 5px blue;
-      }
-      #updateLog:hover{
-        box-shadow: 0px 0px 0px 5px blue;
-      }
-      #wiki:hover{
-        box-shadow: 0px 0px 0px 5px rgb(128, 193, 255);
       }
       #moderatorPanel{
         width: 200px;
@@ -807,9 +773,6 @@
         margin-top: 10px;
         color: rgb(99, 99, 99);
         box-shadow: 4px 4px 6px gray;
-      }
-      #moderatorPanel:hover{
-        box-shadow: 0px 0px 0px 5px blue;
       }
       #selectFile{
         background-color: rgb(0, 208, 255);
@@ -845,7 +808,7 @@
         right: 450px;
         top: 790px;
         background-color: rgb(255, 255, 255);
-        box-shadow: 2px 2px 6px gray;
+        box-shadow: 0px 0px 6px gray;
         border-radius: 15px;
         height: 300px;
         width: 380px;
@@ -861,6 +824,10 @@
         border: none;
         box-shadow: none;
         font-size: 50px;
+      }
+      #test{
+        clip-path: polygon(71% 78%, 63% 85%, 55% 70%);
+        background-color: red;
       }
     </style>
   </head>
@@ -883,6 +850,7 @@
     </div>
     <button id="showEmojisBtn" class="goodBtn">🙂</button>
     <div id="emojis" style="display: none;">
+      <div id="test"></div>
       <button id="smile" class="emojiBtn goodBtn" title="smile">😀</button>
       <button id="grinning" class="emojiBtn goodBtn" title="grinning">🙂</button>
       <button id="laughing" class="emojiBtn goodBtn" title="laughing">🤣</button>
@@ -912,7 +880,9 @@
     <button id="updateLog" class="goodBtn rightSideBarElement">Update Log</button>
     <button id="wiki" class="goodBtn rightSideBarElement">Help Wiki</button>
     <input type="text" id="room" placeholder="Join Room" />
-    <input type="text" id="roomLeave" placeholder="Leave Room">
+    <input type="text" id="roomLeave" placeholder="Leave Room">]
+    <input placeholder="username" id="username" autocomplete="off" type="username" class="rightSideBarElement">
+    <div id="textMessageColour">
     <button id="blackChatMessageTextColour"style="height: 50px; width: 50px"></button>
     <button id="redChatMessageTextColour"style="height: 50px; width: 50px"></button>
     <button id="yellowChatMessageTextColour"style="height: 50px; width: 50px"></button>
@@ -921,7 +891,7 @@
     <button id="pinkChatMessageTextColour" style="height: 50px; width: 50px"></button>
     <button id="blueChatMessageTextColour" style="height: 50px; width: 50px"></button>
     <button id="purpleChatMessageTextColour" style="height: 50px; width: 50px"></button>
-    <input placeholder="username" id="username" autocomplete="off" type="username" class="rightSideBarElement">
+    </div>
     <button id="secretAdmin" class="goodBtn"></button>
     </div>
     
@@ -932,7 +902,6 @@
     <br />
     <input type="file" id="file-input" style="display:none">
     <label id="selectFile" for="file-input">Select File</label>
-    <button id="file-send-button">SEND FILE</button>
     <div id="progressContainer">
       <div
         id="progressBar"
