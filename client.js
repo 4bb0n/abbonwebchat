@@ -81,7 +81,7 @@ const socket = io();
       document.getElementById("bone").onclick = () => {input.value += "🦴"};
       document.getElementById("disgust").onclick = () => {input.value += "🤮"};
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
-      document.getElementById("coolGuy").onclick = () => {input.value += "👀"};
+      document.getElementById("eye").onclick = () => {input.value += "👀"};
       document.getElementById("emojis").onmouseleave = () => {
         document.getElementById("emojis").style.display = "none";
       }
@@ -813,7 +813,7 @@ ${numUser}`;
               break;
           }
         chatDisplay.appendChild(receivedMessageContainer);
-        newMessage.textContent = msg;
+        newMessage.innerHTML = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
 
@@ -853,7 +853,7 @@ ${numUser}`;
         }
         newMessage.contentEditable = true;
         let newerMessage = document.createElement("pre")
-        newerMessage.textContent = msg;
+        newerMessage.innerHTML = msg;
         newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessageContainer);
         newMessage.textContent = msg;
@@ -1164,7 +1164,7 @@ ${numUser}`;
         const fileLink = document.createElement("a");
         let fileToDownload = msg.split("/").pop(); // Use the file name as the download name
         fileLink.textContent = msg;
-        fileLink.href = ('/fileToDownload')
+        fileLink.href = (`/download/${fileToDownload}`);
         fileLink.download = msg.split("/").pop(); // Use the file name as the download name
         fileMessage.classList.add("fileMessage");
         fileMessage.appendChild(fileLink);
