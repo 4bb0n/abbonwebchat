@@ -17,6 +17,7 @@ let offlineMessages = {}
 let getUsersOnlineArray = [];
 let bannedUsers = {};
 let accountCreated = {}
+let messages = [];
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -67,6 +68,7 @@ socket.on("force disconnect", (targetUsername) => {
     else{
       socket.to(room).emit('chat message', msg); 
     }
+    messages.push(msg);
   });
   fs.readFileSync('messages.txt', 'utf8', (err, data) => {
     if (err) {
@@ -93,26 +95,9 @@ socket.on("force disconnect", (targetUsername) => {
   socket.on('send-file', (fileData) => {
     const { fileName, fileContent } = fileData;
     const filePath = path.join(__dirname, 'uploads', fileName);
-    fileToDownload = __dirname + filePath;
   
     // Delete all files in the uploads directory
-    fs.readdir(path.join(__dirname, 'uploads'), (err, files) => {
-      if (err) {
-        console.error('Error reading uploads directory:', err);
-        return;
-      }
-  
-      files.forEach(file => {
-        const fileToDelete = path.join(__dirname, 'uploads', file);
-        fs.unlink(fileToDelete, (err) => {
-          if (err) {
-            console.error('Error deleting file:', err);
-          } else {
-            console.log('Deleted file:', file);
-          }
-        });
-      });
-  
+    fs.readdir(path.join(__dirname, '/uploads'), (err, files) => {
       // Decode the Base64 string to a Buffer
       const buffer = Buffer.from(fileContent, 'base64');
   
@@ -305,10 +290,6 @@ socket.on("connected", (username) => {
 app.get('/info.html', (req, res) => {
   res.sendFile(__dirname + '/info.html')
 })
-app.get('/download', (req, res) => {
-  res.send(fileToDownload)
-  res.download(fileToDownload)
-})
 app.get('/index.html', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })
@@ -373,10 +354,37 @@ socket.on("chat message5", msg => {
 app.get('/signup.html', (req, res) => {
   res.sendFile(__dirname + '/signup.html')
 })
-socket.on("createAccount", (username, password) => {
-  accountCreated[username] = password;
+socket.on("createAccount", (account) => {
+  const username = account[0]
+  const password = account[1]
+  if (!accountCreated[username]) {
+      accountCreated[username] = password;
+      console.log("Account Created:", accountCreated);
+  } else {
+      console.log("Account creation failed: Username already exists.");
+  }
+});
+socket.emit("checkIfMissedMessagesName")
+socket.on("checkIfMissedMessages", username => {
+  for(let i = 0; i < offlineUsers.length; i++){
+    if(offlineUsers[i] == username){
+      socket.emit("checkIfmissedMessages", messages)
+    }
+  }
+})
+socket.on("getAccounts", () => {
+  socket.emit("getAccountsReturn", accountCreated)
   console.log(accountCreated)
 })
+app.get('/download/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', fileName);
+  res.download(filePath, (err) => {
+      if (err) {
+          res.status(404).send('File not found');
+      }
+  });
+});
 //end of io.on('connection')
 });
 
