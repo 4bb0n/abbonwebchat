@@ -671,6 +671,42 @@
         color:white;
         box-shadow: 4px 4px 6px gray;
       }
+      #blackMsgBoxColour {
+        margin-top: 5px;
+        background-color: #000000;
+        position: relative;
+        box-shadow: none;
+      }
+      #redMsgBoxColour {
+        background-color: red;
+        position: relative;
+        box-shadow: none;
+      }
+      #yellowMsgBoxColour {
+        background-color: yellow;
+        position: relative;
+        box-shadow: none;
+      }
+      #greenMsgBoxColour {
+        background-color: green;
+        position: relative;
+        box-shadow: none;
+      }
+      #blueMsgBoxColour {
+        background-color: blue;
+        position: relative;
+        box-shadow: none;
+      }
+      #pinkMsgBoxColour {
+        background-color: rgb(242, 96, 255);
+        position: relative;
+        box-shadow: none;
+      }
+      #purpleMsgBoxColour {
+        background-color: purple;
+        position: relative;
+        box-shadow: none;
+      }
       #blackChatMessageTextColour {
         margin-top: 5px;
         background-color: #000000;
@@ -692,13 +728,13 @@
         position: relative;
         box-shadow: none;
       }
-      #pinkChatMessageTextColour {
-        background-color: rgb(242, 96, 255);
+      #blueChatMessageTextColour {
+        background-color: blue;
         position: relative;
         box-shadow: none;
       }
-      #blueChatMessageTextColour {
-        background-color: blue;
+      #pinkChatMessageTextColour {
+        background-color: rgb(242, 96, 255);
         position: relative;
         box-shadow: none;
       }
@@ -727,6 +763,28 @@
       }
       .purple{
         color: purple;
+      }
+
+      .backgroundblack {
+        background-color: black;
+      }
+      .backgroundred {
+        background-color: red;
+      }
+      .backgroundyellow {
+        background-color: yellow;
+      }
+      .backgroundgreen {
+        background-color: green;
+      }
+      .backgroundpink {
+        background-color: rgb(242, 96, 255);
+      }
+      .backgroundblue{
+        background-color: blue;
+      }
+      .backgroundpurple{
+        background-color: purple;
       }
       #updateLog {
         position: relative;
@@ -880,7 +938,7 @@
     <button id="updateLog" class="goodBtn rightSideBarElement">Update Log</button>
     <button id="wiki" class="goodBtn rightSideBarElement">Help Wiki</button>
     <input type="text" id="room" placeholder="Join Room" />
-    <input type="text" id="roomLeave" placeholder="Leave Room">]
+    <input type="text" id="roomLeave" placeholder="Leave Room">
     <input placeholder="username" id="username" autocomplete="off" type="username" class="rightSideBarElement">
     <div id="textMessageColour">
     <button id="blackChatMessageTextColour"style="height: 50px; width: 50px"></button>
@@ -892,6 +950,16 @@
     <button id="blueChatMessageTextColour" style="height: 50px; width: 50px"></button>
     <button id="purpleChatMessageTextColour" style="height: 50px; width: 50px"></button>
     </div>
+    <div id="msgBoxColour">
+      <button id="blackMsgBoxColour"style="height: 50px; width: 50px"></button>
+      <button id="redMsgBoxColour"style="height: 50px; width: 50px"></button>
+      <button id="yellowMsgBoxColour"style="height: 50px; width: 50px"></button>
+      <button id="greenMsgBoxColour"style="height: 50px; width: 50px"></button>
+      <br>
+      <button id="pinkMsgBoxColour" style="height: 50px; width: 50px"></button>
+      <button id="blueMsgBoxColour" style="height: 50px; width: 50px"></button>
+      <button id="purpleMsgBoxColour" style="height: 50px; width: 50px"></button>
+      </div>
     <button id="secretAdmin" class="goodBtn"></button>
     </div>
     
@@ -932,21 +1000,12 @@ Users online:
     <br />
     <hr />
     <h2 id="settings">SETTINGS</h2>
-    <pre>
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre
-    >
-    <br />
-    <h3 id="speechBoxColour">chat message text colour</h3>
-    <pre>
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre
-    >
     <div id="background-color-mode">
       <button id="darkMode">Dark Mode</button>
       <button id="lightMode">Light Mode</button>
     </div>
     <pre>
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre
-    >
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </pre>
     <div id="Messages">
       <h3 id="messageSettings">Message Settings</h3>
       <button id="clearAllMsg">Clear All Messages</button>
