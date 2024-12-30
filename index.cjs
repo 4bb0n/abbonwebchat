@@ -58,10 +58,11 @@ socket.on("force disconnect", (targetUsername) => {
   socket.disconnect();
 })
 
-  socket.on('chat message', (msg, room, username, textColour) => {
+  socket.on('chat message', (msg, room, username, textColour, msgBoxColour) => {
     // Broadcast message to all clients except the one that sent it
     if(room == ''){
-    socket.broadcast.emit('chat message', msg, username, textColour);
+    console.log('msgBoxColour = '+ msgBoxColour)
+    socket.broadcast.emit('chat message', msg, username, textColour, msgBoxColour);
     socket.broadcast.emit('new message notification', msg);
     console.log(msg)
     }
