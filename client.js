@@ -54,15 +54,15 @@ const socket = io();
       const accountBtn = document.getElementById("accountBtn");
       const adminPanelBtn = document.getElementById("adminPanelBtn");
       const showEmojisBtn = document.getElementById("showEmojisBtn");
-      let directMsgPerson = "";
-      let targetDirectMsgPerson = "";
-      let voteName = "";
-      let toggleVisibilityDirectMsgBtnVAR = 1;
-      let appendMessageOrder = 0;
-      let toggleVisibilitySecretAdmin = 0;
-      let adminPerm = false;
-      let chatMessageTextColour = "";
-      let msgBoxColour = "";
+      var directMsgPerson = "";
+      var targetDirectMsgPerson = "";
+      var voteName = "";
+      var toggleVisibilityDirectMsgBtnVAR = 1;
+      var appendMessageOrder = 0;
+      var toggleVisibilitySecretAdmin = 0;
+      var adminPerm = false;
+      var chatMessageTextColour = "";
+      var msgBoxColour = "";
 
       //speech box colour
       document.getElementById("blackMsgBoxColour").addEventListener("click", () => {msgBoxColour = "black"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
@@ -304,7 +304,7 @@ const socket = io();
       });
 
       socket.on("updateOnlineUsers2", (users) => {
-        let arr = [...new Set(users)];
+        var arr = [...new Set(users)];
         setTimeout(() => {
           arr.forEach((user) => {
             const button = document.createElement("button");
@@ -424,7 +424,7 @@ const socket = io();
       });
 
       socket.on("updateOnlineUsers", (onlineUsers) => {
-        let tempArray2 = [...new Set(onlineUsers)];
+        var tempArray2 = [...new Set(onlineUsers)];
         usersOnlineNames.textContent = tempArray2[0];
         if (!usersOnlineNames.textContent == "") {
           usersOnlineNames += tempArray2[-1];
@@ -494,7 +494,7 @@ const socket = io();
       });
       socket.on("voteKickNameMatched", (username) => {
         appendMessage(
-          `${username} has been voted to kick! Majority is needed to complete the kick!`
+          `${username} has been voted to kick! Majority is needed to compvare the kick!`
         );
         const voteKickDiv = document.getElementById("voteKickDiv");
         voteName = username;
@@ -603,7 +603,7 @@ ${numUser}`;
         const username = msg.split(" :")[0]; // Extract username from msg
         const messageContent = msg.split(":").slice(1).join(":").trim(); // Extract message content
         if (Notification.permission === "granted") {
-          let notifi = new Notification(`New message from ${username.value}`, {
+          var notifi = new Notification(`New message from ${username.value}`, {
             body: messageContent,
             tag: "chat message",
           });
@@ -653,7 +653,7 @@ ${numUser}`;
 
       // Function to add a new message
       function addMessage(type, content) {
-        let messages = loadMessagesFromLocalStorage();
+        var messages = loadMessagesFromLocalStorage();
         const newMessage = { type, content, timestamp: Date.now() };
         messages.push(newMessage);
         saveMessagesToLocalStorage(messages);
@@ -689,8 +689,8 @@ ${numUser}`;
           .replaceAll("$IGMA", "*FORBIDDEN WORD*")
           .replaceAll("fuck", "*FORBIDDEN WORD*")
           .replaceAll("FUCK", "*FORBIDDEN WORD*");
-          let senderName = msg.split(" :")[0]
-          let soundEffect = new Audio("chatSoundEffect.mp3")
+          var senderName = msg.split(" :")[0]
+          var soundEffect = new Audio("chatSoundEffect.mp3")
         if (desUsername == username.value) {
           console.log("direct message received");
           const newMessage = addMessage("received", msg);
@@ -859,7 +859,7 @@ ${numUser}`;
         const chatDisplay = document.getElementById("chat-display");
         const newMessage = document.createElement("div");
         const newMessageContainer = document.createElement("div");
-        const deleteBtn = document.createElement("button");
+        const devareBtn = document.createElement("button");
         newMessageContainer.classList.add("senderMessageContainer");
         newMessageContainer.appendChild(newMessage);
         newMessage.classList.add("senderMessage");
@@ -924,7 +924,7 @@ ${numUser}`;
                     break;
             } 
         newMessage.contentEditable = true;
-        let newerMessage = document.createElement("pre")
+        var newerMessage = document.createElement("pre")
         newerMessage.innerHTML = msg;
         newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessageContainer);
@@ -980,7 +980,7 @@ ${numUser}`;
       // force kick packet receiver
       socket.on("new message notification", (msg, desUsername) => {
         if (desUsername == username.value) {
-          let notification1 = new Notification(
+          var notification1 = new Notification(
             `New message from ${username.value}`,
             {
               body: msg,
@@ -988,7 +988,7 @@ ${numUser}`;
             }
           );
         } else if (desUsername == "") {
-          let notification1 = new Notification(
+          var notification1 = new Notification(
             `New message from ${username.value}`,
             {
               body: msg,
@@ -1049,7 +1049,7 @@ ${numUser}`;
       function kickUser(targetUsername) {
         const username = document.getElementById("username").value;
         if (targetUsername == username) {
-          let lastWords = window.prompt(
+          var lastWords = window.prompt(
             "You're about to be kicked! Any last words?"
           );
           const rickroll = document.createElement("iframe");
@@ -1114,8 +1114,8 @@ ${numUser}`;
 
           xhr.upload.addEventListener("progress", function (event) {
             if (event.lengthComputable) {
-              const percentComplete = (event.loaded / event.total) * 100;
-              progressBar.style.width = percentComplete + "%";
+              const percentCompvare = (event.loaded / event.total) * 100;
+              progressBar.style.width = percentCompvare + "%";
             }
           });
 
@@ -1223,7 +1223,7 @@ ${numUser}`;
 
       // Function to add a file message
       function addFileMessage(type, content) {
-        let fileMessages = loadFileMessagesFromLocalStorage();
+        var fileMessages = loadFileMessagesFromLocalStorage();
         const newFileMessage = { type, content, timestamp: Date.now() };
         fileMessages.push(newFileMessage);
         saveFileMessagesToLocalStorage(fileMessages);
@@ -1234,9 +1234,9 @@ ${numUser}`;
       function appendFileMessage(msg) {
         const fileMessage = document.createElement("div");
         const fileLink = document.createElement("a");
-        let fileToDownload = msg.split("/").pop(); // Use the file name as the download name
+        var fivaroDownload = msg.split("/").pop(); // Use the file name as the download name
         fileLink.textContent = msg;
-        fileLink.href = (`/download/${fileToDownload}`);
+        fileLink.href = (`/download/${fivaroDownload}`);
         fileLink.download = msg.split("/").pop(); // Use the file name as the download name
         fileMessage.classList.add("fileMessage");
         fileMessage.appendChild(fileLink);
@@ -1273,10 +1273,10 @@ ${numUser}`;
         const byteCharacters = atob(base64);
         const byteArrays = [];
 
-        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        for (var offset = 0; offset < byteCharacters.length; offset += 512) {
           const slice = byteCharacters.slice(offset, offset + 512);
           const byteNumbers = new Array(slice.length);
-          for (let i = 0; i < slice.length; i++) {
+          for (var i = 0; i < slice.length; i++) {
             byteNumbers[i] = slice.charCodeAt(i);
           }
           const byteArray = new Uint8Array(byteNumbers);
@@ -1306,16 +1306,16 @@ ${numUser}`;
         const pre = document.getElementsByTagName("pre");
         const p = document.getElementsByTagName("p");
         /*************  ✨ Codeium Command ⭐  *************/
-        for (let i = 0; i < h3.length; i++) {
+        for (var i = 0; i < h3.length; i++) {
           h3[i].style.color = "white";
         }
-        for (let i = 0; i < h2.length; i++) {
+        for (var i = 0; i < h2.length; i++) {
           h2[i].style.color = "white";
         }
-        for (let i = 0; i < pre.length; i++) {
+        for (var i = 0; i < pre.length; i++) {
           pre[i].style.color = "white";
         }
-        for (let i = 0; i < p.length; i++) {
+        for (var i = 0; i < p.length; i++) {
           p[i].style.color = "white";
         }
 
