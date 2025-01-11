@@ -968,11 +968,15 @@ ${numUser}`;
         }
         else if(adminId == "moderator"){
           document.getElementById("AdminUIContainer").style.display = "initial";
-          document.getElementById("moderatorPanel").style.display = "initial";
-          appendMessage("You have moderator permissions!");
+          document.getElementById("moderatorPanel").style.display = "initial"
         }
         else{
           appendMessage("You have no permissions. (lowest permission level)");
+          setInterval(()=>{
+                document.getElementById("AdminUIContainer").style.display = "none";
+          document.getElementById("moderatorPanel").style.display = "none"
+          document.getElementById("adminPanelBtn").style.display = "none";
+          },10)
         }
         socket.emit("join room", "Home")
       });
