@@ -392,6 +392,6 @@ app.get('/download/:filename', (req, res) => {
 
 const PORT = 3000
 const HOST = '0.0.0.0';
-http.listen(PORT, HOST, () => {
+http.listen(PORT, () => {
   console.log(`Server running on https://${HOST}:${PORT}`);
 });
