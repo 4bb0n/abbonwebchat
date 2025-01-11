@@ -1,7 +1,7 @@
 const { isUtf8 } = require('buffer');
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
+const http = require('https').createServer(app);
 const io = require('socket.io')(http, {
   maxHttpBufferSize: 1000e9
 });
