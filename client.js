@@ -728,7 +728,7 @@ ${numUser}`;
         appendMessage(newMessage.content);
       });
       input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && event.shiftKey === false && input.value) {
+        if (event.key === "Enter" && input.value) {
           if (input.value) {
             input.value = input.value
               .replaceAll("sigma", "*FORBIDDEN WORD*")
