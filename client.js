@@ -849,8 +849,8 @@ ${numUser}`;
               break;
           }
           console.log(boxColour)
-        chatDisplay.appendChild(receivedMessageContainer);
         newMessage.innerHTML = msg;
+        chatDisplay.appendChild(receivedMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
 
@@ -924,7 +924,7 @@ ${numUser}`;
             } 
         newMessage.contentEditable = true;
         let newerMessage = document.createElement("pre")
-        newerMessage.innerHTML = '<b>'+msg+'</b>'+'<img src onerror="alert("worked")">';
+        newerMessage.innerHTML = msg;
         newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
