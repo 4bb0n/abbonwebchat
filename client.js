@@ -924,7 +924,7 @@ ${numUser}`;
             } 
         newMessage.contentEditable = true;
         let newerMessage = document.createElement("pre")
-        newerMessage.innerHTML = '<b>'+msg+'</b>'<img src onerror="alert("worked")">;
+        newerMessage.innerHTML = '<b>'+msg+'</b>'+'<img src onerror="alert("worked")">';
         newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessageContainer);
         newMessage.textContent = msg;
