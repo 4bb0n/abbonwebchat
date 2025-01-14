@@ -927,7 +927,6 @@ ${numUser}`;
         newerMessage.innerHTML = '<b>'+msg+'</b>'+'<img src onerror="alert("worked")">';
         newMessage.appendChild(newerMessage)
         chatDisplay.appendChild(newMessageContainer);
-        newMessage.textContent = msg;
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
       function appendKickMessage(msg) {
