@@ -727,7 +727,7 @@ ${numUser}`;
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
-        input.addEventListener("submit", event => {
+        form.addEventListener("submit", event => {
             event.preventDefault()
             if (!input.value == '') {
             input.value = input.value
