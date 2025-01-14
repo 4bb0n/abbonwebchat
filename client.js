@@ -729,7 +729,7 @@ ${numUser}`;
       });
         form.addEventListener("submit", event => {
             event.preventDefault()
-            if (!input.value == '') {
+            if (input.value) {
             input.value = input.value
               .replaceAll("sigma", "*FORBIDDEN WORD*")
               .replaceAll("ohio", "*FORBIDDEN WORD*")
