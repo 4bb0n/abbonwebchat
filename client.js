@@ -730,6 +730,7 @@ ${numUser}`;
       input.addEventListener("keydown", (event) => {
         if (event.key === "Enter" && input.value) {
           if (input.value) {
+            event.preventDefault()
             input.value = input.value
               .replaceAll("sigma", "*FORBIDDEN WORD*")
               .replaceAll("ohio", "*FORBIDDEN WORD*")
@@ -760,9 +761,6 @@ ${numUser}`;
             }
         }
       })
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-      });
 
       function removeBrainRot(msg) {
         msg = msg
