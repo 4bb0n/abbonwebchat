@@ -727,10 +727,9 @@ ${numUser}`;
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && input.value) {
-          if (input.value) {
+        input.addEventListener("submit", event => {
             event.preventDefault()
+            if (input.value) {
             input.value = input.value
               .replaceAll("sigma", "*FORBIDDEN WORD*")
               .replaceAll("ohio", "*FORBIDDEN WORD*")
@@ -759,9 +758,7 @@ ${numUser}`;
             input.value = "";
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
             }
-        }
-      })
-
+        })
       function removeBrainRot(msg) {
         msg = msg
           .replaceAll("sigma", "*FORBIDDEN WORD*")
