@@ -11,7 +11,6 @@ const socket = io();
       const loginBtn = document.getElementById("loginBtn");
       const darkMode = document.getElementById("darkMode");
       const lightMode = document.getElementById("lightMode");
-      Notification.requestPermission();
       const aiIframe = document.getElementById("ai");
       const clearAllMsg = document.getElementById("clearAllMsg");
       const removeLastMsg = document.getElementById("removeLastMsg");
