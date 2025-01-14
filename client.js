@@ -923,9 +923,7 @@ ${numUser}`;
                     break;
             } 
         newMessage.contentEditable = true;
-        let newerMessage = document.createElement("pre")
-        newerMessage.innerHTML = msg;
-        newMessage.appendChild(newerMessage)
+        newMessage.innerHTML = msg;
         chatDisplay.appendChild(newMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
