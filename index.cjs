@@ -26,7 +26,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/account.html');
 });
 
 app.get('/client.js', (req, res) => {
