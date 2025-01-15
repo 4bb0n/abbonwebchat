@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
   let fileToDownload = ""
   numUsers++;
   let date = new Date();
-  console.log(`A user connected at ${date}. Total users: ${numUsers} with the id of ${socket.id}`);
+  console.log(`A user connected at ${date}(server time). Total users: ${numUsers} with the id of ${socket.id}`);
   io.emit('user count', numUsers)
 
   socket.emit('IpAddressRequest')
