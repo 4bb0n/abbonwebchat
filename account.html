@@ -51,7 +51,7 @@
     <br>
     <div id="loginForm">
     <input id="username" placeholder="username" required><br>
-    <input id="password" placeholder="password" type="password"><br>
+    <input id="password" placeholder="password" type="password" required><br>
     <button id="loginBtn">Login</button> <br>
     <a href="/signup.html" id="sign-up"><pre>Don't have an account?
  Sign up!</pre></a>
@@ -116,17 +116,12 @@ function moreAccounts() {
     for (let i = 1; i <= 11; i++) {
         let account = localStorage.getItem(`account${i}`);
         if (account) {
-            try {
-                account = JSON.parse(account);
-                if (account.username === document.getElementById("username").value && account.password === password.value) {
-                    return true;
-                }
-            } catch (error) {
-                console.error("Error parsing account data", error);
-            }
+            const username = account.split(",")[0]
+            const password = account.split(",")[1]
         }
-    }
-    return false;
+        else{
+         return false;
+        }
 }
 
       });
