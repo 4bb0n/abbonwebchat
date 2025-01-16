@@ -118,7 +118,7 @@ function moreAccounts() {
         if (account) {
             try {
                 account = JSON.parse(account);
-                if (account.username === inputUsername && account.password === inputPassword) {
+                if (account.username === document.getElementById("username").value && account.password === password.value) {
                     return true;
                 }
             } catch (error) {
