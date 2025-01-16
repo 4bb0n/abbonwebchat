@@ -118,6 +118,9 @@ function moreAccounts() {
         if (account) {
             const username = account.split(",")[0]
             const password = account.split(",")[1]
+            if(document.getElementById("username").value == username && document.getElementById("password").value == password){
+                return true;
+            }
         }
         else{
          return false;
