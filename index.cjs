@@ -119,6 +119,7 @@ socket.on("force disconnect", (targetUsername) => {
 
   socket.on('disconnect', () => {
     let date = new Date()
+    date.toString()
     numUsers--;
     console.log(`User disconnected. Total users: ${numUsers}`);
     socket.broadcast.emit("disconnected", numUsers, date)
