@@ -976,7 +976,9 @@ ${numUser}`;
             id
         );
         const username = localStorage.getItem("username");
-        socket.emit("userjoined", username, new Date());
+            let date = Date()
+            date.toString()
+        socket.emit("userjoined", username, date);
         appendKickMessage(
           "IF YOU'RE NOT GETTING NOTIFICATION FROM MESSAGES, GO TO SETTINGS AND ENABLE IT GLOBALLY (and for google chrome if you forgot to!)"
         );
