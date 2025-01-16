@@ -74,13 +74,39 @@
             socket.emit("checkForSameName", username);
             if(username && password) {
             const account = [username, password]
-            localStorage.setItem("account", account);
+            let accOrder = checkAccounts()
+            if(accOrder == 0){
+                localStorage.setItem("account", account);
+            }
+            else{
+                localStorage.setItem("account" + accOrder, account);
+            }
             window.open('/', '_self');
             }
             else{
                 alert("Pleaase enter your username and password")
             }
         };
+        function checkAccounts(){
+            let account = localStorage.getItem("account")
+            let account2 = localStorage.getItem("account2")
+            let account3 = localStorage.getItem("account3")
+            let account4 = localStorage.getItem("account4")
+            let account5 = localStorage.getItem("account5")
+            let account6 = localStorage.getItem("account6")
+            let account7 = localStorage.getItem("account7")
+            let account8 = localStorage.getItem("account8")
+            let account9 = localStorage.getItem("account9")
+            let account10 = localStorage.getItem("account10")
+            let account11 = localStorage.getItem("account11")
+
+            let accountList = [account, account2, account3, account4, account5, account6, account7, account8, account9, account10, account11]
+            let index = accountList.findIndex(findUndefined)
+            function findUndefined(x){
+                return x == undefined;
+            }
+            return index;
+        }
     </script>
 </body>
 </html>
