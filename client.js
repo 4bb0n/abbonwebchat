@@ -971,7 +971,7 @@ ${numUser}`;
       socket.on("socket ID", (id) => {
         appendMessage(
           "You Joined on " +
-            new Date().toLocaleString()+
+            new Date()+
             " your id is:              \n \n " +
             id
         );
