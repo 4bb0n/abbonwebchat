@@ -387,6 +387,9 @@ app.get('/download/:filename', (req, res) => {
       }
   });
 });
+socket.on("userDetails", (userDetails) => {
+  socket.broadcast.emit("logUserDetails", userDetails)
+})
 //end of io.on('connection')
 });
 
