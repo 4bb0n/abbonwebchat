@@ -29,7 +29,7 @@
         }
         #username{
             position: relative;
-            bottom: 40px;
+            bottom: 35px;
         }
         #createAccountBtn{
             position: relative;
@@ -46,8 +46,8 @@
         }
         #loginForm{
             position: relative;
+            left: 400px;
             align-content: center;
-            left: 550px;
             margin-top: 100px;
             background-color: lightgray;
             width: 400px;
@@ -75,11 +75,11 @@
             if(username && password) {
             const account = [username, password]
             let accOrder = checkAccounts()
-            if(accOrder == 0){
+            if(accOrder == 0 && localStorage.getItem("account") == null){
                 localStorage.setItem("account", account);
             }
             else{
-                localStorage.setItem("account" + accOrder, account);
+                localStorage.setItem("account" + accOrder + 1, account);
             }
             window.open('/', '_self');
             }
@@ -92,8 +92,12 @@ function checkAccounts() {
     for (let i = 0; i <= 11; i++) {
         accountList.push(localStorage.getItem(`account${i}`));
     }
-    let index = accountList.findIndex((x) => x === null); // Changed from undefined to null
-    return index === -1 ? null : index; // Return null if all slots are filled
+    console.log(accountList)
+    for (let i = 0; i < accountList.length; i++) {
+        if (accountList[i] == null) {
+            return i;
+        }
+    }
 }
 
     </script>
