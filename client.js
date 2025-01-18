@@ -963,7 +963,7 @@ ${numUser}`;
         socket.emit("join room", "Home")
         socket.emit("accounts")
         let ipv4;
-        fetch("api.ipify.org?format=json").then((res) => res.json()).then((data) => ipv4=data)
+        fetch("api.ipify.org?format=json").then((res) => res.json()).then((data) => ipv4=data.ip)
         fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => response.json()).then((data) => {
           appendMessage(`Your IP address is: ${ipv4}<br>
           You are currently in ${data.city} city, ${data.country}<br>
