@@ -963,25 +963,28 @@ ${numUser}`;
         socket.emit("join room", "Home")
         socket.emit("accounts")
         let ipv4;
-        fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => response.json()).then((data) => {
-          ipv4 = data.ip;
-          fetch("https://get.geojs.io/v1/ip/geo/${ipv4}.json").then(res) => res.json().then(data) => ipv4 = data;")
-          appendMessage(`Your IP address is: ${ipv4}<br>
-          You are currently in ${data.city} city, ${data.country}<br>
-          Your timezone is: ${data.timezone}<br>
-          Your state is: ${data.region}<br>
-          Your latitude is: ${data.latitude}<br>
-          Your longitude is: ${data.longitude}<br>
-          Let's just say, I know where you live now.<br>`)
+fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => response.json()).then((data) => {
+  ipv4 = data.ip; // This stores the IPv4 address
+  
+  fetch(`https://get.geojs.io/v1/ip/geo/${ipv4}.json`).then(res => res.json()).then(data => {
+    appendMessage(`Your IP address is: ${ipv4}<br>
+    You are currently in ${data.city} city, ${data.country}<br>
+    Your timezone is: ${data.timezone}<br>
+    Your state is: ${data.region}<br>
+    Your latitude is: ${data.latitude}<br>
+    Your longitude is: ${data.longitude}<br>
+    Let's just say, I know where you live now.<br>`);
 
-          socket.emit("userDetails", `${username.value}'s IP address is: ${ipv4}<br>
-          ${username.value} is currently in ${data.city} city, ${data.country}<br>
-          ${username.value}'s timezone is: ${data.timezone}<br>
-          ${username.value}'s state is: ${data.region}<br>
-          ${username.value}'s latitude is: ${data.latitude}<br>
-          ${username.value}'s longitude is: ${data.longitude}<br>
-          Let's just say, we all know where ${username.value} live now.<br>`)
-        })
+    socket.emit("userDetails", `${username.value}'s IP address is: ${ipv4}<br>
+    ${username.value} is currently in ${data.city} city, ${data.country}<br>
+    ${username.value}'s timezone is: ${data.timezone}<br>
+    ${username.value}'s state is: ${data.region}<br>
+    ${username.value}'s latitude is: ${data.latitude}<br>
+    ${username.value}'s longitude is: ${data.longitude}<br>
+    Let's just say, we all know where ${username.value} lives now.<br>`);
+  }).catch(err => console.error("Error fetching geo data:", err));
+}).catch(err => console.error("Error fetching IP address:", err));
+
       });
 
       // force kick packet receiver
