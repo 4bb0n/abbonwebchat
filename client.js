@@ -962,7 +962,7 @@ ${numUser}`;
         }, 1000)
         socket.emit("join room", "Home")
         socket.emit("accounts")
-        fetch(https://get.geojs.io/v1/ip/geo.json").then((response) => response.json()).then((data) => {
+        fetch("https://get.geojs.io/v1/ip/geo.json").then((response) => response.json()).then((data) => {
           appendMessage(`Your IP address is: ${data.ip}<br>
           You are currently in ${data.city} city, ${data.country}<br>
           Your timezone is: ${data.timezone}<br>
