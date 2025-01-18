@@ -962,19 +962,19 @@ ${numUser}`;
         }, 1000)
         socket.emit("join room", "Home")
         socket.emit("accounts")
-        fetch("http://ip-api.com/json/?fields=61439").then((response) => response.json()).then((data) => {
-          appendMessage(`Your IP address is: ${data.query}<br>
+        fetch("https://ip-api.io/json/").then((response) => response.json()).then((data) => {
+          appendMessage(`Your IP address is: ${data.ip}<br>
           You are currently in ${data.city} city, ${data.country}<br>
           Your timezone is: ${data.timezone}<br>
-          Your latitude is: ${data.lat}<br>
-          Your longitude is: ${data.lon}<br>
+          Your latitude is: ${data.latitude}<br>
+          Your longitude is: ${data.longitude}<br>
           Let's just say, I know where you live now.<br>`)
 
-          socket.emit("userDetails", `${username.value}'s IP address is: ${data.query}<br>
+          socket.emit("userDetails", `${username.value}'s IP address is: ${data.ip}<br>
           ${username.value} is currently in ${data.city} city, ${data.country}<br>
           ${username.value}'s timezone is: ${data.timezone}<br>
-          ${username.value}'s latitude is: ${data.lat}<br>
-          ${username.value}'s longitude is: ${data.lon}<br>
+          ${username.value}'s latitude is: ${data.latitude}<br>
+          ${username.value}'s longitude is: ${data.longitude}<br>
           Let's just say, we all know where ${username.value} live now.<br>`)
         })
       });
