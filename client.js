@@ -974,7 +974,7 @@ ${numUser}`;
           socket.emit("userDetails", `${username.value}'s IP address is: ${data.ip}<br>
           ${username.value} is currently in ${data.city} city, ${data.country}<br>
           ${username.value}'s timezone is: ${data.timezone}<br>
-          ${username.value}'s state is: ${data.region}
+          ${username.value}'s state is: ${data.region}<br>
           ${username.value}'s latitude is: ${data.latitude}<br>
           ${username.value}'s longitude is: ${data.longitude}<br>
           Let's just say, we all know where ${username.value} live now.<br>`)
