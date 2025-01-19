@@ -363,7 +363,10 @@ const socket = io();
 
       socket.on("online mail", (destinationUsername, message) => {
         if (username.value == destinationUsername) {
-          appendMessage(`Mail from ${destinationUsername}: ${message}`);
+          let mailSplit = message.split("_");
+          mailSplit.forEach(msg => {
+                appendMessage(`Mail from ${destinationUsername}: ${msg}`);
+          })
         }
       });
 
