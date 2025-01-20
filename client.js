@@ -703,8 +703,9 @@ ${numUser}`;
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
-        form.addEventListener("submit", event => {
-            event.preventDefault()
+input.addEventListener("keypress", event => {
+    if (event.key === "Enter") {
+        event.preventDefault();
             if (input.value) {
             input.value = input.value
               .replaceAll("sigma", "*FORBIDDEN WORD*")
@@ -733,8 +734,10 @@ ${numUser}`;
             socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
             input.value = "";
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            }
-        })
+            }// Prevent form submission
+        form.dispatchEvent(new Event("submit"));  // Trigger form submission
+    }
+});
       function removeBrainRot(msg) {
         msg = msg
           .replaceAll("sigma", "*FORBIDDEN WORD*")
