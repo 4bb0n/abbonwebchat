@@ -736,6 +736,38 @@ input.addEventListener("keypress", event => {
             }
     }
 });
+sendBtn.onclick = () => {
+      
+            if (input.value) {
+            input.value = input.value
+              .replaceAll("sigma", "*FORBIDDEN WORD*")
+              .replaceAll("ohio", "*FORBIDDEN WORD*")
+              .replaceAll("skibidi", "*FORBIDDEN WORD*")
+              .replaceAll("rizzler", "*FORBIDDEN WORD*")
+              .replaceAll("rizz", "*FORBIDDEN WORD*")
+              .replaceAll("OHIO", "*FORBIDDEN WORD*")
+              .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
+              .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
+              .replaceAll("RIZZ", "*FORBIDDEN WORD*")
+              .replaceAll("SIGMA", "*FORBIDDEN WORD*")
+              .replaceAll("$igma", "*FORBIDDEN WORD*")
+              .replaceAll("$kibidi", "*FORBIDDEN WORD*")
+              .replaceAll("$IGMA", "*FORBIDDEN WORD*")
+              .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
+              //please, forgive me but I have to ban it! I have to write it down
+              .replaceAll("fuck", "*FORBIDDEN WORD*")
+              .replaceAll("shit", "*FORBIDDEN WORD*")
+              .replaceAll("bitch", "*FORBIDDEN WORD*")
+            const username = usernameInput.value;
+            const senderMessage = input.value;
+            const newMessage = addMessage("sender", "YOU: " + senderMessage);
+            appendSenderMessage(newMessage.content);
+            const room = document.getElementById("room").value;
+            socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
+            input.value = "";
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+            }
+}
       function removeBrainRot(msg) {
         msg = msg
           .replaceAll("sigma", "*FORBIDDEN WORD*")
