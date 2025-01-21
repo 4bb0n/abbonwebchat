@@ -1,5 +1,4 @@
 const socket = io();
-      const form = document.getElementById("chat-form");
       const input = document.getElementById("chat-input");
       const chatDisplay = document.getElementById("chat-display");
       const fileInput = document.getElementById("file-input");
@@ -734,8 +733,7 @@ input.addEventListener("keypress", event => {
             socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
             input.value = "";
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            }// Prevent form submission
-        form.dispatchEvent(new Event("submit"));  // Trigger form submission
+            }
     }
 });
       function removeBrainRot(msg) {
