@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security</title>
+    <link rel="stylesheet" href="/sideBar.css">
+    <style>
+        body{
+            text-align: center;
+        }
+        #security{
+            background-color: black;
+            color: white;
+        }
+        #clearAllMsg {
+        height: 70px;
+        width: 400px;
+        color: red;
+        border-radius: 15px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 2px 2px 6px gray;
+        margin-top: 15px;
+        font-family: sans-serif;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        margin-bottom: 15px;
+        position: relative;
+        bottom: 12px;
+        left: 20px;
+        justify-self: center;
+      }
+      #clearAllMsg:hover {
+        background-color: red;
+        color: white;
+        box-shadow: none;
+      }
+    </style>
+</head>
+<body>
+    <div id="sideBar">
+        <button id="account">Account</button>
+        <button id="security">Security</button>
+        <button id="notifications">Notifications</button>
+        <button id="personalization">Personalization</button>
+    </div>
+    <div id="clearMsg">
+        <button id="clearAllMsg">Clear All Messages</button>
+    </div>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script src="/settings/javascript/sideBar.js"></script>
+    <script>
+        const socket = io()
+        document.getElementById("clearAllMsg").addEventListener("click", () => {
+            const prompt = window.prompt("Are you sure you want to clear all messages? (This action cannot be undone!) Type YES to clear all messages.")
+            if(prompt === "YES"){
+                localStorage.setItem("clearMsg", "1");
+                localStorage.removeItem("chatMessages");
+            }
+        })
+    </script>
+</body>
+</html>
