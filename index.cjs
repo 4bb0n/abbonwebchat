@@ -24,7 +24,25 @@ const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
-
+app.get('/sideBar.css', (req, res) => {
+  res.sendFile(__dirname + '/sideBar.css');
+})
+app.get('/index.cjs', (req, res) => {
+  res.sendFile(__dirname + 'index.cjs');
+});
+app.get('/settings/javascript/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(__dirname, 'settings', fileName);
+  res.sendFile(filePath);
+})
+app.get('/settings/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(__dirname, 'settings', fileName + '.html');
+  res.sendFile(filePath);
+})
+app.get('/settings', (req, res) => {
+  res.sendFile(__dirname + '/settings.html');
+});
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
@@ -44,7 +62,7 @@ io.on('connection', (socket) => {
   let fileToDownload = ""
   numUsers++;
   let date = new Date();
-  console.log(`A user connected at ${date}(server time). Total users: ${numUsers} with the id of ${socket.id}`);
+  console.log(`A user connected at ${date}. Total users: ${numUsers} with the id of ${socket.id}`);
   io.emit('user count', numUsers)
 
   socket.emit('IpAddressRequest')
@@ -119,7 +137,6 @@ socket.on("force disconnect", (targetUsername) => {
 
   socket.on('disconnect', () => {
     let date = new Date()
-    date.toString()
     numUsers--;
     console.log(`User disconnected. Total users: ${numUsers}`);
     socket.broadcast.emit("disconnected", numUsers, date)
@@ -148,7 +165,7 @@ socket.on("force disconnect", (targetUsername) => {
   })
   socket.on("userjoined", (username, time) => {
     socket.broadcast.emit("userjoined", username , time, socket.id)
-    console.log(username + " has joined on" + time)
+    console.log(username + " has joined")
   })
   socket.emit('getName')
 
@@ -398,5 +415,5 @@ socket.on("userDetails", (userDetails) => {
 const PORT = 3000
 const HOST = '0.0.0.0';
 http.listen(PORT, HOST, () => {
-  console.log(`Server running on https://${HOST}:${PORT}`);
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });
