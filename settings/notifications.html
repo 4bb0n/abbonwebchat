@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <link rel="stylesheet" href="/sideBar.css">
+    <style>
+        body{
+            text-align: center;
+        }
+        .notification{
+            position: relative;
+            width: 800px;
+            left: 50px;
+            background-color: rgb(0, 255, 166);
+            cursor:auto;
+            margin-top: 5px;
+        }
+        .notification:hover{
+            background-color: rgb(0, 255, 166);
+        }
+        #notifications{
+            background-color: black;
+            color: white;
+        }
+        #notificationsContainer{
+            background-color: rgb(52, 224, 255);
+            width: 900px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            height: fit-content;
+            max-height: 500px;
+            position: relative;
+            left: 400px;
+            top: 100px;
+            align-content: center;
+            border-radius: 15px;
+            box-shadow: 4px 4px 4px rgb(57, 57, 57);
+        }
+    </style>
+</head>
+<body>
+    <div id="sideBar">
+        <button id="account">Account</button>
+        <button id="security">Security</button>
+        <button id="notifications">Notifications</button>
+        <button id="personalization">Personalization</button>
+    </div>
+    <div id="notificationsContainer">
+
+    </div>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script src="/settings/javascript/sideBar.js"></script>
+    <script>
+        const socket = io()
+
+        socket.on("mail message", (msg) => {
+        msg = removeBrainRot(msg)
+          .replaceAll("undefinedMail ", "");
+        addNotification(msg);
+        addNotificationToLocalStorage(msg);
+      });
+      function removeBrainRot(msg) {
+        let words = msg.split(" ");
+        let forbiddenWords = ["sigma", "ohio", "skibidi", "rizzler", "rizz", "OHIO", "SKIBIDI", "RIZZLER", "RIZZ", "SIGMA", "$igma", "$kibidi", "sk1b1d1", "$k1b1d1", "sk!bidi", "$IGMA", "$KIBIDI", "fuck", "shit", "nigga", "nigger", "nigg*r", "nigg*", "bitch", "fuck", "f*ck", "sh*t", "b*tch", "$*gma", "s1gma", "s*gma", "r*zzl3r", "r*zz", "r1zz", "rizzl3r"];
+        let forbiddenWordsSplit = forbiddenWords.map(word => word.split(""));
+        let finishedWords = [];
+        words.forEach(word => {
+          let wordChance = 0;
+          let wordSplit = word.split("");
+          let wordSplitLength = wordSplit.length;
+          for (let i = 0; i < forbiddenWordsSplit.length; i++) {
+          for(let j = 0; j < wordSplitLength; j++) {
+            if(forbiddenWordsSplit[i][j] == wordSplit[j]) {
+              wordChance += (j / wordSplitLength) * 100;
+            }
+          }
+        }
+        if(wordChance >= 375){
+          finishedWords.push("*FORBIDDEN WORD*");
+        }
+        else{
+          finishedWords.push(word);
+        }
+      })
+      return finishedWords.join(" ");
+      }
+      function addNotification(msg) {
+        const notifications = document.getElementById("notificationsContainer");
+        const notification = document.createElement("button");
+        notification.classList.add("notification");
+        notification.textContent = msg;
+        notifications.appendChild(notification);
+      }
+      function loadNotifications() {
+        try {
+          return JSON.parse(localStorage.getItem("notification")) || [];
+        } catch (error) {
+          console.error("Error loading notifications from local storage:", error);
+          return [];
+        }
+      }
+      function addNotificationToLocalStorage(content) {
+        let messages = loadNotifications();
+        const newMessage = content;
+        messages.push(newMessage);
+        saveNotificationToLocalStorage(messages);
+        return newMessage;
+      }
+      function saveNotificationToLocalStorage(messages) {
+        localStorage.setItem("notification", JSON.stringify(messages));
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        if(localStorage.getItem("notification") == null){
+            localStorage.setItem("notification", JSON.stringify([]));
+        }
+        else{
+            const messages = loadNotifications();
+            messages.forEach(message => addNotification(message));
+        }
+    })
+    </script>
+</body>
+</html>
