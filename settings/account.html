@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="stylesheet" href="/sideBar.css">
+    <style>
+        body{
+            text-align: center;
+        }
+        input{
+            height: 40px;
+            width: 225px;
+            border-radius: 10px;
+            font-size: 20px;
+            border-width: 1px;
+            font-family: monospace;
+            background-color: rgb(0, 8, 33);
+            color: white;
+            box-shadow: none;
+            margin-top: 3px;
+        }
+        #password{
+            position: relative;
+        }
+        #loginBtn{
+            position: relative;
+            left: 650px;
+            height: 50px;
+            width: 200px;
+            font-size: large;
+            margin-top: 10px;
+            background-color: lightgray;
+            cursor: pointer;
+            box-shadow: 2px 2px 2px black;
+        }
+        #loginBtn:hover{
+            background-color: rgb(200, 200, 200);
+        }
+        #loginForm{
+            margin-top: 100px;
+        }
+        #sign-up{
+            position: relative;
+            top: 15px;
+            font-size: 15px;
+        }
+        #account{
+            background-color: black;
+            color: white;
+        }
+        #permission{
+            background-color: lightgray;
+            max-width: 400px;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: sans-serif;
+            justify-self: center;
+        }
+        #currentUsername{
+            font-size: 20px;
+        }
+        #currentPassword{
+            font-size: 20px;
+        }
+        #accountInfo{
+            background-color: rgb(237, 237, 237);
+            width: 400px;
+            justify-self: center;
+            height: 350px;
+            padding-top: 20px;
+        }
+        #admin{
+            color: red;
+        }
+        select{
+            width: 300px;
+            height: 50px;
+            font-size: large;
+            font-family:Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+        label{
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="sideBar">
+        <button id="account">Account</button>
+        <button id="security">Security</button>
+        <button id="notifications">Notifications</button>
+        <button id="personalization">Personalization</button>
+    </div>
+    <h1>Account</h1>
+    <br>
+    <div id="loginForm">
+    <input id="username" placeholder="username" required><br>
+    <input id="password" placeholder="password" type="password"><br>
+    <button id="loginBtn">Login</button> <br>
+    <a href="/signup.html" id="sign-up"><pre>Don't have an account?
+ Sign up!</pre></a>
+    </div>
+    <div id="accountInfo">
+        <pre id="currentUsername"></pre>
+        <pre id="currentPassword"></pre>
+        <br>
+        <pre id="permission"></pre>
+    </div>
+    <div id="accountList">
+        <label for="accounts">Accounts</label><br>
+        <select name="accounts" id="accounts">
+            <option value="test">test</option>
+        </select>
+    </div>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script src="/settings/javascript/sideBar.js"></script>
+    <script>
+        const socket = io()
+        const username = document.getElementById("username").value
+        const password = document.getElementById("password").value
+        let accountExists = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("username").value = localStorage.getItem("username")
+            document.getElementById("password").value = localStorage.getItem("password")
+            if(localStorage.getItem("loggedIn") == "true"){
+                document.getElementById("loginForm").style.display = "none"
+                if(localStorage.getItem("adminId") === "2405"){
+                    document.getElementById("permission").innerHTML = "Permission Level: <p id='admin'>admin</p>"
+                }
+                else if(localStorage.getItem("adminId") === "moderator"){
+                    document.getElementById("permission").innerHTML = "Permission Level: moderator"
+                }
+                else{
+                    document.getElementById("permission").innerHTML = "Permission Level:user"
+                }
+            }
+            document.getElementById("currentUsername").innerHTML = "Current Username: " + localStorage.getItem("username")
+            document.getElementById("currentPassword").innerHTML = "Current Password: " + localStorage.getItem("password")
+            document.getElementById("account").innerHTML += `<option value='${username}'>${username}</option>`;
+            let usingAccount;
+            for(let i = 0; i < 11; i++){
+                let acc = localStorage.getItem(`account${i}`)
+                if(username != null){
+                let password = acc.split(",")[1]
+                    acc = acc.split(",")[0]
+                    document.getElementById("accounts").innerHTML += `<option value='${username}' id='${username}'>${username}</option>`
+                    document.getElementById(username).addEventListener("click", () => {
+                        localStorage.setItem("currentAccount", acc + "," + password)
+                        window.location.reload()
+                    })
+                }
+            }
+        })
+
+              document.getElementById("loginBtn").addEventListener("click", () => {
+        const password = document.getElementById("password");
+        const savedUsername = localStorage.getItem("account").split(",")[0];
+        const savedPassword = localStorage.getItem("account").split(",")[1];
+        localStorage.setItem("password", password.value);
+        localStorage.setItem("username", document.getElementById("username").value);
+        socket.emit("getAccounts")
+        if (password.value === "stcxkl@ctdvn") {
+          socket.emit("loginCorrect")
+          localStorage.setItem("loggedIn", "true")
+          localStorage.setItem("currentAccount", document.getElementById("username").value + ',' + document.getElementById("password").value)
+        } 
+        else if(document.getElementById("username").value !== '' && password.value == ""){
+          window.open('/', '_self')
+          localStorage.removeItem("adminId")
+          localStorage.removeItem("moderator")
+          localStorage.setItem("loggedIn", "true")
+        }
+        else if(password.value ===  "moderator"){
+            localStorage.removeItem("adminId")
+            localStorage.setItem("adminId", "moderator")
+            localStorage.setItem("loggedIn", "true")
+            window.open('/', "_self")
+        }
+        else if(document.getElementById("username").value == savedUsername && password.value == savedPassword){
+            localStorage.setItem("loggedIn", "true")
+            window.open('/', "_self")
+        }
+        else if(moreAccounts() == true){
+            localStorage.setItem("loggedIn", "true")
+            window.open('/', "_self")
+        }
+        else{
+            alert("Please enter your name and the correct password!")
+            localStorage.removeItem("adminId")
+            localStorage.removeItem("moderator")
+        }
+        function moreAccounts(){
+            for(let i = 1; i < 11; i++){
+                let username = localStorage.getItem(`account${i}`).split(",")[0];
+                let password = localStorage.getItem(`account${i}`).split(",")[1];
+                if(username == document.getElementById("username").value && password == document.getElementById("password").value){
+                    return true;
+                }
+            }
+        }
+      });
+      socket.on("loggedIn", () => {
+        localStorage.setItem("adminId", '2405')
+        window.open('/', "_self")
+      })
+    </script>
+</body>
+</html>
