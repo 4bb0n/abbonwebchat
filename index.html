@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Web Chat</title>
     <style>
       body {
-        max-width: 1000px;
+        max-width: 100%;
         overflow-x: hidden;
       }
 
@@ -23,8 +23,10 @@
       }
 
       #chat-display {
+        position: relative;
         height: 600px;
-        width: 860px;
+        top: 40px;
+        width: 900px;
         font-size: 20px;
         background-color: #f5f5f5;
         font-family: sans-serif;
@@ -62,21 +64,19 @@
         position: relative;
         overflow-x: hidden;
         right: 0;
-        height: fit-content;
+        height: auto;
         background-image: linear-gradient(#53bbf0, #258ff4);
         opacity: 5;
         margin: 10px;
         border-radius: 10px;
         color: white;
+        text-align: left;
         font-family: helvetica;
         padding: 5px;
         padding-top: 10px;
         padding-bottom: 10px;
         padding-right: 10px;
         border-radius: 15px;
-      }
-      .senderMessageContainer{
-        align-content: right;
       }
       .triangle {
         width: 0px;
@@ -100,7 +100,7 @@
       @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
       #send {
         position: absolute;
-        bottom: 25px;
+        top: 710px;
         border-radius: 15px;
         width: 140px;
         margin: auto;
@@ -114,12 +114,13 @@
         background-color: rgb(52, 162, 236);
       }
       #chat-input {
-        margin-top: 10px;
+        margin-top: 50px;
         margin-right: 10px;
+        padding-right: 40px;
         box-shadow: 3px 3px 2px;
         border-width: 3px;
         border-color: #000000;
-        width: 500px;
+        width: 700px;
         height: 40px;
         font-family: helvetica;
         background-color: whitesmoke;
@@ -321,19 +322,24 @@
       #clearAllMsg {
         height: 70px;
         width: 200px;
-        border-radius: 0;
-        background-color: lightgray;
+        color: red;
+        border-radius: 15px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 2px 2px 6px gray;
         margin-top: 15px;
         font-family: sans-serif;
+        font-size: 15px;
         font-weight: bold;
-        box-shadow: gray;
+        border: none;
         margin-bottom: 15px;
         position: relative;
         bottom: 12px;
         left: 20px;
       }
       #clearAllMsg:hover {
-        background-color: rgb(190, 197, 255);
+        background-color: red;
+        color: white;
+        box-shadow: none;
       }
       #messageSettings {
         position: relative;
@@ -349,17 +355,24 @@
       #removeLastMsg {
         height: 70px;
         width: 200px;
-        border-radius: 0;
-        background-color: lightgray;
+        color: red;
+        border-radius: 15px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 2px 2px 6px gray;
         margin-top: 15px;
         font-family: sans-serif;
+        font-size: 15px;
         font-weight: bold;
-        box-shadow: gray;
-        left: 50px;
-        margin-left: 40px;
+        border: none;
+        margin-bottom: 15px;
+        position: relative;
+        bottom: 12px;
+        left: 20px;
       }
       #removeLastMsg:hover {
-        background-color: rgb(190, 197, 255);
+        background-color: red;
+        color: white;
+        box-shadow: none;
       }
       #darkMode {
         border-radius: 2px;
@@ -420,9 +433,8 @@
         animation-iteration-count: infinite;
       }
       .kickMessage {
-        width: 1000px;
+        width: 500px;
         position: relative;
-        left: 20%;
         text-align: center;
         height: auto;
         background-color: #dddce2;
@@ -471,7 +483,7 @@
       #joinRoom {
         position: relative;
         background-color: rgb(61, 255, 80);
-        left: 1000px;
+        left: 10000px;
         border-radius: 0;
         font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
         font-weight: bold;
@@ -484,7 +496,7 @@
         position: relative;
         top: 10px;
         background-color: rgb(250, 45, 45);
-        left: 1000px;
+        left: 10000px;
         border-radius: 0;
         font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
           sans-serif;
@@ -685,17 +697,17 @@
         box-shadow: none;
       }
       #yellowMsgBoxColour {
-        background-color: #f3ff12;
+        background-color: yellow;
         position: relative;
         box-shadow: none;
       }
       #greenMsgBoxColour {
-        background-color: #03ff70;
+        background-color: rgb(0, 212, 127);
         position: relative;
         box-shadow: none;
       }
       #blueMsgBoxColour {
-        background-color: #0381ff;
+        background-color: rgb(84, 171, 248);
         position: relative;
         box-shadow: none;
       }
@@ -705,7 +717,7 @@
         box-shadow: none;
       }
       #purpleMsgBoxColour {
-        background-color: #9332d9;
+        background-color: rgb(188, 101, 255);;
         position: relative;
         box-shadow: none;
       }
@@ -716,22 +728,22 @@
         box-shadow: none;
       }
       #redChatMessageTextColour {
-        background-color: red;
+        background-color: rgb(255, 32, 32);
         position: relative;
         box-shadow: none;
       }
       #yellowChatMessageTextColour {
-        background-color: #f3ff12;
+        background-color: yellow;
         position: relative;
         box-shadow: none;
       }
       #greenChatMessageTextColour {
-        background-color: green;
+        background-color: rgb(0, 212, 127);
         position: relative;
         box-shadow: none;
       }
       #blueChatMessageTextColour {
-        background-color: blue;
+        background-color: rgb(84, 171, 248);
         position: relative;
         box-shadow: none;
       }
@@ -741,7 +753,7 @@
         box-shadow: none;
       }
       #purpleChatMessageTextColour {
-        background-color: purple;
+        background-color: rgb(188, 101, 255);;
         position: relative;
         box-shadow: none;
       }
@@ -752,19 +764,19 @@
         color: red;
       }
       .yellow {
-        color: #f3ff12;
+        color: yellow;
       }
       .green {
-        color: #03ff70;
+        color: green;
       }
       .pink {
-        color: rgb(242, 96, 255);
+        color: #fc9ad2;
       }
       .blue{
-        color: #0381ff;
+        color: blue;
       }
       .purple{
-        color: #9332d9;
+        color: rgb(188, 101, 255);
       }
 
       .backgroundblack {
@@ -774,19 +786,19 @@
         background-color: red;
       }
       .backgroundyellow {
-        background-color: #f3ff12;
+        background-color: yellow;
       }
       .backgroundgreen {
-        background-color: #03ff70;
+        background-color: green;
       }
       .backgroundpink {
-        background-color: rgb(242, 96, 255);
+        background-color: #fc9ad2
       }
       .backgroundblue{
-        background-color: #0381ff;
+        background-color: rgb(84, 171, 248);
       }
       .backgroundpurple{
-        background-color: #9332d9;
+        background-color: rgb(188, 101, 255);
       }
       #updateLog {
         position: relative;
@@ -802,7 +814,7 @@
         background-color: rgb(206, 206, 206);
         border-left: 4px solid #5865F2;
         top: 0;
-        right: 0;
+        left: 1305px;
         width: 210px;
         height: 100%
       }
@@ -866,7 +878,7 @@
       #emojis{
         position: absolute;
         right: 450px;
-        top: 790px;
+        top: 770px;
         background-color: rgb(255, 255, 255);
         box-shadow: 0px 0px 6px gray;
         border-radius: 15px;
@@ -877,17 +889,51 @@
       #showEmojisBtn{
         position: absolute;
         right: 775px;
-        top: 720px;
+        top: 705px;
         height: 50px;
         width: 55px;
-        background-color: white;
+        background-color: inherit;
         border: none;
         box-shadow: none;
-        font-size: 50px;
+        font-size: 40px;
       }
       #test{
         clip-path: polygon(71% 78%, 63% 85%, 55% 70%);
         background-color: red;
+      }
+      #textMessageColour{
+        position: absolute;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 20px;
+        right: 400px;
+        top: 150px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 15px;
+      }
+      #msgBoxColour{
+        position: absolute;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 20px;
+        right: 400px;
+        top: 400px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 15px;
+      }
+      #textMessageColoursHeader{
+        position: absolute;
+        right: 400px;
+        top: 100px;
+        color: black;
+        font-family: sans-serif;
+      }
+      #messageBackgroundColour{
+        position: absolute;
+        right: 400px;
+        top: 350px;
+        color: black;
+        font-family: sans-serif;
       }
     </style>
   </head>
@@ -896,9 +942,35 @@
     <button id="toggleDirectMsgVisibility" class="goodBtn">
       Show / Hide Direct Messages
     </button>
+    <div id="topStuff">
     <div id="chat-display" readonly style="border-width: 2px"></div>
-      <textarea id="chat-input" type="text" autocomplete="off" contenteditable="on" placeholder="Type a message..."></textarea>
-      <button id="send">Send</button>
+    <h3 id="textMessageColoursHeader">Text Message Colours</h3>
+    <div id="textMessageColour">
+      <button id="blackChatMessageTextColour"style="height: 50px; width: 50px"></button>
+      <button id="redChatMessageTextColour"style="height: 50px; width: 50px"></button>
+      <button id="yellowChatMessageTextColour"style="height: 50px; width: 50px"></button>
+      <button id="greenChatMessageTextColour"style="height: 50px; width: 50px"></button>
+      <br>
+      <button id="pinkChatMessageTextColour" style="height: 50px; width: 50px"></button>
+      <button id="blueChatMessageTextColour" style="height: 50px; width: 50px"></button>
+      <button id="purpleChatMessageTextColour" style="height: 50px; width: 50px"></button>
+      </div>
+      <h3 id="messageBackgroundColour">Message Box Colours</h3>
+      <div id="msgBoxColour">
+        <button id="blackMsgBoxColour"style="height: 50px; width: 50px"></button>
+        <button id="redMsgBoxColour"style="height: 50px; width: 50px"></button>
+        <button id="yellowMsgBoxColour"style="height: 50px; width: 50px"></button>
+        <button id="greenMsgBoxColour"style="height: 50px; width: 50px"></button>
+        <br>
+        <button id="pinkMsgBoxColour" style="height: 50px; width: 50px"></button>
+        <button id="blueMsgBoxColour" style="height: 50px; width: 50px"></button>
+        <button id="purpleMsgBoxColour" style="height: 50px; width: 50px"></button>
+        </div>
+      </div>
+    <form id="chat-form">
+      <input id="chat-input" type="text" autocomplete="off" contenteditable="on" placeholder="Type a message...">
+      <button id="send" type="submit">Send</button>
+    </form>
     <div id="commandContainer">
       <input
         type="text"
@@ -908,7 +980,6 @@
     </div>
     <button id="showEmojisBtn" class="goodBtn">🙂</button>
     <div id="emojis" style="display: none;">
-      <div id="test"></div>
       <button id="smile" class="emojiBtn goodBtn" title="smile">😀</button>
       <button id="grinning" class="emojiBtn goodBtn" title="grinning">🙂</button>
       <button id="laughing" class="emojiBtn goodBtn" title="laughing">🤣</button>
@@ -935,31 +1006,12 @@
     <button id="moderatorPanel" class="goodBtn rightSideBarElement" style="display: none;">Moderator Panel</button>
     <button id="adminPanelBtn" class="goodBtn rightSideBarElement" style="display: none">Admin Panel</button>
     <button id="accountBtn" class="goodBtn rightSideBarElement">Account</button>
+    <button id="settingsBtn" class="goodBtn rightSideBarElement">Settings</button>
     <button id="updateLog" class="goodBtn rightSideBarElement">Update Log</button>
     <button id="wiki" class="goodBtn rightSideBarElement">Help Wiki</button>
     <input type="text" id="room" placeholder="Join Room" />
     <input type="text" id="roomLeave" placeholder="Leave Room">
     <input placeholder="username" id="username" autocomplete="off" type="username" class="rightSideBarElement">
-    <div id="textMessageColour">
-    <button id="blackChatMessageTextColour"style="height: 50px; width: 50px"></button>
-    <button id="redChatMessageTextColour"style="height: 50px; width: 50px"></button>
-    <button id="yellowChatMessageTextColour"style="height: 50px; width: 50px"></button>
-    <button id="greenChatMessageTextColour"style="height: 50px; width: 50px"></button>
-    <br>
-    <button id="pinkChatMessageTextColour" style="height: 50px; width: 50px"></button>
-    <button id="blueChatMessageTextColour" style="height: 50px; width: 50px"></button>
-    <button id="purpleChatMessageTextColour" style="height: 50px; width: 50px"></button>
-    </div>
-    <div id="msgBoxColour">
-      <button id="blackMsgBoxColour"style="height: 50px; width: 50px"></button>
-      <button id="redMsgBoxColour"style="height: 50px; width: 50px"></button>
-      <button id="yellowMsgBoxColour"style="height: 50px; width: 50px"></button>
-      <button id="greenMsgBoxColour"style="height: 50px; width: 50px"></button>
-      <br>
-      <button id="pinkMsgBoxColour" style="height: 50px; width: 50px"></button>
-      <button id="blueMsgBoxColour" style="height: 50px; width: 50px"></button>
-      <button id="purpleMsgBoxColour" style="height: 50px; width: 50px"></button>
-      </div>
     <button id="secretAdmin" class="goodBtn"></button>
     </div>
     
@@ -1036,9 +1088,9 @@ Users online:
         </div>
       </div>
     </div>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.js" defer></script>
-    <script src="index.cjs" defer></script>
-    <script src="iosdev.js" defer></script>
-    <script src="client.js" defer></script>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script src="client.js"></script>
   </body>
 </html>
