@@ -52,6 +52,7 @@ const socket = io();
       const accountBtn = document.getElementById("accountBtn");
       const adminPanelBtn = document.getElementById("adminPanelBtn");
       const showEmojisBtn = document.getElementById("showEmojisBtn");
+      const settingsBtn = document.getElementById("settingsBtn");
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
@@ -90,6 +91,23 @@ const socket = io();
       document.getElementById("disgust").onclick = () => {input.value += "🤮"};
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
       document.getElementById("eye").onclick = () => {input.value += "👀"};
+
+      settingsBtn.addEventListener("click", () => {
+        window.open("/settings", "_self");
+      })
+
+      const button = document.createElement("button");
+      button.textContent = "Home";
+      button.classList.add("directMsgBtns");
+      directMsgDiv.appendChild(button);
+      button.addEventListener("click", () => {
+          chatDisplay.textContent = "";
+          setTimeout(() => {
+            appendMessage("You are now talking in Home room");
+          }, 1000);
+          room.value = "Home";
+          joinRoom.click()
+      });
 
       socket.on("logUserDetails", (data) => {
         appendMessage(data);
@@ -160,7 +178,7 @@ const socket = io();
       })
 
       accountBtn.addEventListener("click", () => {
-        window.open("/account.html","_self")
+        window.open("/settings/account","_self")
       })
 
       showUpdateLogBtn.addEventListener("click", () => {
@@ -681,23 +699,7 @@ ${numUser}`;
       });
 
       socket.on("mail message", (msg) => {
-        msg = msg
-          .replaceAll("sigma", "*FORBIDDEN WORD*")
-          .replaceAll("ohio", "*FORBIDDEN WORD*")
-          .replaceAll("skibidi", "*FORBIDDEN WORD*")
-          .replaceAll("rizzler", "*FORBIDDEN WORD*")
-          .replaceAll("rizz", "*FORBIDDEN WORD*")
-          .replaceAll("OHIO", "*FORBIDDEN WORD*")
-          .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-          .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-          .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-          .replaceAll("SIGMA", "*FORBIDDEN WORD*")
-          .replaceAll("$igma", "*FORBIDDEN WORD*")
-          .replaceAll("$kibidi", "*FORBIDDEN WORD*")
-          .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
-          .replaceAll("$IGMA", "*FORBIDDEN WORD*")
-          .replaceAll("fuck", "*FORBIDDEN WORD*")
-          .replaceAll("FUCK", "*FORBIDDEN WORD*")
+        msg = removeBrainRot(msg)
           .replaceAll("undefinedMail ", "");
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
@@ -706,25 +708,7 @@ input.addEventListener("keypress", event => {
     if (event.key === "Enter") {
         event.preventDefault();
             if (input.value) {
-            input.value = input.value
-              .replaceAll("sigma", "*FORBIDDEN WORD*")
-              .replaceAll("ohio", "*FORBIDDEN WORD*")
-              .replaceAll("skibidi", "*FORBIDDEN WORD*")
-              .replaceAll("rizzler", "*FORBIDDEN WORD*")
-              .replaceAll("rizz", "*FORBIDDEN WORD*")
-              .replaceAll("OHIO", "*FORBIDDEN WORD*")
-              .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-              .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-              .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-              .replaceAll("SIGMA", "*FORBIDDEN WORD*")
-              .replaceAll("$igma", "*FORBIDDEN WORD*")
-              .replaceAll("$kibidi", "*FORBIDDEN WORD*")
-              .replaceAll("$IGMA", "*FORBIDDEN WORD*")
-              .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
-              //please, forgive me but I have to ban it! I have to write it down
-              .replaceAll("fuck", "*FORBIDDEN WORD*")
-              .replaceAll("shit", "*FORBIDDEN WORD*")
-              .replaceAll("bitch", "*FORBIDDEN WORD*")
+            input.value = removeBrainRot(input.value)
             const username = usernameInput.value;
             const senderMessage = input.value;
             const newMessage = addMessage("sender", "YOU: " + senderMessage);
@@ -739,25 +723,7 @@ input.addEventListener("keypress", event => {
 sendBtn.onclick = () => {
       
             if (input.value) {
-            input.value = input.value
-              .replaceAll("sigma", "*FORBIDDEN WORD*")
-              .replaceAll("ohio", "*FORBIDDEN WORD*")
-              .replaceAll("skibidi", "*FORBIDDEN WORD*")
-              .replaceAll("rizzler", "*FORBIDDEN WORD*")
-              .replaceAll("rizz", "*FORBIDDEN WORD*")
-              .replaceAll("OHIO", "*FORBIDDEN WORD*")
-              .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-              .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-              .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-              .replaceAll("SIGMA", "*FORBIDDEN WORD*")
-              .replaceAll("$igma", "*FORBIDDEN WORD*")
-              .replaceAll("$kibidi", "*FORBIDDEN WORD*")
-              .replaceAll("$IGMA", "*FORBIDDEN WORD*")
-              .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
-              //please, forgive me but I have to ban it! I have to write it down
-              .replaceAll("fuck", "*FORBIDDEN WORD*")
-              .replaceAll("shit", "*FORBIDDEN WORD*")
-              .replaceAll("bitch", "*FORBIDDEN WORD*")
+            input.value = removeBrainRot(input.value)
             const username = usernameInput.value;
             const senderMessage = input.value;
             const newMessage = addMessage("sender", "YOU: " + senderMessage);
@@ -769,28 +735,29 @@ sendBtn.onclick = () => {
             }
 }
       function removeBrainRot(msg) {
-        msg = msg
-          .replaceAll("sigma", "*FORBIDDEN WORD*")
-          .replaceAll("ohio", "*FORBIDDEN WORD*")
-          .replaceAll("skibidi", "*FORBIDDEN WORD*")
-          .replaceAll("rizzler", "*FORBIDDEN WORD*")
-          .replaceAll("rizz", "*FORBIDDEN WORD*")
-          .replaceAll("OHIO", "*FORBIDDEN WORD*")
-          .replaceAll("SKIBIDI", "*FORBIDDEN WORD*")
-          .replaceAll("RIZZLER", "*FORBIDDEN WORD*")
-          .replaceAll("RIZZ", "*FORBIDDEN WORD*")
-          .replaceAll("SIGMA", "*FORBIDDEN WORD*")
-          .replaceAll("$igma", "*FORBIDDEN WORD*")
-          .replaceAll("$kibidi", "*FORBIDDEN WORD*")
-          .replaceAll("$KIBIDI", "*FORBIDDEN WORD*")
-          .replaceAll("$IGMA", "*FORBIDDEN WORD*")
-          .replaceAll("fuck", "*FORBIDDEN WORD*")
-          .replaceAll("FUCK", "*FORBIDDEN WORD*")
-          .replaceAll("fuck", "*FORBIDDEN WORD*")
-          .replaceAll("shit", "*FORBIDDEN WORD*")
-          .replaceAll("bitch", "*FORBIDDEN WORD*")
-          .replaceAll("undefinedMail ", "");
-        return msg;
+        let words = msg.split(" ");
+        let forbiddenWords = ["sigma", "ohio", "skibidi", "rizzler", "rizz", "OHIO", "SKIBIDI", "RIZZLER", "RIZZ", "SIGMA", "$igma", "$kibidi", "sk1b1d1", "$k1b1d1", "sk!bidi", "$IGMA", "$KIBIDI", "fuck", "shit", "nigga", "nigger", "nigg*r", "nigg*", "bitch", "fuck", "f*ck", "sh*t", "b*tch", "$*gma", "s1gma", "s*gma", "r*zzl3r", "r*zz", "r1zz", "rizzl3r"];
+        let forbiddenWordsSplit = forbiddenWords.map(word => word.split(""));
+        let finishedWords = [];
+        words.forEach(word => {
+          let wordChance = 0;
+          let wordSplit = word.split("");
+          let wordSplitLength = wordSplit.length;
+          for (let i = 0; i < forbiddenWordsSplit.length; i++) {
+          for(let j = 0; j < wordSplitLength; j++) {
+            if(forbiddenWordsSplit[i][j] == wordSplit[j]) {
+              wordChance += (j / wordSplitLength) * 100;
+            }
+          }
+        }
+        if(wordChance >= 375){
+          finishedWords.push("*FORBIDDEN WORD*");
+        }
+        else{
+          finishedWords.push(word);
+        }
+      })
+      return finishedWords.join(" ");
       }
 
       function appendMessage(msg, textColour, boxColour) {
@@ -863,8 +830,15 @@ sendBtn.onclick = () => {
         const newMessage = document.createElement("div");
         const newMessageContainer = document.createElement("div");
         const deleteBtn = document.createElement("button");
+
+        deleteBtn.classList.add("deleteBtn");
+        deleteBtn.textContent = "X";
+        deleteBtn.addEventListener("click", () => {
+          newMessageContainer.remove();
+        });
         newMessageContainer.classList.add("senderMessageContainer");
         newMessageContainer.appendChild(newMessage);
+        newMessageContainer.appendChild(deleteBtn);
         newMessage.classList.add("senderMessage");
         switch (chatMessageTextColour) {
           case "black":
@@ -955,6 +929,11 @@ sendBtn.onclick = () => {
             username.value = "NoName";
           }
         }
+        
+  if(localStorage.getItem("clearMsg") !== null){
+    localStorage.removeItem("clearMsg")
+    chatDisplay.value = "";
+  }
         socket.emit("getUsersOnline");
         socket.emit("connected", username.value);
         const adminId = localStorage.getItem("adminId");
