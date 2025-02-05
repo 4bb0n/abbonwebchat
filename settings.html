@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <style>
+        button{
+            display: block;
+            width: 200px;
+            height: 60px;
+            margin-top: 15px;
+            margin-left: 10px;
+            background-color: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 4px 4px 4px gray;
+            cursor: pointer;
+        }
+        button:hover{
+            background-color: rgb(240, 240, 240);
+        }
+        #sideBar{
+            width: 230px;
+            height: 100%;
+            background-color: rgb(218, 218, 218);
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="sideBar">
+        <button id="account">Account</button>
+        <button id="security">Security</button>
+        <button id="notifications">Notifications</button>
+        <button id="personalization">Personalization</button>
+    </div>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.js"></script>
+    <script src="index.cjs"></script>
+    <script src="/settings/javascript/sideBar.js"></script>
+    <script>
+        const socket = io()
+        const account = document.getElementById("account");
+        account.addEventListener("click", () => {
+            window.open("settings/account", "_self");
+        });
+    </script>
+</body>
+</html>
