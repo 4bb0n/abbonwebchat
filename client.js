@@ -295,21 +295,33 @@ const socket = io();
       socket.on("updateOnlineUsers2", (users) => {
         let arr = [...new Set(users)];
         setTimeout(() => {
-          arr.forEach((user) => {
+          for(let i = 0; i < arr.length; i++) {
+            for(let j = 0; j < arr.length; j++) {
+            if(arr[i] == arr[j]) {
             const button = document.createElement("button");
-            button.textContent = user;
+            button.textContent = arr[i];
             button.classList.add("directMsgBtns");
             directMsgDiv.appendChild(button);
             button.addEventListener("click", () => {
                 chatDisplay.textContent = "";
                 setTimeout(() => {
-                  appendMessage("You are now talking to " + user);
+                  appendMessage("You are now talking to " + arr[i]);
                 }, 1000);
-              directMsgPerson = user;
+              directMsgPerson = arr[i];
             });
-          });
-        }, 2000);
-      });
+            }
+          };
+        }
+        let whileLoop = 0;
+        while(document.getElementsByClassName("directMsgBtns").length > arr.length + 1) {
+          document.getElementsByClassName("directMsgBtns")[arr.length + 1].remove();
+          whileLoop++;
+          if(document.getElementsByClassName("directMsgBtns")[arr.length + 1] == username.value) {
+            document.getElementsByClassName("directMsgBtns")[arr.length + 1].remove();
+          }
+        }
+      })
+    }, 2000);
 
       socket.on("forceChangeNameCheck", (curName, nameToChange) => {
         if (username.value == curName) {
