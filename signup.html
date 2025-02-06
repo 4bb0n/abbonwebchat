@@ -29,7 +29,7 @@
         }
         #username{
             position: relative;
-            bottom: 35px;
+            bottom: 40px;
         }
         #createAccountBtn{
             position: relative;
@@ -46,8 +46,8 @@
         }
         #loginForm{
             position: relative;
-            left: 400px;
             align-content: center;
+            left: 550px;
             margin-top: 100px;
             background-color: lightgray;
             width: 400px;
@@ -68,38 +68,65 @@
     <script>
         const socket = io();
         const createAccountBtn = document.getElementById("createAccountBtn");
+        let usernameTaken = false;
+        document.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem("accountList") === null){
+            localStorage.setItem("accountList", JSON.stringify([]));
+            }
+        })
+        function loadAccountsFromLocalStorage() {
+        try {
+          return JSON.parse(localStorage.getItem("accountList")) || [];
+        } catch (error) {
+          console.error("Error loading messages from local storage:", error);
+          return [];
+        }
+      }
+
+        socket.emit("getAccounts");
+        
+        document.getElementById("username").oninput = () => {
+            console.log("changed")
+            socket.emit("getAccounts");
+        }
+            socket.on("getAccountsReturn", accounts =>{
+            if(accounts[document.getElementById("username").value]){
+                alert("This username is already taken")
+                usernameTaken = true;
+            }
+            else{
+                usernameTaken = false;
+            }
+        })
+
         createAccountBtn.onclick = () => {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            socket.emit("checkForSameName", username);
-            if(username && password) {
-            const account = [username, password]
-            let accOrder = checkAccounts()
-            if(accOrder == 0 && localStorage.getItem("account") == null){
-                localStorage.setItem("account", account);
-            }
-            else{
-                localStorage.setItem("account" + accOrder + 1, account);
-            }
+            if(username && password && !usernameTaken){
+                let accounts = loadAccountsFromLocalStorage();
+                const account = [username, password]
+                accounts.push(account);
+                if(!localStorage.getItem("account")){
+                    localStorage.setItem("account", account);
+                    localStorage.getItem("accountList").push(account);
+                }
+                else{
+                    for(let i = 1; i < 11; i++){
+                        if(!localStorage.getItem(`account${i}`)){
+                            localStorage.setItem(`account${i}`, account);
+                            break;
+                        }
+                        else{
+                        }
+                    }
+                }
+            socket.emit("createAccount", account)
             window.open('/', '_self');
             }
             else{
                 alert("Please enter your username and password")
             }
         };
-function checkAccounts() {
-    let accountList = [];
-    for (let i = 0; i <= 11; i++) {
-        accountList.push(localStorage.getItem(`account${i}`));
-    }
-    console.log(accountList)
-    for (let i = 0; i < accountList.length; i++) {
-        if (accountList[i] == null) {
-            return i;
-        }
-    }
-}
-
     </script>
 </body>
 </html>
