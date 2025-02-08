@@ -18,12 +18,24 @@ let getUsersOnlineArray = [];
 let bannedUsers = {};
 let accountCreated = {}
 let messages = [];
-
+/*
+app.use(express.static(path.join(__dirname, 'settings')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'node_modules')));
+app.use(express.static(path.join(__dirname)))
+*/
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.get('client.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'client.js'))
+})
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
+
 app.get('/sideBar.css', (req, res) => {
   res.sendFile(__dirname + '/sideBar.css');
 })
@@ -42,9 +54,6 @@ app.get('/settings/:filename', (req, res) => {
 })
 app.get('/settings', (req, res) => {
   res.sendFile(__dirname + '/settings.html');
-});
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/client.js', (req, res) => {
@@ -142,6 +151,7 @@ socket.on("force disconnect", (targetUsername) => {
     socket.broadcast.emit("disconnected", numUsers, date)
     io.emit("checkWhoIsOnline")
     io.emit('user count', numUsers)
+    io.emit("updateOnlineUsers2", onlineUsers)
   });
   socket.on('checkWhoIsOnline', (username) => {
     tempArray.push(username)
@@ -404,9 +414,12 @@ app.get('/download/:filename', (req, res) => {
       }
   });
 });
-socket.on("userDetails", (userDetails) => {
+socket.on("userDetails", (userDetails) => { 
   socket.broadcast.emit("logUserDetails", userDetails)
   console.log(userDetails)
+})
+socket.on("deleteMsg", (username, msg) => {
+  socket.broadcast.emit("deleteMsg")
 })
 //end of io.on('connection')
 });
