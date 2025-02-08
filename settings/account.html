@@ -89,6 +89,7 @@
 </head>
 <body>
     <div id="sideBar">
+        <button id="home">Home</button>
         <button id="account">Account</button>
         <button id="security">Security</button>
         <button id="notifications">Notifications</button>
@@ -104,8 +105,8 @@
  Sign up!</pre></a>
     </div>
     <div id="accountInfo">
-        <pre id="currentUsername"></pre>
-        <pre id="currentPassword"></pre>
+        <input id="currentUsername">
+        <input id="currentPassword">
         <br>
         <pre id="permission"></pre>
     </div>
@@ -133,14 +134,20 @@
                     document.getElementById("permission").innerHTML = "Permission Level: <p id='admin'>admin</p>"
                 }
                 else if(localStorage.getItem("adminId") === "moderator"){
-                    document.getElementById("permission").innerHTML = "Permission Level: moderator"
+                    document.getElementById("permission").innerHTML = "Permission Level: <p style='color: lime;'>moderator</p>"
                 }
                 else{
                     document.getElementById("permission").innerHTML = "Permission Level:user"
                 }
             }
-            document.getElementById("currentUsername").innerHTML = "Current Username: " + localStorage.getItem("username")
-            document.getElementById("currentPassword").innerHTML = "Current Password: " + localStorage.getItem("password")
+            document.getElementById("currentUsername").value = localStorage.getItem("username")
+            document.getElementById("currentPassword").value = localStorage.getItem("password")
+            document.getElementById("currentUsername").addEventListener("change", () => {
+                localStorage.setItem("username", document.getElementById("currentUsername").value)
+            })
+            document.getElementById("currentPassword").addEventListener("change", () => {
+                localStorage.setItem("password", document.getElementById("currentPassword").value)
+            })
             document.getElementById("account").innerHTML += `<option value='${username}'>${username}</option>`;
             let usingAccount;
             for(let i = 0; i < 11; i++){
