@@ -658,7 +658,7 @@ ${numUser}`;
       // Function to add a new message
       function addMessage(type, content) {
         let messages = loadMessagesFromLocalStorage();
-        const newMessage = { type, content, timestamp: Date.now() };
+        const newMessage = { type, content, timestamp: Date.now(), id: Math.random().toString() + Math.random().toString() };
         messages.push(newMessage);
         saveMessagesToLocalStorage(messages);
         return newMessage;
@@ -861,6 +861,7 @@ sendBtn.onclick = () => {
           if (messageIndex !== -1) {
             messages.splice(messageIndex, 1); // Remove the message from the array
             saveMessagesToLocalStorage(messages); // Save the updated array to localStorage
+            socket.emit("deleteMsg", username.value, newMessage.textContent.split("YOU: ").join(""))
           }
         
           // Remove the message from the DOM
@@ -951,6 +952,8 @@ sendBtn.onclick = () => {
 
       // Load and display messages when the page loads
       document.addEventListener("DOMContentLoaded", () => {
+        chatMessageTextColour = localStorage.getItem("ChatMessageTextColour")
+        msgBoxColour = localStorage.getItem("msgBoxColour")
         const fileMessages = loadFileMessagesFromLocalStorage();
         const messages = loadMessagesFromLocalStorage();
         displayFileMessages(fileMessages);
@@ -1035,7 +1038,21 @@ fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => respon
   }).catch(err => console.error("Error fetching geo data:", err));
 }).catch(err => console.error("Error fetching IP address:", err));
 
-      });
+let accountList = loadAccountsFromLocalStorage()
+  accountList.forEach(x => {
+    socket.emit("createAccount", x)
+  })
+
+//end of domcontentloaded
+});
+      function loadAccountsFromLocalStorage() {
+        try {
+          return JSON.parse(localStorage.getItem("accountList")) || [];
+        } catch (error) {
+          console.error("Error loading messages from local storage:", error);
+          return [];
+        }
+      }
 
       // force kick packet receiver
       socket.on("new message notification", (msg, desUsername) => {
@@ -1076,7 +1093,7 @@ fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => respon
             date.toString()
         socket.emit("userjoined", username, date);
         appendKickMessage(
-          "IF YOU'RE NOT GETTING NOTIFICATION FROM MESSAGES, GO TO SETTINGS AND ENABLE IT GLOBALLY (and for google chrome if you forgot to!)"
+          "Change your username in settings page"
         );
       });
 
