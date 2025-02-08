@@ -78,7 +78,7 @@
         try {
           return JSON.parse(localStorage.getItem("accountList")) || [];
         } catch (error) {
-          console.error("Error loading messages from local storage:", error);
+          console.error("Error loading accounts from local storage:", error);
           return [];
         }
       }
