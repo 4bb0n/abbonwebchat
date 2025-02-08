@@ -836,17 +836,41 @@ sendBtn.onclick = () => {
         chatDisplay.appendChild(receivedMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
-
+      let sentMessages = []
       function appendSenderMessage(msg) {
         const chatDisplay = document.getElementById("chat-display");
         const newMessage = document.createElement("div");
         const newMessageContainer = document.createElement("div");
         const deleteBtn = document.createElement("button");
 
+        newMessage.innerHTML = msg;
+        sentMessages.push(msg)
         deleteBtn.classList.add("deleteBtn");
         deleteBtn.textContent = "X";
         deleteBtn.addEventListener("click", () => {
+          //thanks deepseek R1!!!
+          // Load messages from localStorage
+          let messages = loadMessagesFromLocalStorage();
+        
+          // Find the index of the message to delete
+          const messageIndex = messages.findIndex(
+            (msg) => msg.content === newMessage.textContent && msg.type === "sender"
+          );
+        
+          // If the message is found, remove it
+          if (messageIndex !== -1) {
+            messages.splice(messageIndex, 1); // Remove the message from the array
+            saveMessagesToLocalStorage(messages); // Save the updated array to localStorage
+          }
+        
+          // Remove the message from the DOM
           newMessageContainer.remove();
+        
+          // Optional: Remove the message from the sentMessages array
+          const sentMessageIndex = sentMessages.indexOf(newMessage.textContent);
+          if (sentMessageIndex !== -1) {
+            sentMessages.splice(sentMessageIndex, 1);
+          }
         });
         newMessageContainer.classList.add("senderMessageContainer");
         newMessageContainer.appendChild(newMessage);
@@ -913,7 +937,6 @@ sendBtn.onclick = () => {
                     break;
             } 
         newMessage.contentEditable = true;
-        newMessage.innerHTML = msg;
         chatDisplay.appendChild(newMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
