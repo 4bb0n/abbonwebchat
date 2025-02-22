@@ -742,34 +742,23 @@ ${numUser}`;
       });
 input.addEventListener("keypress", event => {
     if (event.key === "Enter") {
-        event.preventDefault();
-            if (input.value) {
-            input.value = removeBrainRot(input.value)
-            const username = usernameInput.value;
-            const senderMessage = input.value;
-            const newMessage = addMessage("sender", "YOU: " + senderMessage);
-            appendSenderMessage(newMessage.content);
-            const room = document.getElementById("room").value;
-            socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
-            input.value = "";
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            }
+      sendBtn.click()
     }
 });
-sendBtn.onclick = () => {
-      
-            if (input.value) {
-            input.value = removeBrainRot(input.value)
-            const username = usernameInput.value;
-            const senderMessage = input.value;
-            const newMessage = addMessage("sender", "YOU: " + senderMessage);
-            appendSenderMessage(newMessage.content);
-            const room = document.getElementById("room").value;
-            socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
-            input.value = "";
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            }
-}
+sendBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (input.value) {
+  input.value = removeBrainRot(input.value)
+  const username = usernameInput.value;
+  const senderMessage = input.value;
+  const newMessage = addMessage("sender", "YOU: " + senderMessage);
+  appendSenderMessage(newMessage.content);
+  const room = document.getElementById("room").value;
+  socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
+  input.value = "";
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+  }
+})
       function removeBrainRot(msg) {
         let words = msg.split(" ");
         let forbiddenWords = ["sigma", "ohio", "skibidi", "rizzler", "rizz", "OHIO", "SKIBIDI", "RIZZLER", "RIZZ", "SIGMA", "$igma", "$kibidi", "sk1b1d1", "$k1b1d1", "sk!bidi", "$IGMA", "$KIBIDI", "fuck", "shit", "nigga", "nigger", "nigg*r", "nigg*", "bitch", "fuck", "f*ck", "sh*t", "b*tch", "$*gma", "s1gma", "s*gma", "r*zzl3r", "r*zz", "r1zz", "rizzl3r"];
