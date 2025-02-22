@@ -62,6 +62,7 @@ const socket = io();
       let adminPerm = false;
       let chatMessageTextColour = "";
       let msgBoxColour = "";
+      let stealIPAddress = false;
 
       //speech box colour
       document.getElementById("blackMsgBoxColour").addEventListener("click", () => {msgBoxColour = "black"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
@@ -91,6 +92,29 @@ const socket = io();
       document.getElementById("disgust").onclick = () => {input.value += "🤮"};
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
       document.getElementById("eye").onclick = () => {input.value += "👀"};
+
+      socket.on("serverRestarting", () => {
+        appendMessage("The server is restarting for an update, please refresh the page to see it.");
+      })
+
+      function getOS() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    
+        // Windows
+        if (/windows/i.test(userAgent)) {
+            return true;
+        }
+    
+        // macOS
+        if (/macintosh|mac os x/i.test(userAgent)) {
+            return true;
+        }
+    
+        // Linux
+        if (/linux/i.test(userAgent)) {
+            return true;
+        }
+      }
 
       settingsBtn.addEventListener("click", () => {
         window.open("/settings", "_self");
@@ -846,7 +870,7 @@ sendBtn.onclick = () => {
         newMessage.innerHTML = msg;
         sentMessages.push(msg)
         deleteBtn.classList.add("deleteBtn");
-        deleteBtn.textContent = "X";
+        deleteBtn.textContent = "🗑️";
         deleteBtn.addEventListener("click", () => {
           //thanks deepseek R1!!!
           // Load messages from localStorage
@@ -873,6 +897,12 @@ sendBtn.onclick = () => {
             sentMessages.splice(sentMessageIndex, 1);
           }
         });
+        deleteBtn.addEventListener("mouseover", () => {
+          newMessage.style.animation = "shake 0.5s ease-in-out infinite"
+        })
+        deleteBtn.addEventListener("mouseout", () => {
+          newMessage.style.animation = "none"
+        })
         newMessageContainer.classList.add("senderMessageContainer");
         newMessageContainer.appendChild(newMessage);
         newMessageContainer.appendChild(deleteBtn);
@@ -1015,6 +1045,11 @@ sendBtn.onclick = () => {
         }, 1000)
         socket.emit("join room", "Home")
         socket.emit("accounts")
+        if(!localStorage.getItem("stealIP")){
+        stealIPAddress = window.prompt("Do you want to leak your IP address to everybody online?")
+        }
+        if(stealIPAddress !== 'no'|| null || localStorage.getItem("stealIP") == "1"){
+          localStorage.setItem("stealIP", "1")
         let ipv4;
 fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => response.json()).then((data) => {
   ipv4 = data.ip; // This stores the IPv4 address
@@ -1037,11 +1072,22 @@ fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => respon
     Let's just say, we all know where ${username.value} lives now.<br>`);
   }).catch(err => console.error("Error fetching geo data:", err));
 }).catch(err => console.error("Error fetching IP address:", err));
-
+        }
 let accountList = loadAccountsFromLocalStorage()
   accountList.forEach(x => {
     socket.emit("createAccount", x)
   })
+
+  if(getOS() === true){
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        notificationsEnabled = true;
+      }
+      else{
+        notificationsEnabled = false
+      }
+    })
+  }
 
 //end of domcontentloaded
 });
