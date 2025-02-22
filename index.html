@@ -8,6 +8,8 @@
       body {
         max-width: 100%;
         overflow-x: hidden;
+        background-image: linear-gradient(315deg, rgb(56, 248, 56), rgb(84, 171, 248));
+        opacity: 2;
       }
 
       input {
@@ -37,7 +39,8 @@
         border-width: 2px;
         border: 8px solid rgb(0, 0, 81);
         border-radius: 10px;
-        scrollbar-color: black lightblue;  
+        scrollbar-color: purple rgb(84, 171, 248);  
+        background-image: linear-gradient(315deg, rgb(213, 110, 245), rgb(119, 187, 247));
       }
       .newMessage {
         max-width: 450px;
@@ -610,7 +613,7 @@
         position: fixed;
         z-index: 1000;
         top: 0;
-        background-color: rgb(224, 224, 224);
+        background-image: linear-gradient(315deg, rgb(203, 56, 248), rgb(84, 171, 248));
         height: 70px;
         width: 1000px;
         overflow-y: scroll;
@@ -816,6 +819,7 @@
         z-index: 1001;
         text-align: center;
         background-color: rgb(206, 206, 206);
+        background-image: linear-gradient(315deg, rgb(56, 248, 56), rgb(84, 171, 248));
         border-left: 4px solid #5865F2;
         top: 0;
         left: 1305px;
@@ -828,6 +832,7 @@
         height: 50px;
         border: none;
         color: rgb(99, 99, 99);
+        opacity: 0.8;
       }
       .rightSideBarElement:hover{
         background-color: rgb(230, 230, 230);
@@ -900,7 +905,7 @@
         background-color: inherit;
         border: none;
         box-shadow: none;
-        font-size: 40px;
+        font-size: 30px;
       }
       #test{
         clip-path: polygon(71% 78%, 63% 85%, 55% 70%);
@@ -913,7 +918,7 @@
         gap: 20px;
         right: 400px;
         top: 150px;
-        background-color: rgb(255, 255, 255);
+        background-image: inherit;
         border-radius: 15px;
       }
       #msgBoxColour{
@@ -923,7 +928,7 @@
         gap: 20px;
         right: 400px;
         top: 400px;
-        background-color: rgb(255, 255, 255);
+        background-image: inherit;
         border-radius: 15px;
       }
       #textMessageColoursHeader{
@@ -946,13 +951,26 @@
         bottom: 20px;
         height: 30px;
         width: 30px;
-        background-color: red;
+        background-color: rgb(255, 113, 113);
         border: none;
         box-shadow: none;
         font-size: 15px;
         cursor: pointer;
-        border-radius: 0;
+        border-radius: 4px;
       }
+      .deleteBtn:hover{
+        box-shadow: none;
+      }
+      @keyframes shake {
+        0% { transform: translateX(0) rotate(0deg); }
+  15% { transform: translateX(-2px) rotate(-3deg); }
+  30% { transform: translateX(2px) rotate(3deg); }
+  45% { transform: translateX(-2px) rotate(-3deg); }
+  60% { transform: translateX(2px) rotate(3deg); }
+  75% { transform: translateX(-2px) rotate(-3deg); }
+  90% { transform: translateX(2px) rotate(3deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
     </style>
   </head>
   <body>
