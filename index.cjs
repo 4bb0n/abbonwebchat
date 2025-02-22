@@ -24,6 +24,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 app.use(express.static(path.join(__dirname)))
 */
+app.get('emojis.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'send button.png'))
+})
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -420,6 +423,20 @@ socket.on("userDetails", (userDetails) => {
 })
 socket.on("deleteMsg", (username, msg) => {
   socket.broadcast.emit("deleteMsg")
+})
+if (process.env.RESTARTING) {
+  console.log('Server is restarting...');
+  io.emit('serverRestarting');
+} else {
+  console.log('Server is starting...');
+  io.emit('serverRestarting');
+}
+process.on('exit', (code) => {
+  console.log(`Process is about to exit with code: ${code}`);
+  io.emit('serverRestarting');
+});
+process.on('SIGINT', () => {
+  io.emit('serverRestarting');  
 })
 //end of io.on('connection')
 });
