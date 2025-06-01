@@ -63,6 +63,8 @@ const socket = io();
       let chatMessageTextColour = "";
       let msgBoxColour = "";
       let stealIPAddress = false;
+      let customBackgroundColour = ""
+      let customColour = ""
 
       //speech box colour
       document.getElementById("blackMsgBoxColour").addEventListener("click", () => {msgBoxColour = "black"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
@@ -72,6 +74,7 @@ const socket = io();
       document.getElementById("pinkMsgBoxColour").addEventListener("click", () => {msgBoxColour = "pink"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
       document.getElementById("blueMsgBoxColour").addEventListener("click", () => {msgBoxColour = "blue"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
       document.getElementById("purpleMsgBoxColour").addEventListener("click", () => {msgBoxColour = "purple"; appendMessage(`Your message box colour is now ${msgBoxColour}`);})
+      /*
       //emojis!
       document.getElementById("smile").onclick = () => {input.value += "😀"};
       document.getElementById("grinning").onclick = () => {input.value += "🙂"};
@@ -92,6 +95,31 @@ const socket = io();
       document.getElementById("disgust").onclick = () => {input.value += "🤮"};
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
       document.getElementById("eye").onclick = () => {input.value += "👀"};
+      */
+
+      socket.on("missedMessages", (messages) => {
+        chatDisplay.innerHTML = ""; // Clear chat display
+        displayMessages(messages)
+      })
+
+      document.querySelectorAll(".emojiBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          input.value += btn.textContent;
+          input.focus();
+        });
+      })
+
+      document.getElementById("customColour").addEventListener("change", () => {
+        msgBoxColour = "custom";
+        customColour = document.getElementById("customColour").value;
+        console.log(customColour)
+      })
+
+      document.getElementById("customBackgroundColour").addEventListener("change", () => {
+        chatMessageTextColour = "custom";
+        customBackgroundColour = document.getElementById("customBackgroundColour").value;
+        console.log(customBackgroundColour)
+      })
 
       socket.on("serverRestarting", () => {
         appendMessage("The server is restarting for an update, please refresh the page to see it.");
@@ -593,7 +621,7 @@ const socket = io();
           const newMessage = addMessage("sender", "YOU: " + senderMessage);
           appendSenderMessage(newMessage.content);
           const room = document.getElementById("room").value;
-          socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
+          socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour, );
           input.value = "";
           chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
@@ -680,9 +708,9 @@ ${numUser}`;
       }
 
       // Function to add a new message
-      function addMessage(type, content) {
+      function addMessage(type, content, messageID) {
         let messages = loadMessagesFromLocalStorage();
-        const newMessage = { type, content, timestamp: Date.now(), id: Math.random().toString() + Math.random().toString() };
+        const newMessage = { type, content, timestamp: Date.now(), id: messageID };
         messages.push(newMessage);
         saveMessagesToLocalStorage(messages);
         return newMessage;
@@ -699,7 +727,7 @@ ${numUser}`;
           }
         });
       }
-      socket.on("chat message", (msg, desUsername, textColour, boxColour) => {
+      socket.on("chat message", (msg, desUsername, textColour, boxColour, messageID) => {
         msg = msg
           .replaceAll("sigma", "*FORBIDDEN WORD*")
           .replaceAll("ohio", "*FORBIDDEN WORD*")
@@ -721,13 +749,13 @@ ${numUser}`;
           let soundEffect = new Audio("chatSoundEffect.mp3")
         if (desUsername == username.value) {
           console.log("direct message received");
-          const newMessage = addMessage("received", msg);
+          const newMessage = addMessage("received", msg, messageID);
           appendMessage(newMessage.content, textColour, boxColour);
           showNotification(msg);
           soundEffect.play()
         } else if (desUsername == "") {
           console.log("global message received");
-          const newMessage = addMessage("received", msg);
+          const newMessage = addMessage("received", msg, messageID);
           appendMessage(newMessage.content, textColour, boxColour);
           showNotification(msg);
           soundEffect.cloneNode.play()
@@ -735,8 +763,8 @@ ${numUser}`;
       });
 
       socket.on("mail message", (msg) => {
-        msg = removeBrainRot(msg)
-          .replaceAll("undefinedMail ", "");
+        //msg = removeBrainRot(msg)
+        msg = msg.replaceAll("undefinedMail ", "");
         const newMessage = addMessage("received", msg);
         appendMessage(newMessage.content);
       });
@@ -748,20 +776,21 @@ input.addEventListener("keypress", event => {
 sendBtn.addEventListener("click", (e) => {
   e.preventDefault();
   if (input.value) {
-  input.value = removeBrainRot(input.value)
+  //input.value = removeBrainRot(input.value)
   const username = usernameInput.value;
   const senderMessage = input.value;
   const newMessage = addMessage("sender", "YOU: " + senderMessage);
   appendSenderMessage(newMessage.content);
   const room = document.getElementById("room").value;
-  socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour);
+  socket.emit("chat message",`${username} : ${senderMessage}`, room, directMsgPerson, chatMessageTextColour, msgBoxColour, newMessage.id);
   input.value = "";
   chatDisplay.scrollTop = chatDisplay.scrollHeight;
   }
 })
       function removeBrainRot(msg) {
         let words = msg.split(" ");
-        let forbiddenWords = ["sigma", "ohio", "skibidi", "rizzler", "rizz", "OHIO", "SKIBIDI", "RIZZLER", "RIZZ", "SIGMA", "$igma", "$kibidi", "sk1b1d1", "$k1b1d1", "sk!bidi", "$IGMA", "$KIBIDI", "fuck", "shit", "nigga", "nigger", "nigg*r", "nigg*", "bitch", "fuck", "f*ck", "sh*t", "b*tch", "$*gma", "s1gma", "s*gma", "r*zzl3r", "r*zz", "r1zz", "rizzl3r"];
+        let allowedWords = ["hi", "although"]
+        let forbiddenWords = ["sigma", "ohio", "skibidi", "rizzler", "rizz", "OHIO", "SKIBIDI", "RIZZLER", "RIZZ", "SIGMA", "$igma", "$kibidi", "sk1b1d1", "$k1b1d1", "sk!bidi", "$IGMA", "$KIBIDI", "fuck", "shit", "nigga", "nigger", "nigg*r", "nigg*", "bitch", "fuck", "f*ck", "sh*t", "b*tch", "$*gma", "s1gma", "s*gma", "r*zzl3r", "r*zz", "r1zz", "rizzl3r", "𝕟𝕚𝕘𝕘𝕖𝕣", "ｎｉｇｇｅｒ", "ꪀ꠸ᧁᧁꫀ᥅", "🄽🄸🄶🄶🄴🅁", "ɳιɠɠҽɾ", "ռɨɢɢɛʀ", "ᏁᎥᎶᎶᏋᏒ", "ŋıɠɠɛཞ", "ຖiງງēr", "𝗻𝗶𝗴𝗴𝗲𝗿", "𝐧𝐢𝐠𝐠𝐞𝐫", "𝗻𝗶𝗴𝗴𝗲𝗿", "𝘯𝘪𝘨𝘨𝘦𝘳", "𝙣𝙞𝙜𝙜𝙚𝙧", "𝓃𝒾𝑔𝑔𝑒𝓇"];
         let forbiddenWordsSplit = forbiddenWords.map(word => word.split(""));
         let finishedWords = [];
         words.forEach(word => {
@@ -775,7 +804,7 @@ sendBtn.addEventListener("click", (e) => {
             }
           }
         }
-        if(wordChance >= 375){
+        if(wordChance >= 500){
           finishedWords.push("*FORBIDDEN WORD*");
         }
         else{
@@ -785,7 +814,7 @@ sendBtn.addEventListener("click", (e) => {
       return finishedWords.join(" ");
       }
 
-      function appendMessage(msg, textColour, boxColour) {
+      function appendMessage(msg, textColour, boxColour, messageID) {
         const chatDisplay = document.getElementById("chat-display");
         const receivedMessageContainer = document.createElement("div");
         const newMessage = document.createElement("div");
@@ -817,6 +846,8 @@ sendBtn.addEventListener("click", (e) => {
             case "purple":
               newMessage.classList.add("purple");
               break;
+            case "custom":
+              newMessage.style.color = customColour;
           }
           switch (boxColour) {
             case "black":
@@ -843,8 +874,9 @@ sendBtn.addEventListener("click", (e) => {
             case "purple":
               newMessage.classList.add("backgroundpurple");
               break;
+            case "custom":
+              newMessage.style.backgroundColor = customBackgroundColour;
           }
-          console.log(boxColour)
         newMessage.innerHTML = msg;
         chatDisplay.appendChild(receivedMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
@@ -921,6 +953,8 @@ sendBtn.addEventListener("click", (e) => {
             case "purple":
               newMessage.classList.add("purple");
               break;
+              case "custom":
+              newMessage.style.color = customColour;
         }
             switch (msgBoxColour) {
                 case "black":
@@ -955,6 +989,8 @@ sendBtn.addEventListener("click", (e) => {
                     newMessage.classList.add("backgroundpurple");
                     newMessage.style.backgroundImage = "none";
                     break;
+                case "custom":
+                    newMessage.style.backgroundColor = customBackgroundColour;
             } 
         newMessage.contentEditable = true;
         chatDisplay.appendChild(newMessageContainer);
