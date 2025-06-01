@@ -88,18 +88,23 @@ socket.on("force disconnect", (targetUsername) => {
   socket.disconnect();
 })
 
-  socket.on('chat message', (msg, room, username, textColour, msgBoxColour) => {
+  socket.on('chat message', (msg, room, username, textColour, msgBoxColour, messageID) => {
     // Broadcast message to all clients except the one that sent it
     if(room == ''){
     console.log('msgBoxColour = '+ msgBoxColour)
-    socket.broadcast.emit('chat message', msg, username, textColour, msgBoxColour);
+    socket.broadcast.emit('chat message', msg, username, textColour, msgBoxColour, messageID);
     socket.broadcast.emit('new message notification', msg);
     console.log(msg)
+        messages.push({
+      type: "received",
+      content: msg,
+      timestamp: Date.now(),
+      id: messageID
+    });
     }
     else{
       socket.to(room).emit('chat message', msg); 
     }
-    messages.push(msg);
   });
   fs.readFileSync('messages.txt', 'utf8', (err, data) => {
     if (err) {
@@ -225,9 +230,6 @@ socket.on("force disconnect", (targetUsername) => {
         else{
         socket.emit("mailSentNotificationCommand", destinationUsername, message)
         }
-        console.log(offlineMessages)
-        console.log(offlineUsers)
-        console.log(message)
       }
       else{
         socket.broadcast.emit("online mail", destinationUsername, message)
@@ -293,6 +295,7 @@ socket.on("force disconnect", (targetUsername) => {
   socket.emit('get name')
   socket.on('name return', (username) => {
     onlineUsers.push(username)
+    socket.emit("missedMessages", messages)
     socket.emit("adminGetUsernameReturn", onlineUsers)
   })
   setTimeout(() => {
