@@ -1029,7 +1029,8 @@ sendBtn.addEventListener("click", (e) => {
   }
         socket.emit("getUsersOnline");
         socket.emit("connected", username.value);
-        const adminId = localStorage.getItem("adminId");
+        const adminId = localStorage.getItem("adminId")
+        setTimeout(() => {
         if(adminId == "2405"){
         adminPermissions = true;
         adminPerm = true;
@@ -1050,6 +1051,7 @@ sendBtn.addEventListener("click", (e) => {
           document.getElementById("adminPanelBtn").style.display = "none";
           },10)
         }
+      }, 1000);
         setTimeout(() => {
           if(document.getElementById("username").value == 'NoName'){
             let name = prompt("Please enter your name!");
@@ -1080,6 +1082,7 @@ fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => respon
   ipv4 = data.ip; // This stores the IPv4 address
   
   fetch(`https://get.geojs.io/v1/ip/geo/${ipv4}.json`).then(res => res.json()).then(data => {
+    setTimeout(() => {
     appendMessage(`Your IP address is: ${ipv4}<br>
     You are currently in ${data.city} city, ${data.country}<br>
     Your timezone is: ${data.timezone}<br>
@@ -1095,6 +1098,7 @@ fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => respon
     ${username.value}'s latitude is: ${data.latitude}<br>
     ${username.value}'s longitude is: ${data.longitude}<br>
     Let's just say, we all know where ${username.value} lives now.<br>`);
+    }, 1000);
   }).catch(err => console.error("Error fetching geo data:", err));
 }).catch(err => console.error("Error fetching IP address:", err));
         }
