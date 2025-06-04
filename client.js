@@ -1075,7 +1075,9 @@ sendBtn.addEventListener("click", (e) => {
         if(!localStorage.getItem("stealIP")){
         stealIPAddress = window.prompt("Do you want to leak your IP address to everybody online?")
         }
-        if(stealIPAddress !== 'no'|| null || localStorage.getItem("stealIP") == "1"){
+        const stealIP = false;
+        stealIPAddress = 'no'
+        if(stealIPAddress !== 'no'|| null || localStorage.getItem("stealIP") == "1" && stealIP){ 
           localStorage.setItem("stealIP", "1")
         let ipv4;
 fetch("https://get.geojs.io/v1/ip/geo.json?ipv4=true").then((response) => response.json()).then((data) => {
