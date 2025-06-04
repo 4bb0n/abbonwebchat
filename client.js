@@ -44,7 +44,6 @@ const socket = io();
       const pinkChatMessageTextColour = document.getElementById("pinkChatMessageTextColour");
       const blueChatMessageTextColour = document.getElementById("blueChatMessageTextColour");
       const purpleChatMessageTextColour = document.getElementById("purpleChatMessageTextColour");
-      const showUpdateLogBtn = document.getElementById("updateLog");
       const accountBtn = document.getElementById("accountBtn");
       const adminPanelBtn = document.getElementById("adminPanelBtn");
       const showEmojisBtn = document.getElementById("showEmojisBtn");
@@ -93,6 +92,10 @@ const socket = io();
       document.getElementById("eye").onclick = () => {input.value += "👀"};
       */
 
+      socket.on("you_joined", (time, id) => {
+        appendMessage(`You joined at ${time} with id ${id}`);
+      })
+
       socket.on("missedMessages", (messages) => {
         chatDisplay.innerHTML = ""; // Clear chat display
         displayMessages(messages)
@@ -115,10 +118,6 @@ const socket = io();
         chatMessageTextColour = "custom";
         customBackgroundColour = document.getElementById("customBackgroundColour").value;
         console.log(customBackgroundColour)
-      })
-
-      socket.on("serverRestarting", () => {
-        appendMessage("The server is restarting for an update, please refresh the page to see it.");
       })
 
       function getOS() {
@@ -227,10 +226,6 @@ const socket = io();
 
       accountBtn.addEventListener("click", () => {
         window.open("/settings/account","_self")
-      })
-
-      showUpdateLogBtn.addEventListener("click", () => {
-        window.open("https://github.com/4bb0n/abbonwebchat/commits/main/")
       })
 
       purpleChatMessageTextColour.addEventListener("click", () => {
@@ -1028,14 +1023,14 @@ sendBtn.addEventListener("click", (e) => {
       }, 1000);
         setTimeout(() => {
           if(document.getElementById("username").value == 'NoName'){
-            let name = prompt("Please enter your name!");
-            if(name){
+            let name = prompt("Please enter your name! There must be no spaces in your name!");
+            if(name && name.split(" ").length <= 1){
               username.value = name;
               localStorage.setItem("username", name);
             }
             else{
-              while(!name){
-                name = prompt("Please enter your name!")
+              while(!name || name.split(" ").length > 1){
+                name = prompt("Please enter your name! There must be no spaces in your name!");
                 if(name){
                   username.value = name;
                   localStorage.setItem("username", name);
@@ -1143,9 +1138,6 @@ let accountList = loadAccountsFromLocalStorage()
             let date = Date()
             date.toString()
         socket.emit("userjoined", username, date);
-        appendKickMessage(
-          "Change your username in settings page"
-        );
       });
 
       socket.on("userjoined", (username, time, id) => {
