@@ -8,11 +8,7 @@ const socket = io();
       const offNot = document.getElementById("offnot");
       const password = document.getElementById("password");
       const loginBtn = document.getElementById("loginBtn");
-      const darkMode = document.getElementById("darkMode");
-      const lightMode = document.getElementById("lightMode");
       const aiIframe = document.getElementById("ai");
-      const clearAllMsg = document.getElementById("clearAllMsg");
-      const removeLastMsg = document.getElementById("removeLastMsg");
       const darkBlueSpeechBoxBtn = document.getElementById("darkBlueSpeechBox");
       const chatDisplayForm = document.getElementById("chat-display-form");
       const joinRoom = document.getElementById("joinRoom");
@@ -458,18 +454,6 @@ const socket = io();
         }
       );
 
-      socket.on("clearMessagesCommand", () => {
-        clearAllMsg.click();
-      });
-
-      socket.on("lightModeCommand", () => {
-        lightMode.click();
-      });
-
-      socket.on("darkModeCommand", () => {
-        darkMode.click();
-      });
-
       socket.on("changeNameCommand", (name) => {
         appendMessage("Name changed to " + name);
         username.value = name;
@@ -493,7 +477,7 @@ const socket = io();
 
       socket.on("help command", () => {
         appendMessage(
-          `Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help, /changename, /clearMsg, /darkMode, /lightMode`
+          `Commands: /votekick, /joincustomroom, /leaveroom, /mail, /help, /changename, /clearMsg`
         );
       });
 
@@ -669,23 +653,6 @@ ${numUser}`;
           }, 2000);
         }
       }
-
-      clearAllMsg.addEventListener("click", () => {
-        localStorage.removeItem("chatMessages");
-        chatDisplay.innerHTML = "Message Cleared";
-      });
-
-      removeLastMsg.addEventListener("click", () => {
-        const messages = loadMessagesFromLocalStorage();
-        if (messages.length > 0) {
-          messages.pop();
-          saveMessagesToLocalStorage(messages);
-          const removedLastMsgWarning = document.createElement("p");
-          removedLastMsgWarning.textContent = "[Last Message Removed]";
-          chatDisplay.appendChild(removedLastMsgWarning);
-          document.getElementsByClassName("senderMessage").pop().remove();
-        }
-      });
 
       // Save username to local storage
       usernameInput.addEventListener("input", function () {
@@ -892,6 +859,7 @@ sendBtn.addEventListener("click", (e) => {
         sentMessages.push(msg)
         deleteBtn.classList.add("deleteBtn");
         deleteBtn.textContent = "🗑️";
+        deleteBtn.style.display = "none";
         deleteBtn.addEventListener("click", () => {
           //thanks deepseek R1!!!
           // Load messages from localStorage
@@ -992,7 +960,13 @@ sendBtn.addEventListener("click", (e) => {
                 case "custom":
                     newMessage.style.backgroundColor = customBackgroundColour;
             } 
-        newMessage.contentEditable = true;
+            newMessageContainer.addEventListener("contextmenu", (e) => {
+              e.preventDefault();
+              deleteBtn.style.display = "block";
+            });
+        newMessageContainer.addEventListener("mouseleave", () => {
+          deleteBtn.style.display = "none";
+        });
         chatDisplay.appendChild(newMessageContainer);
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
       }
@@ -1401,30 +1375,6 @@ let accountList = loadAccountsFromLocalStorage()
         const test = localStorage.getItem("fileMessages");
       }
 
-      // Clear all messages
-      clearAllMsg.addEventListener("click", () => {
-        localStorage.removeItem("chatMessages");
-        localStorage.removeItem("fileMessages");
-        chatDisplay.innerHTML = "Message Cleared";
-      });
-
-      // Remove last message
-      removeLastMsg.addEventListener("click", () => {
-        const messages = loadMessagesFromLocalStorage();
-        const fileMessages = loadFileMessagesFromLocalStorage();
-        if (messages.length > 0) {
-          messages.pop();
-          saveMessagesToLocalStorage(messages);
-          chatDisplay.innerHTML = "Last Message Removed";
-          displayMessages(messages);
-        }
-        if (fileMessages.length > 0) {
-          fileMessages.pop();
-          saveFileMessagesToLocalStorage(fileMessages);
-          displayFileMessages(fileMessages);
-        }
-      });
-
       function base64ToBlob(base64, type) {
         const byteCharacters = atob(base64);
         const byteArrays = [];
@@ -1445,51 +1395,6 @@ let accountList = loadAccountsFromLocalStorage()
       socket.on("file-error", (errorMessage) => {
         console.error("File error:", errorMessage);
       });
-
-      // dark mode and light mode function
-      darkMode.addEventListener("click", () => {
-        document.body.style.backgroundColor = "rgb(8, 0, 51)";
-        username.style.backgroundColor = "white";
-        password.style.backgroundColor = "white";
-        username.style.color = "black";
-        password.style.color = "black";
-        chatDisplay.style.backgroundColor = "#005678";
-        input.style.backgroundColor = "#6b6b6b";
-        input.style.color = "white";
-        input.placeholder.style.color = "white";
-        const h3 = document.getElementsByTagName("h3");
-        const h2 = document.getElementsByTagName("h2");
-        const pre = document.getElementsByTagName("pre");
-        const p = document.getElementsByTagName("p");
-        /*************  ✨ Codeium Command ⭐  *************/
-        for (let i = 0; i < h3.length; i++) {
-          h3[i].style.color = "white";
-        }
-        for (let i = 0; i < h2.length; i++) {
-          h2[i].style.color = "white";
-        }
-        for (let i = 0; i < pre.length; i++) {
-          pre[i].style.color = "white";
-        }
-        for (let i = 0; i < p.length; i++) {
-          p[i].style.color = "white";
-        }
-
-        /******  44e373d3-6bfa-4c98-9c44-a9c39e9088b4  *******/
-      });
-
-      lightMode.addEventListener("click", () => {
-        document.body.style.backgroundColor = "white";
-        username.style.backgroundColor = "black";
-        password.style.backgroundColor = "black";
-        username.style.color = "white";
-        password.style.color = "white";
-        chatDisplay.style.backgroundColor = "white";
-        input.style.backgroundColor = "#dadada";
-        input.style.color = "black";
-        input.placeholder.style.color = "black";
-      });
-
       socket.on("connection", () => {
         socket.emit("join", userID);
       });
