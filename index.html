@@ -445,11 +445,14 @@
         width: 200px;
         border-radius: 0;
         background-color: rgb(131, 131, 131);
-        color: black;
+        color: white;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         text-align: center;
         margin-top: 10px;
         border: none;
+      }
+      #room::placeholder {
+        color: white;
       }
       #room:hover {
         box-shadow: none;
@@ -470,6 +473,9 @@
       }
       #roomLeave:hover {
         box-shadow: none;
+      }
+      #roomLeave::placeholder {
+        color: white;
       }
       #joinRoom {
         position: relative;
@@ -798,13 +804,6 @@
       .backgroundwhite{
         background-color: white;
       }
-      #updateLog {
-        position: relative;
-        width: 220px;
-        height: 50px;
-        border: none;
-        color: rgb(99, 99, 99);
-      }
       #rightSideBarContainer {
         position: fixed;
         z-index: 1001;
@@ -1048,7 +1047,6 @@
     <button id="adminPanelBtn" class="goodBtn rightSideBarElement" style="display: none">Admin Panel</button>
     <button id="accountBtn" class="goodBtn rightSideBarElement">🔑</button>
     <button id="settingsBtn" class="goodBtn rightSideBarElement">⚙️</button>
-    <button id="updateLog" class="goodBtn rightSideBarElement">⬆️ Updates</button>
     <button id="wiki" class="goodBtn rightSideBarElement">❓</button>
     <input type="text" id="room" placeholder="Join Room" />
     <input type="text" id="roomLeave" placeholder="Leave Room">
