@@ -183,6 +183,7 @@ socket.on("force disconnect", (targetUsername) => {
   })
   socket.on("userjoined", (username, time) => {
     socket.broadcast.emit("userjoined", username , time, socket.id)
+    socket.emit("you_joined", time, socket.id)
     console.log(username + " has joined")
   })
   socket.emit('getName')
