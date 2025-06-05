@@ -25,10 +25,6 @@ const socket = io();
       const rejectKick = document.getElementById("rejectKick");
       const username = document.getElementById("username");
       const usersOnlineNames = document.getElementById("usersOnlineNames");
-      const directMsgDiv = document.getElementById("directMsg");
-      const toggleVisibilityDirectMsgBtn = document.getElementById(
-        "toggleDirectMsgVisibility"
-      );
       const wikiBtn = document.getElementById("wiki");
       const showUploadedFilesBtn = document.getElementById("showUploadedFiles");
       const fileUploads = document.getElementById("fileUploads");
@@ -92,6 +88,25 @@ const socket = io();
       document.getElementById("eye").onclick = () => {input.value += "👀"};
       */
 
+      socket.on("userList", (users) => {
+        const directMsgList = document.getElementById("directMessages")
+        directMsgList.innerHTML = "";
+        users.forEach(user => {
+          //if (user !== document.getElementById("username").value) {
+            const userItem = document.createElement("button");
+            userItem.textContent = user;
+            userItem.classList.add("goodBtn");
+            userItem.style.width = "100%";
+            userItem.addEventListener("click", () => {
+              directMsgPerson = user;
+              targetDirectMsgPerson = user;
+              appendMessage(`You are now messaging ${user}`);
+            });
+            directMsgList.appendChild(userItem);
+          //}
+        });
+      })
+
       socket.on("you_joined", (time, id) => {
         appendMessage(`You joined at ${time} with id ${id}`);
       })
@@ -142,20 +157,6 @@ const socket = io();
       settingsBtn.addEventListener("click", () => {
         window.open("/settings", "_self");
       })
-
-      const button = document.createElement("button");
-      button.textContent = "Home";
-      button.classList.add("directMsgBtns");
-      directMsgDiv.appendChild(button);
-      button.addEventListener("click", () => {
-          chatDisplay.textContent = "";
-          setTimeout(() => {
-            appendMessage("You are now talking in Home room");
-          }, 1000);
-          room.value = "Home";
-          joinRoom.click()
-      });
-
       socket.on("logUserDetails", (data) => {
         appendMessage(data);
       })
@@ -335,37 +336,6 @@ const socket = io();
         socket.emit("returnUsersOnlineCheck", username.value);
       });
 
-      socket.on("updateOnlineUsers2", (users) => {
-        let arr = [...new Set(users)];
-        setTimeout(() => {
-          for(let i = 0; i < arr.length; i++) {
-            for(let j = 0; j < arr.length; j++) {
-            if(arr[i] == arr[j]) {
-            const button = document.createElement("button");
-            button.textContent = arr[i];
-            button.classList.add("directMsgBtns");
-            directMsgDiv.appendChild(button);
-            button.addEventListener("click", () => {
-                chatDisplay.textContent = "";
-                setTimeout(() => {
-                  appendMessage("You are now talking to " + arr[i]);
-                }, 1000);
-              directMsgPerson = arr[i];
-            });
-            }
-          };
-        }
-        let whileLoop = 0;
-        while(document.getElementsByClassName("directMsgBtns").length > arr.length + 1) {
-          document.getElementsByClassName("directMsgBtns")[arr.length + 1].remove();
-          whileLoop++;
-          if(document.getElementsByClassName("directMsgBtns")[arr.length + 1] == username.value) {
-            document.getElementsByClassName("directMsgBtns")[arr.length + 1].remove();
-          }
-        }
-      })
-    }, 2000);
-
       socket.on("forceChangeNameCheck", (curName, nameToChange) => {
         if (username.value == curName) {
           username.value = nameToChange;
@@ -403,34 +373,6 @@ const socket = io();
 
       wikiBtn.addEventListener("click", () => {
         window.open("/info.html", "_self");
-      });
-
-      toggleVisibilityDirectMsgBtn.addEventListener("click", () => {
-        if (toggleVisibilityDirectMsgBtnVAR == 1) {
-          directMsgDiv.style.display = "none";
-          toggleVisibilityDirectMsgBtnVAR -= 1;
-        } else {
-          directMsgDiv.style.display = "inherit";
-          directMsgDiv.style.backgroundColor = "#b0b1ff";
-          directMsgDiv.style.width = "100%";
-          directMsgDiv.style.height = "100px";
-          directMsgDiv.style.marginBottom = "20px";
-          toggleVisibilityDirectMsgBtnVAR += 1;
-        }
-      });
-
-      socket.on("connected", (username) => {
-        const button = document.createElement("button");
-        button.textContent = username;
-        button.classList.add("directMsgBtns");
-        directMsgDiv.appendChild(button);
-        button.addEventListener("click", () => {
-          chatDisplay.textContent = "";
-          setTimeout(() => {
-            appendMessage("You are now talking to " + user);
-          }, 1000);
-          directMsgPerson = username;
-        });
       });
 
       socket.on("online mail", (destinationUsername, message) => {
