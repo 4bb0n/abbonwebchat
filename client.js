@@ -44,6 +44,7 @@ const socket = io();
       const adminPanelBtn = document.getElementById("adminPanelBtn");
       const showEmojisBtn = document.getElementById("showEmojisBtn");
       const settingsBtn = document.getElementById("settingsBtn");
+      const emergencyBtn = document.getElementById("emergency");
       let directMsgPerson = "";
       let targetDirectMsgPerson = "";
       let voteName = "";
@@ -87,6 +88,12 @@ const socket = io();
       document.getElementById("coolGuy").onclick = () => {input.value += "😎"};
       document.getElementById("eye").onclick = () => {input.value += "👀"};
       */
+    
+      emergencyBtn.addEventListener("click", () => {
+        chatDisplay.innerHTML = "";
+        emergencyBtn.style.display = "none";
+        socket.disconnect()
+      })
 
       function updateDirectMsgIndicator() {
         for(let i = 0; i < document.getElementById("directMessages").children.length; i++) {
