@@ -88,9 +88,35 @@ const socket = io();
       document.getElementById("eye").onclick = () => {input.value += "👀"};
       */
 
-      socket.on("userList", (users) => {
+      function updateDirectMsgIndicator() {
+        for(let i = 0; i < document.getElementById("directMessages").children.length; i++) {
+          const userItem = document.getElementById("directMessages").children[i];
+          if (userItem.textContent === directMsgPerson) {
+            userItem.classList.add("active");
+          }
+          else if (userItem.textContent === "Home" && directMsgPerson === "") {
+            userItem.classList.add("active");
+          }
+          else {
+            userItem.classList.remove("active");
+          }
+        }
+      }
+
+     function updateDirectMsg(users) {
         const directMsgList = document.getElementById("directMessages")
         directMsgList.innerHTML = "";
+        const homeItem = document.createElement("button");
+        homeItem.textContent = "Home";
+        homeItem.classList.add("goodBtn");
+        homeItem.style.width = "100%";
+        homeItem.addEventListener("click", () => {
+          directMsgPerson = "";
+          targetDirectMsgPerson = "";
+          updateDirectMsgIndicator();
+          socket.emit("join room", "Home");
+        });
+        directMsgList.appendChild(homeItem);
         users.forEach(user => {
           //if (user !== document.getElementById("username").value) {
             const userItem = document.createElement("button");
@@ -100,11 +126,16 @@ const socket = io();
             userItem.addEventListener("click", () => {
               directMsgPerson = user;
               targetDirectMsgPerson = user;
-              appendMessage(`You are now messaging ${user}`);
+              updateDirectMsgIndicator();
             });
             directMsgList.appendChild(userItem);
           //}
         });
+        updateDirectMsgIndicator();
+     }
+
+      socket.on("userList", (users) => {
+        updateDirectMsg(users)
       })
 
       socket.on("you_joined", (time, id) => {
