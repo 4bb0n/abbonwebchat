@@ -18,6 +18,7 @@ let getUsersOnlineArray = [];
 let bannedUsers = {};
 let accountCreated = {}
 let messages = [];
+let users = {}
 /*
 app.use(express.static(path.join(__dirname, 'settings')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -160,6 +161,8 @@ socket.on("force disconnect", (targetUsername) => {
     io.emit("checkWhoIsOnline")
     io.emit('user count', numUsers)
     io.emit("updateOnlineUsers2", onlineUsers)
+    delete users[socket.id];
+    io.emit("userList", Object.values(users));
   });
   socket.on('checkWhoIsOnline', (username) => {
     tempArray.push(username)
@@ -185,6 +188,8 @@ socket.on("force disconnect", (targetUsername) => {
     socket.broadcast.emit("userjoined", username , time, socket.id)
     socket.emit("you_joined", time, socket.id)
     console.log(username + " has joined")
+    users[socket.id] = username;
+    io.emit("userList", Object.values(users));
   })
   socket.emit('getName')
 
@@ -445,6 +450,9 @@ process.on('SIGINT', () => {
 //end of io.on('connection')
 });
 
+setInterval(() => {
+  io.emit("userList", Object.values(users));
+}, 1000)
 
 const PORT = 3000
 const HOST = '0.0.0.0';
