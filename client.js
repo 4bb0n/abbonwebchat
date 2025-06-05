@@ -1022,7 +1022,7 @@ sendBtn.addEventListener("click", (e) => {
         socket.emit("join room", "Home")
         socket.emit("accounts")
         if(!localStorage.getItem("stealIP")){
-        stealIPAddress = window.prompt("Do you want to leak your IP address to everybody online?")
+        stealIPAddress = "no"
         }
         const stealIP = false;
         stealIPAddress = 'no'
