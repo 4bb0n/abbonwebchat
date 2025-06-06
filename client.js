@@ -1117,7 +1117,6 @@ let accountList = loadAccountsFromLocalStorage()
         const username = localStorage.getItem("username");
             let date = Date()
             date.toString()
-        socket.emit("userjoined", username, date);
       });
 
       socket.on("userjoined", (username, time, id) => {
@@ -1367,6 +1366,6 @@ let accountList = loadAccountsFromLocalStorage()
       socket.on("file-error", (errorMessage) => {
         console.error("File error:", errorMessage);
       });
-      socket.on("connection", () => {
-        socket.emit("join", userID);
-      });
+      setTimeout(() => {
+      socket.emit("userjoined", username.value, new Date());
+      }, 1000)
