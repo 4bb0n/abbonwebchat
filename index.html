@@ -105,8 +105,6 @@
       }
       @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
       #send {
-        position: absolute;
-        top: 710px;
         border-radius: 15px;
         width: 140px;
         margin: auto;
@@ -121,7 +119,7 @@
       }
       #chat-input {
         margin-top: 20px;
-        margin-right: 10px;
+        margin-right: -60px;
         padding-right: 40px;
         box-shadow: 3px 3px 2px;
         border-width: 3px;
@@ -846,15 +844,17 @@
         display: inline-grid;
       }
       #showEmojisBtn{
-        position: absolute;
-        right: 775px;
-        top: 705px;
+        margin-right: 40px;
+        position: relative;
+        bottom: 20px;
+        z-index: 1000;
         height: 1px;
         width: 1px;
         background-color: inherit;
         border: none;
         box-shadow: none;
         font-size: 30px;
+        align-self: center;
       }
       #test{
         clip-path: polygon(71% 78%, 63% 85%, 55% 70%);
@@ -992,6 +992,9 @@
           border: 6px solid;
         }
       }
+      #inputContainer {
+        display: inline-flex;
+      }
     </style>
   </head>
   <body>
@@ -999,7 +1002,7 @@
     <button id="accountBtn" class="goodBtn topBarElement">🔑</button>
     <button id="settingsBtn" class="goodBtn topBarElement">⚙️</button>
     <button id="wiki" class="goodBtn topBarElement">❓</button>
-    <button id="emergency" class="goodBtn topBarElement">EMERGENCY</button>
+    <button id="emergency" class="goodBtn topBarElement">EMERGENCY DISCONNECT</button>
     </div>
     <div id="topStuff">
     <div id="chat-display" readonly style="border-width: 2px"></div>
@@ -1029,7 +1032,10 @@
         </div>
       </div>
     <form id="chat-form">
+      <div id="inputContainer">
       <input id="chat-input" type="text" autocomplete="off" contenteditable="on" placeholder="Type a message...">
+      <button id="showEmojisBtn" class="goodBtn">🙂</button>
+      </div>
       <button id="send" type="submit">Send</button>
     </form>
     <div id="commandContainer">
@@ -1039,7 +1045,6 @@
         placeholder="command | Type /help for help" />
       <button id="sendCommandBtn">Send Command</button>
     </div>
-    <button id="showEmojisBtn" class="goodBtn">🙂</button>
     <div id="emojis" style="display: none;">
       <button id="smile" class="emojiBtn goodBtn" title="smile">😀</button>
       <button id="grinning" class="emojiBtn goodBtn" title="grinning">🙂</button>
