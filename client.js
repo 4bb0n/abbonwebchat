@@ -712,6 +712,7 @@ ${numUser}`;
       });
 input.addEventListener("keypress", event => {
     if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default action of the Enter key
       sendBtn.click()
     }
 });
@@ -1367,5 +1368,5 @@ let accountList = loadAccountsFromLocalStorage()
         console.error("File error:", errorMessage);
       });
       setTimeout(() => {
-      socket.emit("userjoined", username.value, new Date());
+      socket.emit("userjoined", username.value, new Date().toString());
       }, 1000)
