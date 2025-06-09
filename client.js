@@ -662,8 +662,8 @@ ${numUser}`;
       function displayMessages(messages) {
         const chatDisplay = document.getElementById("chat-display");
         messages.forEach((message) => {
-          if (message.type === "sender" || message.content.split(" :")[0] === username.value) {
-            appendSenderMessage(message.content);
+          if (message.content.split(" :")[0] === username.value) {
+            appendSenderMessage('YOU :' + message.content.split(" :")[1]);
           } else {
             appendMessage(message.content);
           }
